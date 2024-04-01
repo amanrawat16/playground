@@ -43,12 +43,12 @@ export default function Login() {
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-[url('/ABE05757.png')]">
-        <div className="bg-white max-w-lg mx-auto p-12 rounded-lg shadow-xl">
-      <h2 className="text-center text-[40px] font-bold text-orange-400">
+        <div className="bg-white max-w-lg mx-auto p-12 rounded-xl shadow-xl">
+      <h2 className="text-center text-[30px] font-bold text-orange-400">
            Welcome to the Sports App
           </h2>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight  ">
+          <h2 className="mt-10 text-center text-xl leading-9 tracking-tight  ">
             Let's, Sign in to your account
           </h2>
         </div>
