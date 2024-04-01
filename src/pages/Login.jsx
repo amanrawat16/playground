@@ -43,7 +43,7 @@ export default function Login() {
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-[url('/ABE05757.png')]">
-        <div className="bg-white max-w-lg mx-auto p-12 rounded-xl shadow-xl">
+        <div className="bg-white max-w-lg mx-auto p-10 rounded-xl shadow-xl">
       <h2 className="text-center text-[30px] font-bold text-orange-400">
            Welcome to the Sports App
           </h2>
