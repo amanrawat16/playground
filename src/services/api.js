@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const baseURL = import.meta.env.VITE_BASE_URL;
-const baseURL = "http://localhost:8200";
+const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app";
 const apiKey = import.meta.env.VITE_API_KEY;
 
 export const instance = axios.create({
