@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // const baseURL = import.meta.env.VITE_BASE_URL;
-const baseURL = "http://localhost:8200";
-// https://octopus-app-ly3r2.ondigitalocean.app
+// const baseURL = "http://localhost:8200";
+const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
 const apiKey = import.meta.env.VITE_API_KEY;
 
 export const instance = axios.create({
@@ -37,6 +37,7 @@ export const logoutCompClub = async (userData) => {
     const response = await instance.post("/comp/club/logout", userData);
     return response.data;
   } catch (err) {
+    console.log(err)
     console.error("Error in logout:", err.response || err);
     throw err;
   }

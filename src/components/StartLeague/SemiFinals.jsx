@@ -31,6 +31,8 @@ function SemiFinals({ semiFinalTeams }) {
 
     const handleAddTeamtoSemiFinal = (e, currentteam) => {
         const match = e.target.value;
+        const team = currentteam.winningTeamId
+        console.log(team._id)
         if (match === '') {
             return
         }
@@ -40,7 +42,11 @@ function SemiFinals({ semiFinalTeams }) {
             e.target.value = ''
             return toast.error("Teams full in the match")
         }
-        setmatches({ ...matches, [match]: [...matches[match], currentteam] })
+        console.log(matches[match].includes(team._id))
+        if (matches[match].includes(team._id)) {
+            return toast.error("Team already exists in the match");
+        }
+        setmatches({ ...matches, [match]: [...matches[match], team] })
     }
     return (
         <div className='w-full p-10'>
@@ -63,6 +69,7 @@ function SemiFinals({ semiFinalTeams }) {
                                                 <td className='w-1/3'>{match.matchId.winningTeamName}</td>
                                                 <td className='w-1/3'>
                                                     <select name="match" id={`match${index + 1}`} className='w-full border h-10 rounded' onChange={(e) => handleAddTeamtoSemiFinal(e, match)}>
+                                                        <option value="">Select</option>
                                                         <option value="match1">Match 1</option>
                                                         <option value="match2">Match 2</option>
                                                     </select>
@@ -83,7 +90,7 @@ function SemiFinals({ semiFinalTeams }) {
                                                     {
                                                         matches.match1.map((team, index) => (
                                                             <div className="bg-slate-200 w-1/3 h-12 rounded" key={index}>
-                                                                <p className='w-full h-full flex text-center  justify-center items-center' key={team._id}>{team.team.teamName}<span><ImCross className=" cursor-pointer text-red-500 ml-4" onClick={() => handleteamdeleteMatch1(index)} /></span></p>
+                                                                <p className='w-full h-full flex text-center  justify-center items-center' key={team._id}>{team.teamName}<span><ImCross className=" cursor-pointer text-red-500 ml-4" onClick={() => handleteamdeleteMatch1(index)} /></span></p>
                                                             </div>
 
 
@@ -156,7 +163,7 @@ function SemiFinals({ semiFinalTeams }) {
                                                     {
                                                         matches.match2.map((team, index) => (
                                                             <div className="bg-slate-200 w-1/3 h-12 rounded" key={index}>
-                                                                <p className='w-full h-full flex text-center  justify-center items-center' key={team._id}>{team.team.teamName}<span><ImCross className=" cursor-pointer text-red-500 ml-4" onClick={() => handleteamdeleteMatch2(index)} /></span></p>
+                                                                <p className='w-full h-full flex text-center  justify-center items-center' key={team._id}>{team.teamName}<span><ImCross className=" cursor-pointer text-red-500 ml-4" onClick={() => handleteamdeleteMatch2(index)} /></span></p>
                                                             </div>
 
 
@@ -227,7 +234,9 @@ function SemiFinals({ semiFinalTeams }) {
                                         <button className='h-12 rounded-md border px-5 text-white bg-black'>Start SemiFinal Matches</button>
                                     </div>
                                     :
-                                    <p></p>
+                                    <div className=' w-full flex items-center justify-center my-10'>
+                                        <p className='text-center text-red-500 text-lg'>Schedule matches to Start SemiFinals</p>
+                                    </div>
                             }
                         </form>
                     </div>
