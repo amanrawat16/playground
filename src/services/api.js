@@ -3,7 +3,7 @@ import axios from "axios";
 // const baseURL = import.meta.env.VITE_BASE_URL;
 // const baseURL = "http://localhost:8200";
 const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
-const apiKey = "https://octopus-app-ly3r2.ondigitalocean.app";
+const apiKey = "THE123FIELD";
 
 export const instance = axios.create({
   baseURL: `${baseURL}/api`,
