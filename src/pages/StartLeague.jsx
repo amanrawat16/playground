@@ -65,7 +65,7 @@ function StartLeague() {
     const [quaterFinalsStarted, setIsQuaterFinalStarted] = useState(false)
     const [quaterFinalMatches, setQuaterFinalMatches] = useState([])
     const [semiFinalTeams, setSemiFinalTeams] = useState([])
-
+    const [semiFinalsStarted, setIsSemiFinalsStarted] = useState(false)
     const handleNextComponent = () => {
         const next = Number(activekey) + 1
         const newNext = `${next}`
@@ -109,6 +109,7 @@ function StartLeague() {
         try {
             const response = await viewLeagueFixture(leagueId)
             if (response.status === 'SUCCESS') {
+                console.log(response.leagueFixture)
                 setFixtureGroups(response?.leagueFixture.groups)
                 const teams = response?.leagueFixture?.teams
                 const UnapprovedLeagueTeams = teams.filter((team) => team.status === 'Not Approved')
@@ -126,6 +127,7 @@ function StartLeague() {
                 setIsQuaterFinalStarted(response?.leagueFixture?.quaterFinalsStarted)
                 setQuaterFinalMatches(response?.leagueFixture.quaterFinalMatches)
                 setSemiFinalTeams(response?.leagueFixture?.semiFinalTeams)
+                setIsSemiFinalsStarted(response?.leagueFixture?.semiFinalMatchesStarted)
             }
         } catch (error) {
             console.log(error)
@@ -240,15 +242,15 @@ function StartLeague() {
         {
             key: '5',
             label: "Quater Finals",
-            children: <QuaterFinals approvedTeams={approvedTeams} leagueId={leagueId} setQuaterFinalMatches={setQuaterFinalMatches} />
+            children: <QuaterFinals approvedTeams={approvedTeams} leagueId={leagueId} setQuaterFinalMatches={setQuaterFinalMatches} quaterFinalsStarted={quaterFinalsStarted} />
         }, {
             key: "6",
             label: "Semi Finals",
-            children: <SemiFinals approvedTeams={approvedTeams} semiFinalTeams={semiFinalTeams} />
+            children: <SemiFinals approvedTeams={approvedTeams} semiFinalTeams={semiFinalTeams} setSemiFinalTeams={setSemiFinalTeams} leagueId={leagueId} semiFinalsStarted={semiFinalsStarted} setIsSemiFinalsStarted={setIsSemiFinalsStarted} />
         }, {
             key: "7",
             label: "Finals",
-            children: <Finals />
+            children: <Finals leagueId={leagueId} />
         }
     ];
 

@@ -3,6 +3,7 @@ import { login } from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import image from '../assets/user/ABE05757.png'
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -42,13 +43,14 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <h2 className="text-center text-[40px] font-bold text-blue-500">
-           Welcome to the Sports App
-          </h2>
+      <div className={`flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-loginBg bg-center`}>
+        <div className="bg-white py-20 px-10 lg:w-5/12 w-full rounded-xl shadow-md mx-auto ">
+        <h2 className="text-center text-[40px] font-bold text-orange-500">
+          Welcome to the Sports Stats
+        </h2>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Let's, Sign in to your account
+          <h2 className=" text-center text-2xl font leading-9 tracking-tight text-gray-900">
+            Let's Sign in to your account
           </h2>
         </div>
 
@@ -116,7 +118,7 @@ export default function Login() {
               <button
                 type="submit"
                 onClick={handleLogin}
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-orange-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign in
               </button>
@@ -124,6 +126,7 @@ export default function Login() {
           </form>
         </div>
         <ToastContainer />
+        </div>
       </div>
     </>
   );

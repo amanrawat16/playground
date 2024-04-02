@@ -11,7 +11,7 @@ const initialTeams = {
     match4: []
 }
 
-function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches }) {
+function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFinalsStarted }) {
     const [teams, setTeams] = useState(approvedTeams)
     const [matches, setmatches] = useState(initialTeams)
     const {
@@ -139,6 +139,14 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches }) {
             console.log(error)
             toast.error("Error starting quater final matches")
         }
+    }
+
+    if (quaterFinalsStarted) {
+        return (
+            <div className="w-full flex items-center justify-center">
+                <h1 className=" text-2xl font-bold text-green-500 py-20">QuaterFinals Started...</h1>
+            </div>
+        )
     }
 
     return (
