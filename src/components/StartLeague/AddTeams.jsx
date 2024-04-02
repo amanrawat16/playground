@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { AddTeamtoGroups } from "../../services/api";
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import { ImCross } from "react-icons/im";
 
 
 function AddTeams({ setCurrent, fixtureGroups, approvedTeams, handleUpdateFixtureData, isAddTeamsStarted, setIsAddTeamsStarted }) {
+    console.log(isAddTeamsStarted)
     const [groupId, setGroupId] = useState('')
     const [teamId, setTeamId] = useState('')
     const [teams, setTeams] = useState(approvedTeams || [])
@@ -37,6 +38,7 @@ function AddTeams({ setCurrent, fixtureGroups, approvedTeams, handleUpdateFixtur
         setGroupsData(updatedGroupData)
         const updateTeams = teams.filter((team) => team._id !== teamId)
         setTeams(updateTeams)
+        console.log(updateTeams)
         setTeamId('')
 
 
@@ -113,7 +115,12 @@ function AddTeams({ setCurrent, fixtureGroups, approvedTeams, handleUpdateFixtur
                     })
                 }
             </div>
-            <button className='w-3/5 rounded-md bg-black text-white h-12 disabled:bg-gray-400' disabled={isAddTeamsStarted} onClick={handleStartLeagueMatches}>Start League</button>
+            {
+                teams?.length === 0 && !isAddTeamsStarted ?
+                    <button className='w-3/5 rounded-md bg-black text-white h-12 disabled:bg-gray-400' disabled={isAddTeamsStarted} onClick={handleStartLeagueMatches}>Start League</button>
+                    :
+                    <button className='w-3/5 rounded-md bg-black text-white h-12 disabled:bg-gray-400' disabled={true}>Add All teams to Start</button>
+            }
         </div>
     )
 }

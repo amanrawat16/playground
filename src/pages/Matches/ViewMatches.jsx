@@ -20,6 +20,7 @@ const ViewMatches = () => {
       setIsLoading(true);
 
       const data = await viewMatches();
+
       if (data) setIsLoading(false);
 
       if (data?.matches?.length > 0 && teamsList.length > 0) {

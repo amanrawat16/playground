@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // const baseURL = import.meta.env.VITE_BASE_URL;
-const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app";
+const baseURL = "http://localhost:8200";
+// https://octopus-app-ly3r2.ondigitalocean.app
 const apiKey = import.meta.env.VITE_API_KEY;
 
 export const instance = axios.create({
@@ -313,9 +314,19 @@ export const createLeagueFixtureMatch = async (fixtureId, leagueId, matchData) =
 }
 
 export const startQuaterFinals = async (leagueId) => {
-  console.log(leagueId)
+
   try {
     const response = await instance.post(`/comp/leagueFixture/startQuaterFinals/${leagueId}`)
+    return response.data
+  } catch (error) {
+    console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}
+
+export const startQuaterFinalMatches = async (leagueId, matchData) => {
+  try {
+    const response = await instance.post(`/comp/leagueFixture/start/QuaterFinalMathces/${leagueId}`, matchData)
     return response.data
   } catch (error) {
     console.error("Error creating match", error.response || error);

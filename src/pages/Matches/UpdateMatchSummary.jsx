@@ -113,10 +113,10 @@ const UpdateMatchSummary = () => {
           teamName: state?.team2?.teamName,
           points: 1,
         };
-      } else {
       }
 
-      // console.log("Request Payload is:: ", reqPayload);
+      console.log("Request Payload is:: ", reqPayload);
+   
 
       await updateMatch(matchId, {
         ...reqPayload,

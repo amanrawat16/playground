@@ -4,7 +4,7 @@ import { MdOutlineCreate } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify'
-import {  getAllLeagues, updateFixture, viewLeagueFixture } from '../services/api';
+import { getAllLeagues, updateFixture, viewLeagueFixture } from '../services/api';
 import Swal from 'sweetalert2';
 import { CiFlag1 } from "react-icons/ci";
 import { GiBabyfootPlayers } from "react-icons/gi";
@@ -14,6 +14,8 @@ import CreateGroups from '../components/StartLeague/CreateGroups';
 import AddTeams from '../components/StartLeague/AddTeams';
 import Creatematches from "../components/StartLeague/Creatematches";
 import QuaterFinals from "../components/StartLeague/QuaterFinals";
+import SemiFinals from "../components/StartLeague/SemiFinals";
+import Finals from "../components/StartLeague/Finals";
 
 //-------------------------------------------------------------------------------------------------------------
 
@@ -61,6 +63,8 @@ function StartLeague() {
     const [isCreateGroupsDisabled, setIsCreateGroupsDisabled] = useState(false)
     const [isAddTeamsStarted, setIsAddTeamsStarted] = useState(false)
     const [quaterFinalsStarted, setIsQuaterFinalStarted] = useState(false)
+    const [quaterFinalMatches, setQuaterFinalMatches] = useState([])
+    const [semiFinalTeams, setSemiFinalTeams] = useState([])
 
     const handleNextComponent = () => {
         const next = Number(activekey) + 1
@@ -120,7 +124,8 @@ function StartLeague() {
                 setIsCreateGroupsDisabled(response?.leagueFixture.createGroupsStarted)
                 setIsAddTeamsStarted(response?.leagueFixture?.addteamsStarted)
                 setIsQuaterFinalStarted(response?.leagueFixture?.quaterFinalsStarted)
-
+                setQuaterFinalMatches(response?.leagueFixture.quaterFinalMatches)
+                setSemiFinalTeams(response?.leagueFixture?.semiFinalTeams)
             }
         } catch (error) {
             console.log(error)
@@ -230,12 +235,20 @@ function StartLeague() {
         }, {
             key: '4',
             label: "Create Matches",
-            children: <Creatematches handleNextComponent={handleNextComponent} fixtureGroups={fixtureGroups} approvedTeams={approvedTeams} leagueName={leagueName} fixtureId={fixtureId} leagueId={leagueId} quaterFinalsStarted={quaterFinalsStarted} setIsQuaterFinalStarted={setIsQuaterFinalStarted} fetchLeagueFixture={fetchLeagueFixture}/>
+            children: <Creatematches handleNextComponent={handleNextComponent} fixtureGroups={fixtureGroups} approvedTeams={approvedTeams} leagueName={leagueName} fixtureId={fixtureId} leagueId={leagueId} quaterFinalsStarted={quaterFinalsStarted} setIsQuaterFinalStarted={setIsQuaterFinalStarted} fetchLeagueFixture={fetchLeagueFixture} />
         },
         {
             key: '5',
             label: "Quater Finals",
-            children: <QuaterFinals approvedTeams={approvedTeams} />
+            children: <QuaterFinals approvedTeams={approvedTeams} leagueId={leagueId} setQuaterFinalMatches={setQuaterFinalMatches} />
+        }, {
+            key: "6",
+            label: "Semi Finals",
+            children: <SemiFinals approvedTeams={approvedTeams} semiFinalTeams={semiFinalTeams} />
+        }, {
+            key: "7",
+            label: "Finals",
+            children: <Finals />
         }
     ];
 
