@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // const baseURL = import.meta.env.VITE_BASE_URL;
-// const baseURL = "http://localhost:8200";
-const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
+const baseURL = "http://localhost:8200";
+// const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
 const apiKey = "THE123FIELD";
 
 export const instance = axios.create({
@@ -46,6 +46,7 @@ export const logoutCompClub = async (userData) => {
 export const createTeam = async (teamData) => {
   try {
     const response = await instance.post("/comp/club/createTeam", teamData);
+    console.log(response)
     return response.data;
   } catch (error) {
     console.error("Error creating team:", error.response || error);

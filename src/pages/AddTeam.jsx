@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { createTeam, getCompClubs } from "../services/api";
+import { createTeam, getAllLeagues, getCompClubs } from "../services/api";
 // -------------------------------------------------------------------------------------
 
 const AddTeam = () => {
@@ -19,6 +19,10 @@ const AddTeam = () => {
   const [clubs, setClubs] = useState([]);
 
   const [teamImage, setTeamImage] = useState("");
+
+  const [leagues, setLeagues] = useState([])
+  const [isclubSelected, setIsclubSelected] = useState(false)
+  const [isLeagueSelected, setIsLeagueSelected] = useState(false)
 
   // This block of code is used to show image preview after uploading team's image.
   useEffect(() => {
@@ -37,13 +41,24 @@ const AddTeam = () => {
     }
   };
 
+  const fetchLeagues = async () => {
+    try {
+      const response = await getAllLeagues()
+      if (response.status === "SUCCESS") {
+        setLeagues(response.leagues)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   // Used to create a new team.
   const handleCreateTeam = async (data) => {
     try {
       const formData = new FormData();
       const teamImage = data?.teamImage?.[0];
 
-      // console.log("teamImage::: ", teamImage);
+
 
       // Check if an image is selected
       if (!teamImage) {
@@ -66,20 +81,48 @@ const AddTeam = () => {
       }
 
       formData.append("teamName", data?.teamName);
-      formData.append("clubId", data?.clubId);
+      if (data?.clubId) {
+        formData.append("clubId", data?.clubId);
+      }
+      if (data?.leagueId) {
+        formData.append("leagueId", data?.leagueId)
+      }
       formData.append("teamImage", teamImage);
+      const response = await createTeam(formData);
 
-      await createTeam(formData);
-      toast.success("Team Created Successfully");
+      if (response.status === "SUCCESS") {
+        toast.success("Team Created Successfully");
+        reset();
+        setIsLeagueSelected(false)
+        setIsclubSelected(false)
+      }
       reset();
     } catch (error) {
       console.log("Getting an error while creating team: ", error);
+      toast.error("Error creating the team")
     }
   };
+
+  const handleSelectClub = (e) => {
+    if (e.target.value === '') {
+      setIsclubSelected(false)
+      return;
+    }
+    setIsclubSelected(true)
+  }
+
+  const handleSelectLeague = (e) => {
+    if (e.target.value === '') {
+      setIsLeagueSelected(false)
+      return;
+    }
+    setIsLeagueSelected(true)
+  }
 
   // fetching comp clubs list
   useEffect(() => {
     fetchClubs();
+    fetchLeagues()
   }, []);
 
   // ------------------------------------------------------------------------------------------
@@ -153,8 +196,9 @@ const AddTeam = () => {
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="flex flex-wrap -mx-3 mb-3">
               <div className="w-full px-3">
+                <h1 className="text-center font-bold ">JOIN A CLUB</h1>
                 <label
                   className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
                   htmlFor="teamName"
@@ -162,13 +206,17 @@ const AddTeam = () => {
                   Clubs List
                 </label>
                 <select
-                  className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 disabled:bg-gray-100"
                   {...register(`clubId`, {
                     required: {
-                      value: true,
+                      value: isLeagueSelected ? false : true,
                       message: "Club Name is required",
                     },
+                    onChange: (e) => {
+                      handleSelectClub(e)
+                    }
                   })}
+                  disabled={isLeagueSelected}
                 >
                   <option value="">Select an option</option>
 
@@ -186,6 +234,51 @@ const AddTeam = () => {
                 </p>
               </div>
             </div>
+            <div className="flex justify-around items-center">
+              <hr className="h-px w-[40%] bg-gray-300 border-0 " />
+              <p>OR</p>
+              <hr className="h-px w-[40%] bg-gray-300 border-0 " />
+            </div>
+            <div className="flex flex-wrap -mx-3 my-3">
+              <div className="w-full px-3">
+                <h1 className="text-center font-bold">JOIN A LEAGUE</h1>
+                <label
+                  className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                  htmlFor="leagueId"
+                >
+                  Choose League
+                </label>
+                <select
+                  className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500
+                   disabled:bg-gray-100"
+                  {...register(`leagueId`, {
+                    required: {
+                      value: isclubSelected ? false : true,
+                      message: "League Name is required",
+                    },
+                    onChange: (e) => {
+                      handleSelectLeague(e)
+                    }
+                  })}
+                  disabled={isclubSelected}
+                >
+                  <option value="">Select a league</option>
+
+                  {leagues?.length > 0 &&
+                    leagues.map((league, i) => {
+                      return (
+                        <option key={league?._id || i} value={league?._id}>
+                          {league?.leagueName}
+                        </option>
+                      );
+                    })}
+                </select>
+                <p className="text-red-500 text-xs italic">
+                  {errors?.leagueId?.message}
+                </p>
+              </div>
+            </div>
+
 
             <div className="submit_button">
               <button

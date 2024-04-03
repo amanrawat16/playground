@@ -66,6 +66,8 @@ function StartLeague() {
     const [quaterFinalMatches, setQuaterFinalMatches] = useState([])
     const [semiFinalTeams, setSemiFinalTeams] = useState([])
     const [semiFinalsStarted, setIsSemiFinalsStarted] = useState(false)
+    const [finalTeams, setFinalTeams] = useState([])
+    const [isFinalsStarted, setIsFinalsStarted] = useState(false)
     const handleNextComponent = () => {
         const next = Number(activekey) + 1
         const newNext = `${next}`
@@ -128,6 +130,8 @@ function StartLeague() {
                 setQuaterFinalMatches(response?.leagueFixture.quaterFinalMatches)
                 setSemiFinalTeams(response?.leagueFixture?.semiFinalTeams)
                 setIsSemiFinalsStarted(response?.leagueFixture?.semiFinalMatchesStarted)
+                setFinalTeams(response?.leagueFixture.finalTeams)
+                setIsFinalsStarted(response?.leagueFixture?.finalsStarted)
             }
         } catch (error) {
             console.log(error)
@@ -250,7 +254,7 @@ function StartLeague() {
         }, {
             key: "7",
             label: "Finals",
-            children: <Finals leagueId={leagueId} />
+            children: <Finals leagueId={leagueId} finalTeams={finalTeams} isFinalsStarted={isFinalsStarted} setIsFinalsStarted={setIsFinalsStarted} />
         }
     ];
 

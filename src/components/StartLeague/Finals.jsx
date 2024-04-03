@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 
-function Finals({ }) {
-  const [teams, setTeams] = useState([])
+function Finals({ finalTeams, leagueId, isFinalsStarted, setIsFinalsStarted }) {
+  const [teams, setTeams] = useState(finalTeams)
+  console.log(teams)
   const {
     register,
     handleSubmit, reset,
