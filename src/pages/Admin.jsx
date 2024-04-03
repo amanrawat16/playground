@@ -281,7 +281,7 @@ export default function Admin() {
                             ))
                           }
                         </select>
-                        <div className="border flex rounded-lg text-sm h-full justify-center items-center px-3 bg-black text-white"
+                        <div className="border flex rounded-lg text-sm h-full justify-center items-center px-3 bg-black text-white cursor-pointer"
                           onClick={handleOpenModal}>
                           Add New Category
                         </div>
@@ -305,7 +305,7 @@ export default function Admin() {
                                   League Category is required
                                 </p>
                               )}
-                              <div className="border mt-5 py-2 px-5 rounded bg-black text-white"
+                              <div className="border mt-5 py-2 px-5 rounded bg-black text-white cursor-pointer"
                                 onClick={handlecreateleagueCategory}>Add</div>
                             </div>
                           </div>
