@@ -345,3 +345,13 @@ export const startSemiFinalMatches = async (leagueId, matchData) => {
     throw error;
   }
 }
+
+export const startFinals = async (leagueId, matchData) => {
+  try {
+    const response = await instance.post(`/comp/leagueFixture/start/finals/${leagueId}`, matchData)
+    return response.data
+  } catch (error) {
+    console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}

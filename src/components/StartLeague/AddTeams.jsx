@@ -5,12 +5,10 @@ import { ImCross } from "react-icons/im";
 
 
 function AddTeams({ setCurrent, fixtureGroups, approvedTeams, handleUpdateFixtureData, isAddTeamsStarted, setIsAddTeamsStarted }) {
-    console.log(isAddTeamsStarted)
     const [groupId, setGroupId] = useState('')
     const [teamId, setTeamId] = useState('')
-    const [teams, setTeams] = useState(approvedTeams || [])
-    const [groupsData, setGroupsData] = useState(fixtureGroups || [])
-
+    const [teams, setTeams] = useState(approvedTeams)
+    const [groupsData, setGroupsData] = useState(fixtureGroups)
 
 
     const handleGroupChange = (e) => {
@@ -40,8 +38,6 @@ function AddTeams({ setCurrent, fixtureGroups, approvedTeams, handleUpdateFixtur
         setTeams(updateTeams)
         console.log(updateTeams)
         setTeamId('')
-
-
     }
 
     const handleDeleteTeam = (groupId, teamobj) => {
@@ -75,8 +71,8 @@ function AddTeams({ setCurrent, fixtureGroups, approvedTeams, handleUpdateFixtur
     }
 
     return (
-        <div className='w-full h-full flex justify-center items-center p-6  flex-col'>
-            <h1 className=' font-bold text-2xl'>Add Teams Into Groups</h1>
+        <div className='w-2/3 h-full flex justify-center items-center p-6  flex-col mx-auto'>
+            
             <div className='w-full my-10 flex justify-around'>
                 <select name="groups" id="groupselect" className='w-1/3 h-10 rounded border-2 border-gray-200' value={groupId} onChange={handleGroupChange}>
                     <option value="">Choose Group</option>

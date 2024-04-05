@@ -29,6 +29,7 @@ function CreateGroups({ setCurrent, approvedTeams, fixtureId, handleAddGroups, s
         try {
             const response = await createGroup({ fixtureId, groups })
             if (response.status === "SUCCESS") {
+                console.log(response);
                 reset()
                 setGroups([])
                 toast.success(response.message)
@@ -66,7 +67,7 @@ function CreateGroups({ setCurrent, approvedTeams, fixtureId, handleAddGroups, s
 
 
     return (
-        <div className='w-2/3 h-full mx-auto flex flex-col justify-center items-center py-10 border my-10 rounded-xl shadow-md '>
+        <div className='w-1/2 h-full mx-auto flex flex-col justify-center items-center py-10 border my-10 rounded-xl shadow-md '>
             <h1 className='text-2xl font-bold mb-6'>Create Groups</h1>
             <form onSubmit={handleSubmit(handleCreateGroups)} className='w-2/3'>
                 <div className='flex flex-col w-full ' >

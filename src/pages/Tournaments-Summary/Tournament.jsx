@@ -30,6 +30,7 @@ const Tournament = () => {
     try {
       setIsLoading(true);
       const data = await getAllLeagues();
+
       if (data) setIsLoading(false);
 
       // Modified Leagues data based on react-select format.
@@ -112,6 +113,70 @@ const Tournament = () => {
       );
     }
   };
+
+  function findMaxRusherPoints(data) {
+    let maxRusherPoints = 0;
+    let bestPlayer = "";
+
+    data.forEach((player) => {
+      const rusherPoints = player?.bestRusher?.maxPoints;
+
+      if (rusherPoints > maxRusherPoints) {
+        maxRusherPoints = rusherPoints;
+        bestPlayer = player?.bestRusher?.bestPlayer;
+      }
+    });
+
+    return { maxRusherPoints, bestPlayer };
+  }
+
+  function findMaxDefenderPoints(data) {
+    let maxDefenderPoints = 0;
+    let bestPlayer = "";
+
+    data.forEach((player) => {
+      const defenderPoints = player?.bestDefender?.maxPoints;
+
+      if (defenderPoints > maxDefenderPoints) {
+        maxDefenderPoints = defenderPoints;
+        bestPlayer = player?.bestDefender?.bestPlayer;
+      }
+    });
+
+    return { maxDefenderPoints, bestPlayer };
+  }
+
+  function findMaxAttackerPoints(data) {
+    let maxAttackerPoints = 0;
+    let bestPlayer = "";
+
+    data.forEach((player) => {
+      const attackerPoints = player?.bestAttacker?.maxPoints;
+
+      if (attackerPoints > maxAttackerPoints) {
+        maxAttackerPoints = attackerPoints;
+        bestPlayer = player?.bestAttacker?.bestPlayer;
+      }
+    });
+
+    return { maxAttackerPoints, bestPlayer };
+  }
+
+  function findMaxQBPoints(data) {
+    let maxQbPoints = 0;
+    let bestPlayer = "";
+
+    data.forEach((player) => {
+      const qbPoints = player?.bestQB?.maxPoints;
+
+      if (qbPoints > maxQbPoints) {
+        maxQbPoints = qbPoints;
+        bestPlayer = player?.bestQB?.bestPlayer;
+      }
+    });
+
+    return { maxQbPoints, bestPlayer };
+  }
   // -------------------------------------------------------------------------------------
   useEffect(() => {
     selectedLeague !== "" &&
@@ -183,69 +248,7 @@ const Tournament = () => {
 
       // League Wise Calculation Start
 
-      function findMaxRusherPoints(data) {
-        let maxRusherPoints = 0;
-        let bestPlayer = "";
 
-        data.forEach((player) => {
-          const rusherPoints = player?.bestRusher?.maxPoints;
-
-          if (rusherPoints > maxRusherPoints) {
-            maxRusherPoints = rusherPoints;
-            bestPlayer = player?.bestRusher?.bestPlayer;
-          }
-        });
-
-        return { maxRusherPoints, bestPlayer };
-      }
-
-      function findMaxDefenderPoints(data) {
-        let maxDefenderPoints = 0;
-        let bestPlayer = "";
-
-        data.forEach((player) => {
-          const defenderPoints = player?.bestDefender?.maxPoints;
-
-          if (defenderPoints > maxDefenderPoints) {
-            maxDefenderPoints = defenderPoints;
-            bestPlayer = player?.bestDefender?.bestPlayer;
-          }
-        });
-
-        return { maxDefenderPoints, bestPlayer };
-      }
-
-      function findMaxAttackerPoints(data) {
-        let maxAttackerPoints = 0;
-        let bestPlayer = "";
-
-        data.forEach((player) => {
-          const attackerPoints = player?.bestAttacker?.maxPoints;
-
-          if (attackerPoints > maxAttackerPoints) {
-            maxAttackerPoints = attackerPoints;
-            bestPlayer = player?.bestAttacker?.bestPlayer;
-          }
-        });
-
-        return { maxAttackerPoints, bestPlayer };
-      }
-
-      function findMaxQBPoints(data) {
-        let maxQbPoints = 0;
-        let bestPlayer = "";
-
-        data.forEach((player) => {
-          const qbPoints = player?.bestQB?.maxPoints;
-
-          if (qbPoints > maxQbPoints) {
-            maxQbPoints = qbPoints;
-            bestPlayer = player?.bestQB?.bestPlayer;
-          }
-        });
-
-        return { maxQbPoints, bestPlayer };
-      }
 
       const maxRusherPoints = findMaxRusherPoints(resultData);
       const maxDefenderPoints = findMaxDefenderPoints(resultData);
@@ -303,10 +306,10 @@ const Tournament = () => {
 
           {(pathname === "/dashboard/tournamentSummary" ||
             pathname === "/dashboard/tournamentSummary/leagueWise") && (
-            <LeagueWiseTournamentSummary
-              leagueWiseSummany={matchWiseAnalysisData}
-            />
-          )}
+              <LeagueWiseTournamentSummary
+                leagueWiseSummany={matchWiseAnalysisData}
+              />
+            )}
 
           {pathname === "/dashboard/tournamentSummary/matchWise" && (
             <div>

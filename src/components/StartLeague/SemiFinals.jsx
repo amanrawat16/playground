@@ -9,7 +9,7 @@ const initialTeams = {
     match2: []
 }
 function SemiFinals({ semiFinalTeams, setSemiFinalTeams, leagueId, semiFinalsStarted, setIsSemiFinalsStarted }) {
-
+console.log(semiFinalTeams)
     const [teams, setTeams] = useState(semiFinalTeams)
     const [matches, setmatches] = useState(initialTeams)
     const {
@@ -120,15 +120,14 @@ function SemiFinals({ semiFinalTeams, setSemiFinalTeams, leagueId, semiFinalsSta
 
     return (
         <div className='w-full p-10'>
-            <h1 className='text-center font-bold text-2xl'>SemiFinal</h1>
             <div className='w-full flex flex-col justify-around'>
                 {
                     teams.length > 0 &&
-                    <div className='w-1/3 border  my-10 rounded px-4 py-5 shadow-lg mx-auto'>
+                    <div className='w-3/5 border  my-10 rounded px-4 py-5 shadow-lg mx-auto'>
                         <table className='w-full text-center'>
                             <thead className='h-12 text-center'>
-                                <th className='w-1/3 border-collapse'>S.No.</th>
-                                <th className='w-1/3'>Winning Team</th>
+                                <th className='w-/3 border-collapse'>S.No.</th>
+                                <th className='w-1/3'> Team</th>
                                 <th className='w-1/3'></th>
                             </thead>
                             <tbody className='text-center'>

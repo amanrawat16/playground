@@ -261,13 +261,13 @@ export default function Admin() {
                   <div className="flex flex-wrap md:mb-6  md:my-1 mb-1 my-5">
                     <div className="md:w-[100%] w-[100%]">
                       <h2 className="text-start text-2xl font-bold leading-tight text-black my-2">
-                        Create a new League
+                        Create a new League 
                       </h2>
                       <label
                         className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
                         htmlFor="leagueCategory"
                       >
-                        League Category
+                        League Category <span className="text-red-600">*</span>
                       </label>
                       <div className="h-12 w-full flex justify-between items-center mb-3">
                         <select className="w-8/12 h-full bg-gray-200  rounded focus:outline-none focus:bg-white cursor-pointer" name="categories" id="categories"
@@ -283,7 +283,7 @@ export default function Admin() {
                         </select>
                         <div className="border flex rounded-lg text-sm h-full justify-center items-center px-3 bg-black text-white cursor-pointer"
                           onClick={handleOpenModal}>
-                          Add New Category
+                          Add New Category 
                         </div>
                       </div>
                       {
@@ -317,7 +317,7 @@ export default function Admin() {
                         className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
                         htmlFor="matchesInRegularRound"
                       >
-                        Matches in Regular Round
+                        Matches in Regular Round <span className="text-red-600">*</span>
                       </label>
                       <input
                         className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -333,7 +333,7 @@ export default function Admin() {
                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                         htmlFor="leagueName"
                       >
-                        League Name
+                        League Name <span className="text-red-600">*</span>
                       </label>
                       <input
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -373,7 +373,7 @@ export default function Admin() {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="clubImage"
                 >
-                  Club Image
+                  Club Image <span className="text-red-600">*</span>
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -408,7 +408,7 @@ export default function Admin() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="clubName"
                   >
-                    Club Name
+                    Club Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -427,14 +427,14 @@ export default function Admin() {
                   </p>
                 </div>
                 <div className="md:w-[100%] w-[100%] px-3 mt-6 text-start">
-                  <label className="font-bold text-xs text-gray-700" htmlFor="league">SELECT  LEAGUE:</label>
+                  <label className="font-bold text-xs text-gray-700" htmlFor="league">SELECT  LEAGUE <span className=" italic font-normal">(optional)</span></label>
                   <select
                     id="league"
                     className="w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     value={selectedLeague}
                     onChange={(e) => setSelectedLeague(e.target.value)}
                   >
-                    <option value="">Select a league</option>
+                    <option value="">Select a league </option>
                     {leagueOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
@@ -449,7 +449,7 @@ export default function Admin() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-first-name"
                   >
-                    Club Admin Email
+                    Club Admin Email <span className="text-red-600">*</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:bg-white "
@@ -472,7 +472,7 @@ export default function Admin() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name"
                   >
-                    Club Admin Password
+                    Club Admin Password <span className="text-red-600">*</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:border-gray-500"
@@ -497,7 +497,7 @@ export default function Admin() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-first-name"
                   >
-                    Team Email
+                    Team Email <span className="text-red-600">*</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:bg-white"
@@ -520,7 +520,7 @@ export default function Admin() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name"
                   >
-                    Team Password
+                    Team Password <span className="text-red-600">*</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"

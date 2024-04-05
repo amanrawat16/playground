@@ -13,6 +13,7 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
     try {
       setIsLoading(true);
       const data = await getAllTeamsBasedOnLeague(selectedLeagueId);
+      console.log(data)
       if (data) setIsLoading(false);
       setTeamsList(data?.teams);
     } catch (error) {

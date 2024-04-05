@@ -11,7 +11,8 @@ const initialTeams = {
     match4: []
 }
 
-function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFinalsStarted }) {
+function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, setIsSemiFinalsStarted, semiFinalsStarted, quaterFinalMatchesStarted, setQuaterFinalMatchesStarted }) {
+    console.log(approvedTeams)
     const [teams, setTeams] = useState(approvedTeams)
     const [matches, setmatches] = useState(initialTeams)
     const {
@@ -19,6 +20,7 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
         handleSubmit, reset,
         formState: { errors },
     } = useForm();
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
     const handleteamdeleteMatch1 = (i) => {
         const team = matches.match1.filter((team, index) => index === i)
@@ -75,8 +77,7 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
 
 
     const handleStartMatch = async (data) => {
-        console.log(data)
-        console.log(matches.match1[0].team)
+        setIsButtonDisabled(true)
         const newData = {
             Match1: {
                 team1: matches.match1[0].team._id,
@@ -133,15 +134,18 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
             if (response.status === 'SUCCESS') {
                 toast.success("Quater Final Matches started")
                 setQuaterFinalMatches(response?.leagueFixture?.quaterFinalMatches)
+                setQuaterFinalMatchesStarted(response?.leagueFixture?.quaterFinalMatchesStarted)
                 reset()
             }
         } catch (error) {
             console.log(error)
-            toast.error("Error starting quater final matches")
+            toast.error(error.response.data.error || "Error starting quater final matches")
+        } finally {
+            setIsButtonDisabled(false)
         }
     }
 
-    if (quaterFinalsStarted) {
+    if (quaterFinalMatchesStarted) {
         return (
             <div className="w-full flex items-center justify-center">
                 <h1 className=" text-2xl font-bold text-green-500 py-20">QuaterFinals Started...</h1>
@@ -151,13 +155,11 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
 
     return (
         <div className='w-full h-auto'>
-            <h1 className='text-2xl font-bold text-center my-10'>
-                QuaterFinals
-            </h1>
+
             {
                 approvedTeams?.length > 0 &&
                 <div className="w-full flex flex-col items-center py-10  px-5 mx-auto ">
-                    <div className="w-1/2 px-10">
+                    <div className="w-2/3 px-10">
 
                         <div className=" w-full border rounded-md shadow-lg overflow-hidden">
                             <table className="w-full text-center font-bold ">
@@ -430,8 +432,8 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
                                                 <div className="flex w-full justify-around px-2">
                                                     {
                                                         matches.match4.map((team, index) => (
-                                                            <div className="bg-slate-200 w-1/3 h-12 rounded">
-                                                                <p className='w-full h-full flex text-center  justify-center items-center' key={team._id}>{team.team.teamName}<span><ImCross className=" cursor-pointer text-red-500 ml-4" onClick={() => handleteamdeleteMatch4(index)} /></span></p>
+                                                            <div className="bg-slate-200 w-1/3 h-12 rounded" key={team._id}>
+                                                                <p className='w-full h-full flex text-center  justify-center items-center'  >{team.team.teamName}<span><ImCross className=" cursor-pointer text-red-500 ml-4" onClick={() => handleteamdeleteMatch4(index)} /></span></p>
                                                             </div>
 
 
@@ -502,7 +504,7 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
                             {
                                 matches.match1.length > 0 && matches.match2.length > 0 && matches.match3.length > 0 && matches.match4.length > 0 &&
                                 <div className="flex w-full justify-center items-center">
-                                    <button className="border w-52 rounded-lg mt-10 py-4 bg-black text-white" type="submit">Start Matches</button>
+                                    <button className="border w-52 rounded-lg mt-10 py-4 bg-black text-white disabled:bg-slate-400" type="submit" disabled={isButtonDisabled}>Start Matches</button>
 
                                 </div>
                             }

@@ -9,7 +9,28 @@ const UpdateMatchSummary = () => {
   const navigate = useNavigate();
 
   const { state } = useLocation();
+
+  const [teamsList, setTeamsList] = useState([]);
+  const [losingTeam, setLosingTeam] = useState([]);
   // console.log("state::", state);
+  const winningTeam = state?.winningTeam
+  const loosingTeam = state?.losingTeam
+
+
+  useEffect(() => {
+    if (Object.keys(state)?.length > 0) {
+      const teamsData = [{ ...state?.team1, score: 0 }, { ...state?.team2, score: 0 }];
+      if(teamsData[0].teamName === winningTeam.teamName){
+        teamsData[0].score = winningTeam.winningTeamScore;
+        teamsData[1].score = loosingTeam.losingTeamScore
+      }else{
+        teamsData[1].score = winningTeam.winningTeamScore;
+        teamsData[0].score = loosingTeam.losingTeamScore
+      }
+      teamsData?.length > 0 && setTeamsList(teamsData);
+    }
+  }, [state]);
+
 
   const {
     register,
@@ -18,11 +39,12 @@ const UpdateMatchSummary = () => {
     control,
     reset,
   } = useForm({
-    defaultValues: {},
+    defaultValues: {
+
+    },
   });
 
-  const [teamsList, setTeamsList] = useState([]);
-  const [losingTeam, setLosingTeam] = useState([]);
+
 
   const handleAddSummary = async (data) => {
     try {
@@ -114,10 +136,6 @@ const UpdateMatchSummary = () => {
           points: 1,
         };
       }
-
-      console.log("Request Payload is:: ", reqPayload);
-   
-
       await updateMatch(matchId, {
         ...reqPayload,
         winningTeamName: reqPayload?.winningTeam?.winningTeamName,
@@ -135,17 +153,23 @@ const UpdateMatchSummary = () => {
 
   useEffect(() => {
     if (Object.keys(state)?.length > 0) {
-      const teamsData = [state?.team1, state?.team2];
-      // console.log(teamsData);
+      const teamsData = [{ ...state?.team1, score: 0 }, { ...state?.team2, score: 0 }];
+      if(teamsData[0].teamName === winningTeam.teamName){
+        teamsData[0].score = winningTeam.winningTeamScore;
+        teamsData[1].score = loosingTeam.losingTeamScore
+      }else{
+        teamsData[1].score = winningTeam.winningTeamScore;
+        teamsData[0].score = loosingTeam.losingTeamScore
+      }
       teamsData?.length > 0 && setTeamsList(teamsData);
     }
   }, [state]);
 
   return (
-    <div>
+    <div className="">
       <section>
         <div className="flex items-center justify-center">
-          <div className="md:w-1/2 w-full mx-auto">
+          <div className="md:w-1/2 flex flex-col items-center w-full mx-auto">
             <h2 className="text-center text-2xl font-bold leading-tight text-black my-5">
               Update Match Summary Details
             </h2>
@@ -185,8 +209,10 @@ const UpdateMatchSummary = () => {
                       required: {
                         value: true,
                         message: "1st Team Score is required",
+                        
                       },
                     })}
+                    defaultValue={teamsList[0]?.score}
                   />
                   <p className="text-red-500 text-xs italic">
                     {errors?.team1stScore?.message}
@@ -210,6 +236,7 @@ const UpdateMatchSummary = () => {
                         message: "2nd Team Score is required",
                       },
                     })}
+                    defaultValue={teamsList[1]?.score}
                   />
 
                   <p className="text-red-500 text-xs italic">

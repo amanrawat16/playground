@@ -1,26 +1,31 @@
 import { ImCross } from "react-icons/im"
 
 
-function StartRegularRounds({ approvedTeams, handleUnapproveTeam, isRegularRoundStarted, handleStartRegularRounds }) {
+function StartRegularRounds({ approvedTeams, handleUnapproveTeam, isRegularRoundStarted, handleStartRegularRounds, LeagueTeams }) {
+
+    const handleUnapprove = (id) => {
+        const teamIndex = LeagueTeams.findIndex((team) => team._id === id)
+        handleUnapproveTeam(teamIndex)
+    }
     return (
         <div className=' w-full h-full flex flex-col  items-center py-10'>
             <h1 className='text-2xl font-bold mb-5'>Teams</h1>
-            <div className='w-2/3 border shadow-md rounded-md pb-5'>
+            <div className='w-1/3 xs:w-full border shadow-md rounded-md pb-5'>
                 <table className='w-full h-auto '>
                     <thead className='h-12'>
                         <tr >
-                            <th className='w-2/3 text-center'>Teams</th>
-                            <th className='text-center'>Status</th>
-                            <th></th>
+                            <th className='w-[40%] text-center'>Teams</th>
+                            <th className='w-[40%] text-center'>Status</th>
+                            <th className='w-[20%] text-center'></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {approvedTeams?.length > 0 ? approvedTeams.map((team, i) => {
+                        {approvedTeams?.length > 0 ? approvedTeams.map((team) => {
                             return (<tr className='text-center h-12' key={team._id}>
                                 <td>{team.team.teamName}</td>
                                 <td>
-                                    <span className='border-4 border-green-600 bg-green-600 px-3 rounded-full h-full text-xs text-white'>{team.status}</span></td>
-                                {!isRegularRoundStarted ? <td><ImCross className=' text-xs  cursor-pointer' onClick={() => handleUnapproveTeam(i)} /></td> : null}
+                                    <span className='border border-green-500 bg-green-100 px-3 py-1 rounded-md h-full text-xs text-green-500'>{team.status}</span></td>
+                                {!isRegularRoundStarted ? <td className="text-center "><ImCross className=' text-xs  cursor-pointer text-red-500 mx-auto' onClick={() => handleUnapprove(team._id)} /></td> : null}
                             </tr>)
                         }) : null
                         }

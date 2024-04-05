@@ -4,6 +4,9 @@ import moment from "moment";
 import MatchModals from "../../common/MatchModals";
 import { useNavigate } from "react-router-dom";
 import ReactLoader from "../../common/ReactLoader";
+import { MdEditNote } from "react-icons/md";
+import { FaUsers } from "react-icons/fa6";
+import { BeatLoader } from "react-spinners";
 // ------------------------------------------------------------------------
 const ViewMatches = () => {
   const [viewMatchData, setViewMatchData] = useState([]);
@@ -32,6 +35,7 @@ const ViewMatches = () => {
           };
         });
         if (updatedData) setViewMatchData(updatedData);
+        console.log(updatedData)
       }
     } catch (error) {
       setIsLoading(false);
@@ -71,6 +75,7 @@ const ViewMatches = () => {
 
       if (response.status === 'SUCCESS') {
         setViewMatchData(response.matchesList)
+        console.log(response.matchesList)
       }
     } catch (error) {
       console.log(error)
@@ -89,7 +94,7 @@ const ViewMatches = () => {
   return (
     <>
       <div>
-        <section className="container mx-auto p-6 font-mono">
+        <section className="container mx-auto py-6 font-mono">
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-4">
             Matches List
           </h2>
@@ -103,54 +108,67 @@ const ViewMatches = () => {
               }
             </select>
           </div>
-          <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+          <div className="w-full mb-8 overflow-hidden rounded-lg my-10">
             <div className="w-full overflow-x-auto">
               <table className="w-full">
                 <thead className="text-center">
-                  <tr className="text-md font-semibold tracking-wide text-center text-gray-900 bg-gray-100 uppercase">
+                  <tr className="text-md font-semibold tracking-wide text-center border-b">
                     <th className="px-4 py-3">S.No</th>
                     <th className="px-4 py-3">Team 1</th>
+                    <th className="px-4 py-3">Scores</th>
                     <th className="px-4 py-3">Team 2</th>
                     <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Round Type</th>
+                    <th className="px-4 py-3">Location</th>
+                    <th>Winner</th>
+                    <th className="px-4 py-3"></th>
+
                     <th className="px-4 py-3 whitespace-nowrap">
-                      View Details
+                      View
                     </th>
                     <th className="px-4 py-3 whitespace-nowrap">
-                      Update Match Details
+                      Update Match
                     </th>
                     <th className="px-4 py-3 whitespace-nowrap">
-                      Update Player Details
+                      Update Player
                     </th>
                   </tr>
                 </thead>
 
                 <tbody className="bg-white text-center w-full">
                   {isLoading ? (
-                    <ReactLoader />
+                    <tr className="w-full flex items-center justify-center">
+                      <BeatLoader color="#36d7b7" />
+                    </tr>
                   ) : Array.isArray(viewMatchData) &&
                     viewMatchData?.length > 0 ? (
                     viewMatchData?.map((item, index) => (
-                      <tr key={index} className="text-gray-700 ">
-                        <td className="px-4 py-3 text-ms font-semibold border">
+                      <tr key={index} className="text-gray-700 border-b">
+                        <td className="px-4 py-3 text-ms font-semibold ">
                           {index + 1}
                         </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
+                        <td className="px-4 py-3 text-ms font-semibold ">
                           {item?.team1?.teamName}
                         </td>
-                        <td className="px-4 py-3 text-ms font-semibold border">
+                        {
+                          item?.winningTeam?.winningTeamId ?
+                            <td>{
+                              item?.winningTeam?.winningTeamId === item?.team1?.teamName ? `${item?.winningTeam.winningTeamScore}-${item?.losingTeam?.losingTeamScore}` : `${item?.losingTeam?.losingTeamScore}-${item?.winningTeam.winningTeamScore}`
+                            }</td> : <td>-</td>
+                        }
+                        <td className="px-4 py-3 text-ms font-semibold ">
                           {item?.team2?.teamName}
                         </td>
-                        <td className="px-4 py-3 text-sm border whitespace-nowrap">
+                        <td className="px-4 py-3 text-sm  whitespace-nowrap">
                           {moment(item?.date).format("ddd,DD-MM-YYYY")}
                         </td>
+                        <td className="px-4 py-3 text  whitespace-nowrap">{item?.location}</td>
+                        <td className="px-4 py-3">{item?.winningTeamName ? `${item.winningTeamName}` : '-'}</td>
                         <td className="px-4 py-3 text-sm font-bold">{item.matchType}</td>
                         <td>
                           <MatchModals viewDetails={{ item, index }} />
                         </td>
                         <td>
                           <button
-                            className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded bg-gray-500 px-5 text-sm font-medium tracking-wide text-white transition duration-300 hover:bg-gray-600 focus:bg-gray-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:shadow-non mx-2"
                             onClick={() =>
                               navigate(
                                 `/dashboard/match/${item?._id}/updateMatchSummary`,
@@ -160,19 +178,20 @@ const ViewMatches = () => {
                               )
                             }
                           >
-                            Update Match Details
+                            <MdEditNote className="text-3xl text-green-600" />
+
                           </button>
                         </td>
                         <td>
                           <button
-                            className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded bg-gray-500 px-5 text-sm font-medium tracking-wide text-white transition duration-300 hover:bg-gray-600 focus:bg-gray-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:shadow-non"
+                            className=""
                             onClick={() =>
                               navigate("/dashboard/updatePlayerSummary", {
                                 state: item,
                               })
                             }
                           >
-                            Update Player Details
+                            <FaUsers className="text-2xl text-green-600" />
                           </button>
                         </td>
                       </tr>

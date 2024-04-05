@@ -97,7 +97,6 @@ function Creatematches({ approvedTeams, leagueName, fixtureId, leagueId, quaterF
 
     return (
         <div className=' w-full h-full flex justify-center items-center flex-col'>
-            <h1 className='my-10 text-2xl font-bold'>Start Matches</h1>
             <div className='w-full  flex flex-col items-center'>
                 <form
                     className="w-full max-w-lg mt-5"
@@ -246,31 +245,7 @@ function Creatematches({ approvedTeams, leagueName, fixtureId, leagueId, quaterF
                             </p>
                         </div>
                     </div>
-                    <div className='w-full my-4'>
-                        <label
-                            className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                            htmlFor="grid-last-name"
-                        >
-                            Choose Match Type
-                        </label>
-                        <select name="matchType" id="matchType" className='w-full h-12 bg-gray-200' {
-                            ...register('matchType', {
-                                required: {
-                                    value: 'Regular-round',
-                                    message: "Match type is required"
-                                }
-                            })
-                        }>
-                            {
-                                matchType.map((match, index) => {
-                                    return <option value={match} key={index}>{match}</option>
-                                })
-                            }
-                        </select>
-                        <p className="text-red-500 text-xs italic">
-                            {errors?.matchType?.message}
-                        </p>
-                    </div>
+                    
 
                     <div className="flex flex-wrap -mx-3 mb-2">
                         <div className="w-full px-3">

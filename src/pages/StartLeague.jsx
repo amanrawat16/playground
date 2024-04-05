@@ -16,6 +16,9 @@ import Creatematches from "../components/StartLeague/Creatematches";
 import QuaterFinals from "../components/StartLeague/QuaterFinals";
 import SemiFinals from "../components/StartLeague/SemiFinals";
 import Finals from "../components/StartLeague/Finals";
+import { BeatLoader } from 'react-spinners'
+import AntDTable from "../components/AntDTable/AntDTable";
+import { CiSearch } from "react-icons/ci";
 
 //-------------------------------------------------------------------------------------------------------------
 
@@ -47,11 +50,14 @@ const items = [
 
 
 
+
+
 function StartLeague() {
     const [steps, setSteps] = useState(items)
     const [current, setCurrent] = useState(0)
     const [leagues, setLeagues] = useState([])
     const [LeagueTeams, setLeagueTeams] = useState([])
+    const [tableTeams, setTableTeams] = useState([])
     const [leagueId, setLeagueId] = useState('')
     const [approvedTeams, setApprovedTeams] = useState([])
     const [unapprovedTeams, setUnapprovedTeams] = useState([])
@@ -63,11 +69,15 @@ function StartLeague() {
     const [isCreateGroupsDisabled, setIsCreateGroupsDisabled] = useState(false)
     const [isAddTeamsStarted, setIsAddTeamsStarted] = useState(false)
     const [quaterFinalsStarted, setIsQuaterFinalStarted] = useState(false)
+
     const [quaterFinalMatches, setQuaterFinalMatches] = useState([])
+    const [quaterFinalMatchesStarted, setQuaterFinalMatchesStarted] = useState(false)
     const [semiFinalTeams, setSemiFinalTeams] = useState([])
     const [semiFinalsStarted, setIsSemiFinalsStarted] = useState(false)
     const [finalTeams, setFinalTeams] = useState([])
     const [isFinalsStarted, setIsFinalsStarted] = useState(false)
+    const [winnerTeam, setWinnerTeam] = useState('')
+
     const handleNextComponent = () => {
         const next = Number(activekey) + 1
         const newNext = `${next}`
@@ -108,10 +118,11 @@ function StartLeague() {
         if (leagueId === '') {
             return;
         }
+        setLeagueTeams([])
+        setTableTeams([])
         try {
             const response = await viewLeagueFixture(leagueId)
             if (response.status === 'SUCCESS') {
-                console.log(response.leagueFixture)
                 setFixtureGroups(response?.leagueFixture.groups)
                 const teams = response?.leagueFixture?.teams
                 const UnapprovedLeagueTeams = teams.filter((team) => team.status === 'Not Approved')
@@ -132,6 +143,9 @@ function StartLeague() {
                 setIsSemiFinalsStarted(response?.leagueFixture?.semiFinalMatchesStarted)
                 setFinalTeams(response?.leagueFixture.finalTeams)
                 setIsFinalsStarted(response?.leagueFixture?.finalsStarted)
+                setWinnerTeam(response?.leagueFixture?.Winner)
+                setTableTeams(teams)
+                setQuaterFinalMatchesStarted(response?.leagueFixture?.quaterFinalMatchesStarted)
             }
         } catch (error) {
             console.log(error)
@@ -155,22 +169,25 @@ function StartLeague() {
 
     const handleApproveTeam = (i) => {
         const team = LeagueTeams[i]
-        const updatedTeams = LeagueTeams.map((team, index) => {
+
+        const updatedTeams = tableTeams.map((team, index) => {
             if (index === i) {
                 return { ...team, status: "Approved" }
             }
             return team;
         })
         setLeagueTeams(updatedTeams)
+        setTableTeams(updatedTeams)
         setApprovedTeams([...approvedTeams, { ...team, status: "Approved" }])
     };
 
     const handleUnapproveTeam = (i) => {
-        console.log(i)
-        const updateTeam = LeagueTeams[i]
-        const modifyUpdatedTeam = { ...updateTeam, status: "Not Approved" }
+
+        const team = LeagueTeams[i]
+
+        const teamIndex = LeagueTeams.findIndex(el => el._id === team._id)
+        const updateTeam = LeagueTeams[teamIndex]
         setApprovedTeams(approvedTeams.filter((team) => team._id !== updateTeam._id))
-        setUnapprovedTeams([...unapprovedTeams, modifyUpdatedTeam])
         const updatedTeamStatus = LeagueTeams.map((team) => {
             if (team._id === updateTeam._id) {
                 return { ...team, status: "Not Approved" };
@@ -178,6 +195,7 @@ function StartLeague() {
             return team;
         });
         setLeagueTeams(updatedTeamStatus);
+        setTableTeams(updatedTeamStatus)
     };
 
     const handleStartRegularRounds = () => {
@@ -227,7 +245,7 @@ function StartLeague() {
         {
             key: '1',
             label: 'Start Regular Rounds',
-            children: <StartRegularRounds handleNextComponent={handleNextComponent} approvedTeams={approvedTeams} setApprovedTeams={setApprovedTeams} handleUnapproveTeam={handleUnapproveTeam} isRegularRoundStarted={isRegularRoundStarted} setIsRegularRoundStarted={setIsRegularRoundStarted} handleStartRegularRounds={handleStartRegularRounds} />,
+            children: <StartRegularRounds handleNextComponent={handleNextComponent} approvedTeams={approvedTeams} setApprovedTeams={setApprovedTeams} handleUnapproveTeam={handleUnapproveTeam} isRegularRoundStarted={isRegularRoundStarted} setIsRegularRoundStarted={setIsRegularRoundStarted} handleStartRegularRounds={handleStartRegularRounds} LeagueTeams={LeagueTeams} />,
         },
         {
             key: '2',
@@ -246,7 +264,7 @@ function StartLeague() {
         {
             key: '5',
             label: "Quater Finals",
-            children: <QuaterFinals approvedTeams={approvedTeams} leagueId={leagueId} setQuaterFinalMatches={setQuaterFinalMatches} quaterFinalsStarted={quaterFinalsStarted} />
+            children: <QuaterFinals approvedTeams={approvedTeams} leagueId={leagueId} setQuaterFinalMatches={setQuaterFinalMatches} semiFinalsStarted={semiFinalsStarted} setIsSemiFinalsStarted={setIsSemiFinalsStarted} quaterFinalMatchesStarted={quaterFinalMatchesStarted} setQuaterFinalMatchesStarted={setQuaterFinalMatchesStarted} />
         }, {
             key: "6",
             label: "Semi Finals",
@@ -254,9 +272,25 @@ function StartLeague() {
         }, {
             key: "7",
             label: "Finals",
-            children: <Finals leagueId={leagueId} finalTeams={finalTeams} isFinalsStarted={isFinalsStarted} setIsFinalsStarted={setIsFinalsStarted} />
+            children: <Finals leagueId={leagueId} finalTeams={finalTeams} isFinalsStarted={isFinalsStarted} setIsFinalsStarted={setIsFinalsStarted} winnerTeam={winnerTeam} />
         }
     ];
+
+    const handleSearchTeam = (e) => {
+        let team = e.target.value;
+        team = team.trim()
+        if (team === '') {
+            if (LeagueTeams.length === tableTeams.length) {
+                return;
+            }
+            setTableTeams(LeagueTeams)
+            return;
+        }
+        const filteredData = LeagueTeams.filter(item =>
+            item.team.teamName.toLowerCase().includes(team.toLowerCase())
+        );
+        setTableTeams(filteredData)
+    }
 
 
     useEffect(() => {
@@ -264,55 +298,41 @@ function StartLeague() {
     }, [])
     return (
         <div className="w-full h-full flex flex-col items-center">
-            <div className="md:w-1/2 w-full mx-auto  p-12">
-                <h1 className="text-center text-4xl mb-5 font-extrabold ">Start League</h1>
-                <div >
-                    <select name="league" id="league" className='w-1/3 border-2 h-12 border-gray-400 rounded' onChange={handleLeagueChange} value={leagueId}>
+            <h1 className="text-center text-4xl mb-5 font-bold my-10">Start League</h1>
+            <div className="md:w-2/3 sm:w-5/6 mx-auto  border rounded-lg shadow-lg px-12 py-5 mb-10">
+
+                <div className="flex justify-between">
+                    <div className="w-1/3">
+                        <label htmlFor="league" className="text-sm font-medium">Select League</label>
+                        <select name="league" id="league" className='w-full border h-10 border-gray-300 rounded' onChange={handleLeagueChange} value={leagueId}>
+                            {
+                                leagues.length > 0 ? leagues.map((league) => {
+                                    return <option value={league._id} key={league._id}>{league.leagueName}</option>
+                                }) : null
+                            }
+                        </select>
+
+                    </div>
+                    <div className="w-1/3 flex items-end relative">
                         {
-                            leagues.length > 0 ? leagues.map((league) => {
-                                return <option value={league._id} key={league._id}>{league.leagueName}</option>
-                            }) : null
+                            LeagueTeams.length > 0 && <>
+                                <input type="text" className="w-full border h-10 rounded border-gray-300 px-2" name="team" placeholder="Search team" onChange={handleSearchTeam} />
+                                <CiSearch className=" absolute right-2 top-[60%] text-gray-400 font-bold" />
+                            </>
                         }
-                    </select>
+                    </div>
                 </div>
                 <div className="w-full  py-4">
-                    <h1 className="text-center text-xl mb-5 font-bold">Approve Teams</h1>
+
                     {
                         LeagueTeams.length > 0 ?
-                            <div className="w-full h-full border  rounded-lg shadow-md flex flex-col py-4">
-                                <table className="w-full h-full ">
-                                    <thead className="h-10">
-                                        <tr>
-                                            <th>Teams</th>
-                                            <th>Status</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="h-10">
-                                        {
-                                            LeagueTeams.map((team, index) => {
-                                                return <tr key={team._id} className='h-12 '>
-                                                    <td className="text-center w-2/5">{team.team.teamName}</td>
-                                                    <td className={`text-center w-1/5 ${team.status === 'Not Approved' ? 'text-red-600' : 'text-green-600'}`}>{team.status}</td>
-
-                                                    <td className=' text-center'>
-                                                        {
-                                                            team.status === 'Not Approved' ?
-                                                                <button className="px-3 py-1 text-white bg-green-600 rounded-md hover:bg-green-800 text-sm disabled:bg-gray-300" disabled={isRegularRoundStarted} onClick={() => handleApproveTeam(index)}>Approve</button>
-                                                                :
-                                                                <button className="px-3 py-1 text-white bg-red-600 rounded-md hover:bg-red-800 text-sm disabled:bg-gray-300" disabled={isRegularRoundStarted} onClick={() => handleUnapproveTeam(index)}>Unapprove</button>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
-
-                            </div>
+                            <>
+                                <h1 className="text-center text-xl mb-5 font-bold">Approve Teams</h1>
+                                <AntDTable data={tableTeams} handleApproveTeam={handleApproveTeam} handleUnapproveTeam={handleUnapproveTeam} isRegularRoundStarted={isRegularRoundStarted} />
+                            </>
                             :
-                            <div className="w-full h-48 border  rounded-lg shadow-md flex justify-center items-center py-4">
-                                <h1 className='text-2xl'>No teams to display</h1>
+                            <div className="w-full h-48   rounded-lg  flex justify-center items-center py-4">
+                                <BeatLoader color="#36d7b7" />
                             </div>
                     }
                 </div>
@@ -330,18 +350,18 @@ function StartLeague() {
                 />
             </div>
             {
-                approvedTeams.length > 0 ?
-                    <div className='w-full px-10'>
-                        <Tabs
-                            defaultActiveKey={activekey}
-                            size={"large"}
-                            style={{
-                                marginBottom: 32,
-                            }}
-                            onChange={handleKeyChange}
-                            items={tabs}
-                        />
-                    </div> : null
+                approvedTeams.length > 0 &&
+                <div className='w-full px-10'>
+                    <Tabs
+                        defaultActiveKey={activekey}
+                        size={"large"}
+                        style={{
+                            marginBottom: 32,
+                        }}
+                        onChange={handleKeyChange}
+                        items={tabs}
+                    />
+                </div>
             }
         </div >
     )

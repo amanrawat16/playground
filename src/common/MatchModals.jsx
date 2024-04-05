@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { ToastContainer } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { TfiViewListAlt } from "react-icons/tfi";
 
 export default function ({ viewDetails }) {
   // console.log("index::", viewDetails?.index);
@@ -109,159 +110,159 @@ export default function ({ viewDetails }) {
     <>
       <button
         onClick={() => setIsShowing(true)}
-        className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded bg-gray-500 px-3 text-sm font-medium tracking-wide text-white transition duration-300 hover:bg-gray-600 focus:bg-gray-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-300 disabled:shadow-none"
+        className=" bg-white"
       >
-        <span>View Details</span>
+        <TfiViewListAlt className="text-xl text-green-600"/> 
       </button>
 
       {isShowing && typeof document !== "undefined"
         ? ReactDOM.createPortal(
+          <div
+            className="fixed top-0 left-0 z-20 flex w-screen h-screen items-center justify-center bg-slate-300/20 backdrop-blur-sm"
+            aria-labelledby="header-3a content-3a"
+            aria-modal="true"
+            tabindex="-1"
+            role="dialog"
+          >
+            {/*    <!-- Modal --> */}
             <div
-              className="fixed top-0 left-0 z-20 flex w-screen items-center justify-center bg-slate-300/20 backdrop-blur-sm"
-              aria-labelledby="header-3a content-3a"
-              aria-modal="true"
-              tabindex="-1"
-              role="dialog"
+              ref={wrapperRef}
+              className="flex max-h-[90vh] w-11/12 max-w-xl flex-col gap-6 overflow-hidden rounded bg-white p-6 text-slate-500 shadow-xl shadow-slate-700/10"
+              id="modal"
+              role="document"
             >
-              {/*    <!-- Modal --> */}
-              <div
-                ref={wrapperRef}
-                className="flex max-h-[90vh] w-11/12 max-w-xl flex-col gap-6 overflow-hidden rounded bg-white p-6 text-slate-500 shadow-xl shadow-slate-700/10"
-                id="modal"
-                role="document"
-              >
-                {/*        <!-- Modal header --> */}
-                <header id="header-3a" className="flex items-center gap-4">
-                  <h3 className="flex-1 text-xl font-medium text-slate-700">
-                    Match Complete Details
-                  </h3>
-                  <button
-                    onClick={() => setIsShowing(false)}
-                    className="inline-flex h-10 items-center justify-center gap-2 justify-self-center whitespace-nowrap rounded-full px-5 text-sm font-medium tracking-wide text-gray-500 transition duration-300 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-200 focus:text-gray-700  focus-visible:outline-none disabled:cursor-not-allowed disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-transparent"
-                    aria-label="close dialog"
-                  >
-                    <span className="relative only:-mx-5">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        role="graphics-symbol"
-                        aria-labelledby="title-79 desc-79"
-                      >
-                        <title id="title-79">Icon title</title>
-                        <desc id="desc-79">
-                          A more detailed description of the icon
-                        </desc>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </span>
-                  </button>
-                </header>
-                {/*        <!-- Modal body --> */}
-                <div id="content-3a" className="flex-1 overflow-auto">
-                  <section className="container mx-auto p-6 font-mono">
-                    <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
-                      <div className="w-full overflow-x-auto">
-                        <table className="w-full">
-                          <thead className="text-center"></thead>
-                          <tbody className="bg-white text-center">
-                            <tr className="text-md font-semibold tracking-wide text-center  border-b border-gray-600 ">
-                              <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
-                                S.No
-                              </th>
-                              <td>{viewDetails?.index + 1}</td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
-                                Team 1
-                              </th>
-                              <td>{viewDetails?.item?.team1?.teamName}</td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
-                                Team 2
-                              </th>
+              {/*        <!-- Modal header --> */}
+              <header id="header-3a" className="flex items-center gap-4">
+                <h3 className="flex-1 text-xl font-medium text-slate-700">
+                  Match Complete Details
+                </h3>
+                <button
+                  onClick={() => setIsShowing(false)}
+                  className="inline-flex h-10 items-center justify-center gap-2 justify-self-center whitespace-nowrap rounded-full px-5 text-sm font-medium tracking-wide text-gray-500 transition duration-300 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-200 focus:text-gray-700  focus-visible:outline-none disabled:cursor-not-allowed disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-transparent"
+                  aria-label="close dialog"
+                >
+                  <span className="relative only:-mx-5">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      role="graphics-symbol"
+                      aria-labelledby="title-79 desc-79"
+                    >
+                      <title id="title-79">Icon title</title>
+                      <desc id="desc-79">
+                        A more detailed description of the icon
+                      </desc>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </header>
+              {/*        <!-- Modal body --> */}
+              <div id="content-3a" className="flex-1 overflow-auto">
+                <section className="container mx-auto p-6 font-mono">
+                  <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                    <div className="w-full overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="text-center"></thead>
+                        <tbody className="bg-white text-center">
+                          <tr className="text-md font-semibold tracking-wide text-center  border-b border-gray-600 ">
+                            <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
+                              S.No
+                            </th>
+                            <td>{viewDetails?.index + 1}</td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
+                              Team 1
+                            </th>
+                            <td>{viewDetails?.item?.team1?.teamName}</td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
+                              Team 2
+                            </th>
 
-                              <td>{viewDetails?.item?.team2?.teamName}</td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
-                                Date
-                              </th>
-                              <td>
-                                {moment(viewDetails?.item?.date).format(
-                                  "DD-MM-YYYY"
-                                )}
-                              </td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                Start Time
-                              </th>
-                              <td>
-                                {viewDetails?.item?.time?.map(
-                                  (val) => val?.startTime
-                                )}
-                              </td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                End Time
-                              </th>
-                              <td>
-                                {viewDetails?.item?.time?.map(
-                                  (val) => val?.endTime
-                                )}
-                              </td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                Location
-                              </th>
-                              <td>{viewDetails?.item?.location}</td>
-                            </tr>
+                            <td>{viewDetails?.item?.team2?.teamName}</td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 text-gray-900 bg-gray-100 uppercase">
+                              Date
+                            </th>
+                            <td>
+                              {moment(viewDetails?.item?.date).format(
+                                "DD-MM-YYYY"
+                              )}
+                            </td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              Start Time
+                            </th>
+                            <td>
+                              {viewDetails?.item?.time?.map(
+                                (val) => val?.startTime
+                              )}
+                            </td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              End Time
+                            </th>
+                            <td>
+                              {viewDetails?.item?.time?.map(
+                                (val) => val?.endTime
+                              )}
+                            </td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              Location
+                            </th>
+                            <td>{viewDetails?.item?.location}</td>
+                          </tr>
 
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                Winning Team
-                              </th>
-                              <td>{viewDetails?.item?.winningTeamName}</td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                Winning Team Score
-                              </th>
-                              <td>{viewDetails?.item?.winningTeam?.winningTeamScore}</td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                Losing Team
-                              </th>
-                              <td>{viewDetails?.item?.losingTeamName}</td>
-                            </tr>
-                            <tr className=" border-b border-gray-600">
-                              <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
-                                Losing Team Score
-                              </th>
-                              <td>{viewDetails?.item?.losingTeam?.losingTeamScore}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              Winning Team
+                            </th>
+                            <td>{viewDetails?.item?.winningTeamName}</td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              Winning Team Score
+                            </th>
+                            <td>{viewDetails?.item?.winningTeam?.winningTeamScore}</td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              Losing Team
+                            </th>
+                            <td>{viewDetails?.item?.losingTeamName}</td>
+                          </tr>
+                          <tr className=" border-b border-gray-600">
+                            <th className="px-4 py-3 whitespace-nowrap text-gray-900 bg-gray-100 uppercase">
+                              Losing Team Score
+                            </th>
+                            <td>{viewDetails?.item?.losingTeam?.losingTeamScore}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
-                  </section>
-                </div>
+                  </div>
+                </section>
               </div>
-            </div>,
-            document.body
-          )
+            </div>
+          </div>,
+          document.body
+        )
         : null}
     </>
   );

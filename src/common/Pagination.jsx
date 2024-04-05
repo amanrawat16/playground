@@ -35,7 +35,7 @@ const Pagination = ({ items, itemsPerPage, sendDataToParent }) => {
     }
   }, [currentItems]);
   return (
-    <div>
+    <div >
       <ReactPaginate
         nextLabel="Next >"
         onPageChange={handlePageClick}
