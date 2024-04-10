@@ -1,8 +1,8 @@
 import { Space, Table, Tag } from 'antd';
 
+const baseURL = import.meta.env.VITE_BASE_URL;
 
-
-function AntDTable({ data, handleApproveTeam, handleUnapproveTeam, isRegularRoundStarted  }) {
+function AntDTable({ data, handleApproveTeam, handleUnapproveTeam, isRegularRoundStarted }) {
 
     const handleApprove = (index) => {
         handleApproveTeam(index)
@@ -14,6 +14,16 @@ function AntDTable({ data, handleApproveTeam, handleUnapproveTeam, isRegularRoun
 
     const columns = [
         {
+            title: '',
+            dataIndex: ['team', 'teamImage'],
+            key: 'team',
+            align: 'center',
+            render: (teamImage) => <div>
+                <img src={`${baseURL}/uploads/${teamImage?.split("\\")[1]}`} alt={`${teamImage}`} className='h-10 w-10 rounded-full' onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} />
+            </div>,
+
+        },
+        {
             title: 'Team Name',
             dataIndex: ['team', 'teamName'],
             key: 'teamName',
@@ -23,7 +33,7 @@ function AntDTable({ data, handleApproveTeam, handleUnapproveTeam, isRegularRoun
         },
         {
             title: 'Club Name',
-            dataIndex:['team','clubId','clubName'],
+            dataIndex: ['team', 'clubId', 'clubName'],
             key: 'team',
             align: 'center',
             render: (clubName) => clubName ? clubName : '-',
