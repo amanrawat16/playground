@@ -8,6 +8,7 @@ import { MdEditNote } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
 import { BeatLoader } from "react-spinners";
 // ------------------------------------------------------------------------
+const baseURL = import.meta.env.VITE_BASE_URL;
 const ViewMatches = () => {
   const [viewMatchData, setViewMatchData] = useState([]);
   const [isShowing, setIsShowing] = useState(false);
@@ -111,24 +112,26 @@ const ViewMatches = () => {
           <div className="w-full mb-8 overflow-hidden rounded-lg my-10">
             <div className="w-full overflow-x-auto">
               <table className="w-full">
-                <thead className="text-center">
+                <thead className="text-center ">
                   <tr className="text-md font-semibold tracking-wide text-center border-b">
                     <th className="px-4 py-3">S.No</th>
+                    <th></th>
                     <th className="px-4 py-3">Team 1</th>
                     <th className="px-4 py-3">Scores</th>
+                    <th></th>
                     <th className="px-4 py-3">Team 2</th>
                     <th className="px-4 py-3">Date</th>
                     <th className="px-4 py-3">Location</th>
                     <th>Winner</th>
-                    <th className="px-4 py-3"></th>
+                    <th className="px-2 py-3"></th>
 
-                    <th className="px-4 py-3 whitespace-nowrap">
+                    <th className="px-2 whitespace-nowrap">
                       View
                     </th>
-                    <th className="px-4 py-3 whitespace-nowrap">
+                    <th className="px-2 py-3 whitespace-nowrap">
                       Update Match
                     </th>
-                    <th className="px-4 py-3 whitespace-nowrap">
+                    <th className="px-2 py-3 whitespace-nowrap">
                       Update Player
                     </th>
                   </tr>
@@ -146,16 +149,25 @@ const ViewMatches = () => {
                         <td className="px-4 py-3 text-ms font-semibold ">
                           {index + 1}
                         </td>
+                        <td className="flex items-center justify-center">
+                          <img src={`${baseURL}/uploads/${item.team1.teamImage.split("\\")[1]}`} alt={`${item.team1.teamName}`}
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-10 h-10 rounded-full" />
+                        </td>
                         <td className="px-4 py-3 text-ms font-semibold ">
                           {item?.team1?.teamName}
                         </td>
                         {
                           item?.winningTeam?.winningTeamId ?
-                            <td>{
+                            <td className="bg-orange-400 text-white">{
                               item?.winningTeam?.winningTeamId === item?.team1?.teamName ? `${item?.winningTeam.winningTeamScore}-${item?.losingTeam?.losingTeamScore}` : `${item?.losingTeam?.losingTeamScore}-${item?.winningTeam.winningTeamScore}`
-                            }</td> : <td>-</td>
+                            }</td> : <td className="bg-orange-400 text-white">-</td>
                         }
-                        <td className="px-4 py-3 text-ms font-semibold ">
+                        <td className="flex items-center justify-center px-3">
+                          <img src={`${baseURL}/uploads/${item.team2.teamImage.split("\\")[1]}`} alt={`${item.team2.teamName}`}
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}
+                            className="w-10 h-10 rounded-full" />
+                        </td>
+                        <td className="text-ms font-semibold ">
                           {item?.team2?.teamName}
                         </td>
                         <td className="px-4 py-3 text-sm  whitespace-nowrap">
@@ -163,7 +175,7 @@ const ViewMatches = () => {
                         </td>
                         <td className="px-4 py-3 text  whitespace-nowrap">{item?.location}</td>
                         <td className="px-4 py-3">{item?.winningTeamName ? `${item.winningTeamName}` : '-'}</td>
-                        <td className="px-4 py-3 text-sm font-bold">{item.matchType}</td>
+                        <td className=" text-sm font-bold">{item.matchType}</td>
                         <td>
                           <MatchModals viewDetails={{ item, index }} />
                         </td>

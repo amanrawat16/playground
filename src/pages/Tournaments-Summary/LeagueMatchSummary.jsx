@@ -10,7 +10,6 @@ import { confirmAlert } from "react-confirm-alert"; // Import
 
 // -------------------------------------------------------------------------------------
 const LeagueMatchSummary = ({ selectedLeagueId }) => {
-  console.log("selectedLeagueId:: ", selectedLeagueId);
 
   const [teamsListBasedOnLeague, setTeamsListBasedOnLeague] = useState([]);
   const [matchesListBasedOnLeague, setMatchesListBasedOnLeague] = useState([]);

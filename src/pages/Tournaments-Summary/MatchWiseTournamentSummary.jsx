@@ -21,8 +21,8 @@ const MatchWiseTournamentSummary = ({ selectedMatch, matchWiseSummany }) => {
       matchWiseSummany?.teamSecondPlayers?.length > 0
     ) {
       const analysisData = [
-        ...matchWiseSummany?.teamFirstPlayers,
-        ...matchWiseSummany?.teamSecondPlayers,
+        ...matchWiseSummany.teamFirstPlayers,
+        ...matchWiseSummany.teamSecondPlayers,
       ]?.map((player) => {
         return {
           playerName: player?.playerName,

@@ -2,35 +2,52 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { updateMatch } from "../../services/api";
+import { getImage, updateMatch } from "../../services/api";
 import "react-toastify/dist/ReactToastify.css";
 // ------------------------------------------------------------------------
+const baseURL = import.meta.env.VITE_BASE_URL;
+
 const UpdateMatchSummary = () => {
   const navigate = useNavigate();
 
   const { state } = useLocation();
-
+  const [images, setImages] = useState({
+    image1: "",
+    image2: ''
+  })
   const [teamsList, setTeamsList] = useState([]);
   const [losingTeam, setLosingTeam] = useState([]);
-  // console.log("state::", state);
-  const winningTeam = state?.winningTeam
-  const loosingTeam = state?.losingTeam
+  const [winningTeam, setWinningTeam] = useState(state?.winningTeam || '')
+  const [loosingTeam, setloosingTeam] = useState(state?.losingTeam || '')
 
+
+  const modifyImages = () => {
+    setImages({
+      image1: state.team1.teamImage.split("\\")[1],
+      image2: state.team2.teamImage.split("\\")[1]
+    })
+  }
 
   useEffect(() => {
     if (Object.keys(state)?.length > 0) {
       const teamsData = [{ ...state?.team1, score: 0 }, { ...state?.team2, score: 0 }];
-      if(teamsData[0].teamName === winningTeam.teamName){
-        teamsData[0].score = winningTeam.winningTeamScore;
-        teamsData[1].score = loosingTeam.losingTeamScore
-      }else{
-        teamsData[1].score = winningTeam.winningTeamScore;
-        teamsData[0].score = loosingTeam.losingTeamScore
+      if (winningTeam === 'undefined' || loosingTeam === 'undefined') {
+        return;
+      }
+      if (teamsData[0]?.teamName === winningTeam?.teamName) {
+        teamsData[0].score = winningTeam?.winningTeamScore;
+        teamsData[1].score = loosingTeam?.losingTeamScore
+      } else {
+        teamsData[1].score = winningTeam?.winningTeamScore;
+        teamsData[0].score = loosingTeam?.losingTeamScore
       }
       teamsData?.length > 0 && setTeamsList(teamsData);
     }
   }, [state]);
 
+  useEffect(() => {
+    modifyImages()
+  }, [state])
 
   const {
     register,
@@ -154,10 +171,10 @@ const UpdateMatchSummary = () => {
   useEffect(() => {
     if (Object.keys(state)?.length > 0) {
       const teamsData = [{ ...state?.team1, score: 0 }, { ...state?.team2, score: 0 }];
-      if(teamsData[0].teamName === winningTeam.teamName){
+      if (teamsData[0].teamName === winningTeam.teamName) {
         teamsData[0].score = winningTeam.winningTeamScore;
         teamsData[1].score = loosingTeam.losingTeamScore
-      }else{
+      } else {
         teamsData[1].score = winningTeam.winningTeamScore;
         teamsData[0].score = loosingTeam.losingTeamScore
       }
@@ -180,16 +197,25 @@ const UpdateMatchSummary = () => {
               <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full md:w-1/2  mb-6 md:mb-0">
                   <div className="w-full px-3">
+                    <div className=" h-42 flex items-center justify-center">
+                      <img src={`${baseURL}/uploads/${images.image1}`} alt={`${state.team1.teamName}`} 
+                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}className="border w-32 h-32 rounded-full object-cover " />
+                    </div>
                     <h2 className="font-bold mb-5 text-center">
-                      Team 1st <br /> {state?.team1?.teamName}
+                      {state?.team1?.teamName}
                     </h2>
+
                   </div>
                 </div>
 
                 <div className="w-full md:w-1/2  mb-6 md:mb-0">
                   <div className="w-full px-3">
+                    <div className=" h-42 flex items-center justify-center">
+                      <img src={`${baseURL}/uploads/${images.image2}`} alt={`${state.team2.teamName}`} 
+                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}className="border w-32 h-32 rounded-full object-cover " />
+                    </div>
                     <h2 className="font-bold mb-5 text-center">
-                      Team 2nd <br /> {state?.team2?.teamName}
+                      {state?.team2?.teamName}
                     </h2>
                   </div>
                 </div>
@@ -209,7 +235,7 @@ const UpdateMatchSummary = () => {
                       required: {
                         value: true,
                         message: "1st Team Score is required",
-                        
+
                       },
                     })}
                     defaultValue={teamsList[0]?.score}

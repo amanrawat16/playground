@@ -51,11 +51,7 @@ const SideBar = ({ children }) => {
           name: "League Team Wise Summary",
           icon: <FaUser />,
         },
-        {
-          path: "/dashboard/tournamentSummary/leagueMatchSummary",
-          name: "League Matches Summary",
-          icon: <FaUser />,
-        },
+        
       ],
     },
 

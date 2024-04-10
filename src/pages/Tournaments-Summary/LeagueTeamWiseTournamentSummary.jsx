@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAllTeamsBasedOnLeague } from "../../services/api";
 import Pagination from "../../common/Pagination";
 // ---------------------------------------------------------------------------------------------
+const baseURL = import.meta.env.VITE_BASE_URL;
 const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
   // console.log("selectedLeagueId::::", selectedLeagueId);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,7 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
+                  <th className='w-[100px] px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2'></th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 ">
                     Team Name
                   </th>
@@ -61,10 +63,14 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
               </thead>
               <tbody>
                 {Array.isArray(paginatedteamsList) &&
-                paginatedteamsList?.length > 0 ? (
+                  paginatedteamsList?.length > 0 ? (
                   paginatedteamsList.map((team, i) => {
                     return (
                       <tr key={team?._id || i}>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 flex items-center justify-center">
+                          <img src={`${baseURL}/uploads/${team?.teamImage?.split("\\")[1]}`} alt={`${team.teamName}`}
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className='w-10 h-10 rounded-full' />
+                        </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2">
                           <p className="text-gray-900 whitespace-no-wrap font-bold">
                             {team?.teamName}

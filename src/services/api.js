@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // const baseURL = import.meta.env.VITE_BASE_URL;
-// const baseURL = "http://localhost:8200";
-const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
+const baseURL = "http://localhost:8200";
+// const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
 const apiKey = "THE123FIELD";
 
 export const instance = axios.create({
@@ -350,6 +350,16 @@ export const startFinals = async (leagueId, matchData) => {
   try {
     const response = await instance.post(`/comp/leagueFixture/start/finals/${leagueId}`, matchData)
     return response.data
+  } catch (error) {
+    console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}
+
+export const getImage = async (imageName) => {
+  try {
+    const response = await instance.get(`/comp/images/get/${imageName}`)
+    return response.data;
   } catch (error) {
     console.error("Error creating match", error.response || error);
     throw error;

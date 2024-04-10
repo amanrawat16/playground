@@ -75,12 +75,12 @@ const Tournament = () => {
         setMatchesList(modifiedMatchesList);
       }
 
-      const fetchedData = [...data?.matchesLeagueWise];
+      const fetchedData = [...data.matchesLeagueWise];
 
       const result =
         Array.isArray(fetchedData) &&
         fetchedData?.length > 0 &&
-        fetchedData.map((match, i) => {
+        fetchedData.map((match) => {
           return {
             ...match,
             teamFirstPlayers: match?.team1?.players.map((player) => {
@@ -103,7 +103,6 @@ const Tournament = () => {
             }),
           };
         });
-
       setmatchesListLeagueWise(result);
     } catch (error) {
       setIsLoading(false);
@@ -187,9 +186,10 @@ const Tournament = () => {
 
   // Calculations of Best in a Category
   useEffect(() => {
+    console.log( matchesListLeagueWise)
     if (matchesListLeagueWise.length > 0) {
       const analysisData = matchesListLeagueWise.map((match) => {
-        return [...match?.teamFirstPlayers, ...match?.teamSecondPlayers]?.map(
+        return [...match.teamFirstPlayers, ...match.teamSecondPlayers]?.map(
           (player) => {
             return {
               playerName: player?.playerName,
@@ -340,9 +340,9 @@ const Tournament = () => {
             />
           )}
 
-          {pathname === "/dashboard/tournamentSummary/leagueMatchSummary" && (
+          {/* {pathname === "/dashboard/tournamentSummary/leagueMatchSummary" && (
             <LeagueMatchSummary selectedLeagueId={selectedLeague} />
-          )}
+          )} */}
         </div>
 
         <ToastContainer position="bottom-right" autoClose={3000} />
