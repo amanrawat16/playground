@@ -57,11 +57,11 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
         buttons: [
           {
             label: "Yes",
-            onClick: () => {},
+            onClick: () => { },
           },
           {
             label: "No",
-            onClick: () => {},
+            onClick: () => { },
           },
         ],
       });
@@ -97,7 +97,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2">
             <p className="text-gray-900 whitespace-no-wrap font-bold">
               <button
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded"
                 onClick={() => {
                   setShowTeamPlayerModal(true);
                 }}
@@ -105,7 +105,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                 View Details
               </button>
               <button
-                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded ml-3"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded ml-3"
                 onClick={manageTeamFixturesApproval}
               >
                 Approve Team
@@ -207,7 +207,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                 </thead>
                 <tbody>
                   {Array.isArray(paginatedTeamsList) &&
-                  paginatedTeamsList?.length > 0 ? (
+                    paginatedTeamsList?.length > 0 ? (
                     paginatedTeamsList.map((team, i) => {
                       return (
                         <LeagueMatchIndividualSummary team={team} index={i} />
@@ -266,7 +266,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                 </thead>
                 <tbody>
                   {Array.isArray(paginatedMatchesList) &&
-                  paginatedMatchesList?.length > 0 ? (
+                    paginatedMatchesList?.length > 0 ? (
                     paginatedMatchesList.map((match, i) => {
                       return (
                         <tr key={match?._id || i}>
@@ -298,19 +298,19 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
                             <p className="text-gray-900 whitespace-no-wrap font-bold">
                               {new Date().getTime() >
-                              new Date(match?.date).getTime()
+                                new Date(match?.date).getTime()
                                 ? "YES"
                                 : "NO"}
                             </p>
                           </td>
                           {new Date().getTime() >
                             new Date(match?.date).getTime() && (
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                              <p className="text-gray-900 whitespace-no-wrap font-bold">
-                                {match?.winningTeam?.winningTeamName}
-                              </p>
-                            </td>
-                          )}
+                              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
+                                <p className="text-gray-900 whitespace-no-wrap font-bold">
+                                  {match?.winningTeam?.winningTeamName}
+                                </p>
+                              </td>
+                            )}
                         </tr>
                       );
                     })

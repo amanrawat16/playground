@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const baseURL = import.meta.env.VITE_BASE_URL;
-const baseURL = "http://localhost:8200";
+export const baseURL = import.meta.env.VITE_BASE_URL;
 // const baseURL = "https://octopus-app-ly3r2.ondigitalocean.app"
 const apiKey = "THE123FIELD";
 
@@ -362,6 +362,36 @@ export const getImage = async (imageName) => {
     return response.data;
   } catch (error) {
     console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}
+
+export const getTeams = async () => {
+  try {
+    const response = await instance.get(`/comp/team/get`);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}
+
+export const getTeamPlayers = async (teamId) => {
+  try {
+    const response = await instance.get(`/comp/team/players/${teamId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}
+
+export const getPlayer = async (playerId) => {
+  try {
+    const response = await instance.get(`/comp/player/get/${playerId}`)
+    return response.data;
+  } catch (error) {
+    console.error("Error getting player", error.response || error);
     throw error;
   }
 }

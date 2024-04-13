@@ -73,6 +73,11 @@ const SideBar = ({ children }) => {
       ],
     },
     {
+      path : '/dashboard/viewPlayers',
+      name : 'View Players',
+      icon :  <FaUser />,
+    },
+    {
       path: "/dashboard/startLeague",
       name: "Start League",
       icon: <FaHome />

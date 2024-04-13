@@ -22,6 +22,8 @@ import Tournament from "./pages/Tournaments-Summary/Tournament";
 import LeagueTeamWiseTournamentSummary from "./pages/Tournaments-Summary/LeagueTeamWiseTournamentSummary";
 import LeagueMatchSummary from "./pages/Tournaments-Summary/LeagueMatchSummary";
 import StartLeague from "./pages/StartLeague";
+import { ViewPlayers } from "./pages/Teams/ViewPlayers";
+import PlayerProfile from "./pages/Teams/PlayerProfile";
 
 // -----------------------------------------------------------------
 const App = () => {
@@ -58,7 +60,8 @@ const App = () => {
           />
           <Route path="leagueMatchSummary" element={<LeagueMatchSummary />} />
         </Route>
-
+        <Route path="/dashboard/ViewPlayers" element={<ViewPlayers />} />
+        <Route path="/dashboard/playerProfile/:playerId" element={<PlayerProfile />} />
       </Route>
 
       <Route path="/blog1" element={<Layout />}>
