@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'loginBg': "url('./src/assets/user/ABE05757.png')"
+        'loginBg': "url('https://octopus-app-ly3r2.ondigitalocean.app/uploads/ABE05757.png')"
       }
     },
   },
