@@ -210,7 +210,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                     paginatedTeamsList?.length > 0 ? (
                     paginatedTeamsList.map((team, i) => {
                       return (
-                        <LeagueMatchIndividualSummary team={team} index={i} />
+                        <LeagueMatchIndividualSummary team={team} index={i} key={i}/>
                       );
                     })
                   ) : (
