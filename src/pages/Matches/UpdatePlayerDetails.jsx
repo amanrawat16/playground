@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const UpdatePlayerDetails = () => {
   const { state } = useLocation();
-  console.log("state::", state);
 
   const navigate = useNavigate();
 

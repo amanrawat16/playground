@@ -5,7 +5,6 @@ import { CiEdit } from "react-icons/ci";
 const PlayerSummary = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  console.log("state:::", state);
 
   return (
     <>
