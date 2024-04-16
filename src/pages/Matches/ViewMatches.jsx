@@ -1,61 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { getAllLeagues, getTeam, viewMatches, viewMatchesBasedOnLeague, viewMatchesByLeagueName } from "../../services/api";
+import { useEffect, useState } from "react";
+import { getAllLeagues, viewMatches, viewMatchesByLeague, } from "../../services/api";
 import moment from "moment";
 import MatchModals from "../../common/MatchModals";
-import { useNavigate } from "react-router-dom";
-import ReactLoader from "../../common/ReactLoader";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MdEditNote } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
 import { BeatLoader } from "react-spinners";
 // ------------------------------------------------------------------------
 const baseURL = import.meta.env.VITE_BASE_URL;
 const ViewMatches = () => {
+  const { state } = useLocation()
+  const leagueId = state?.leagueId
   const [viewMatchData, setViewMatchData] = useState([]);
-  const [isShowing, setIsShowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Used to store comp teams list
-  const [teamsList, setTeamsList] = useState([]);
+  const [league, setLeague] = useState('all')
   const navigate = useNavigate();
   const [leaguesData, setLeaguesData] = useState([])
 
-  const fetchMatches = async () => {
-    try {
-      setIsLoading(true);
 
-      const data = await viewMatches();
-
-      if (data) setIsLoading(false);
-
-      if (data?.matches?.length > 0 && teamsList.length > 0) {
-        const updatedData = data?.matches?.map((ele) => {
-          return {
-            ...ele,
-            team1Name: teamsList.find((team) => team._id === ele.team1 && team),
-            team2Name: teamsList.find((team) => team._id === ele.team2 && team),
-          };
-        });
-        if (updatedData) setViewMatchData(updatedData);
-        console.log(updatedData)
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.log("Getting an error while fetching clubs: ", error);
-    }
-  };
-
-  // Used to fetch existing teams list
-  const fetchTeams = async () => {
-    try {
-      setIsLoading(true);
-      const data = await getTeam();
-      if (data) setIsLoading(false);
-      setTeamsList(data?.teams);
-    } catch (error) {
-      setIsLoading(false);
-      console.log("Getting an error while fetching teams list: ", error);
-    }
-  };
 
   const fetchLeagues = async () => {
     try {
@@ -67,16 +29,16 @@ const ViewMatches = () => {
   }
 
   const handleLeagueChange = (e) => {
+    setLeague(e.target.value)
     handleViewMatches(e.target.value)
   }
 
   const handleViewMatches = async (leagueId) => {
     try {
-      const response = await viewMatchesByLeagueName(leagueId)
+      const response = await viewMatchesByLeague(leagueId)
 
       if (response.status === 'SUCCESS') {
         setViewMatchData(response.matchesList)
-        console.log(response.matchesList)
       }
     } catch (error) {
       console.log(error)
@@ -84,14 +46,16 @@ const ViewMatches = () => {
   }
 
   useEffect(() => {
-    fetchTeams();
+    // fetchTeams();
     fetchLeagues()
   }, []);
 
-  useEffect(() => {
-    fetchMatches();
-  }, [teamsList]);
 
+
+  useEffect(() => {
+    handleViewMatches(leagueId || 'all')
+    setLeague(leagueId || 'all')
+  }, [leagueId]);
   return (
     <>
       <div>
@@ -100,7 +64,7 @@ const ViewMatches = () => {
             Matches List
           </h2>
           <div className="h-16 my-5 flex justify-end items-center px-10">
-            <select name="league" id="league" className="h-12 px-4" onChange={handleLeagueChange}>
+            <select name="league" id="league" className="h-12 px-4" onChange={handleLeagueChange} defaultValue={'all'} value={league}>
               <option value="all">All Leagues</option>
               {
                 leaguesData.length > 0 && leaguesData.map((league) => {

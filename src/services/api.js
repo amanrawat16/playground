@@ -118,7 +118,7 @@ export const viewMatchesBasedOnLeague = async (leagueId) => {
   }
 };
 
-export const viewMatchesByLeagueName = async (leagueId) => {
+export const viewMatchesByLeague = async (leagueId) => {
   try {
     const response = await instance.get(`/comp/match/viewMatches/${leagueId}`)
     return response.data
@@ -389,6 +389,16 @@ export const getPlayer = async (playerId) => {
   try {
     const response = await instance.get(`/comp/player/get/${playerId}`);
     return response.data;
+  } catch (error) {
+    console.error("Error creating match", error.response || error);
+    throw error;
+  }
+}
+
+export const getPlayerPerformancesOfLeague = async (leagueId) => {
+  try {
+    const response = await instance.get(`/comp/player/playerPerformance/${leagueId}`)
+    return response.data
   } catch (error) {
     console.error("Error creating match", error.response || error);
     throw error;

@@ -132,3 +132,10 @@ main {
   font-size: 16px;
 }
 
+.colorful-row-0 {
+  background-color: #f3f3f3; /* Light grey */
+}
+
+.colorful-row-1 {
+  background-color: #ffffff; /* White */
+}

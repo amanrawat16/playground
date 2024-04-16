@@ -5,7 +5,7 @@ import { CiEdit } from "react-icons/ci";
 const PlayerSummary = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  // console.log("state:::", state);
+  console.log("state:::", state);
 
   return (
     <>
@@ -44,6 +44,7 @@ const PlayerSummary = () => {
                                     playerName: player?.playerName,
                                     teamId: state?.team1?._id,
                                     matchId: state?._id,
+                                    leagueId: state?.league
                                   },
                                 }
                               )
@@ -91,6 +92,7 @@ const PlayerSummary = () => {
                                     playerName: player?.playerName,
                                     teamId: state?.team2?._id,
                                     matchId: state?._id,
+                                    leagueId: state?.league
                                   },
                                 }
                               )

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 // --------------------------------------------------------------------------
 const Pagination = ({ items, itemsPerPage, sendDataToParent }) => {
+  console.log("rerender", items, itemsPerPage)
   // console.log("items:: ", items);
   // console.log("itemsPerPage:: ", itemsPerPage);
   // console.log("sendDataToParent:: ", sendDataToParent);

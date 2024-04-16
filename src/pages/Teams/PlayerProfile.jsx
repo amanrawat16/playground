@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getPlayer } from '../../services/api'
 import { useState } from 'react'
 import AntDTable from '../../components/AntDTable/AntDTable'
 
 function PlayerProfile() {
+    const navigate = useNavigate()
     const { playerId } = useParams()
     const [playerDetail, setPlayerDetail] = useState({})
 
@@ -125,7 +126,11 @@ function PlayerProfile() {
                 </div>
                 <div className='w-full'>
                     <h1 className='text-center text-2xl py-10 text-gray-500'>Player Stats</h1>
-                    <AntDTable data={playerDetail.matchWiseDetails} columns={columns} />
+                    <AntDTable data={playerDetail.matchWiseDetails} columns={columns} onRowClick={
+                        (record) => {
+                            navigate(`/dashboard/matches/viewMatches`, { state: { leagueId: record.matchId.league._id } });
+                        }
+                    } />
                 </div>
             </div>
         </div >

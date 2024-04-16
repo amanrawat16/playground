@@ -21,7 +21,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
   const fetchTeams = async () => {
     try {
       const teamsList = await getAllTeamsBasedOnLeague(selectedLeagueId);
-      // console.log("teamsList::: ", teamsList);
+      console.log("teamsList::: ", teamsList);
       if (teamsList?.teams?.length > 0) {
         setTeamsListBasedOnLeague(teamsList?.teams);
       }

@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const UpdatePlayerDetails = () => {
   const { state } = useLocation();
-  // console.log("state::", state);
+  console.log("state::", state);
 
   const navigate = useNavigate();
 
@@ -15,7 +15,6 @@ const UpdatePlayerDetails = () => {
     register,
     handleSubmit,
     formState: { errors },
-    control,
     reset,
   } = useForm();
 
@@ -24,7 +23,8 @@ const UpdatePlayerDetails = () => {
       const teamId = state?.teamId;
       const playerId = state?.playerId;
       const matchId = state?.matchId;
-      await updatePlayerDetails(teamId, playerId, { ...data, matchId });
+      const leagueId = state?.leagueId;
+      await updatePlayerDetails(teamId, playerId, { ...data, matchId, leagueId });
       toast.success("Player details updated successfully!");
       navigate("/dashboard/matches/viewMatches");
       reset(); // Clear the form on success
@@ -150,7 +150,7 @@ const UpdatePlayerDetails = () => {
                       className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
                       htmlFor="grid-last-name"
                     >
-                    Interception
+                      Interception
                     </label>
                     <span className="mb-2">
                       <img

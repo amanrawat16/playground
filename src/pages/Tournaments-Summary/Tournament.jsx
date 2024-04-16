@@ -186,7 +186,6 @@ const Tournament = () => {
 
   // Calculations of Best in a Category
   useEffect(() => {
-    console.log( matchesListLeagueWise)
     if (matchesListLeagueWise.length > 0) {
       const analysisData = matchesListLeagueWise.map((match) => {
         return [...match.teamFirstPlayers, ...match.teamSecondPlayers]?.map(
@@ -254,7 +253,6 @@ const Tournament = () => {
       const maxDefenderPoints = findMaxDefenderPoints(resultData);
       const maxAttackerPoints = findMaxAttackerPoints(resultData);
       const maxQbPoints = findMaxQBPoints(resultData);
-
       setLeagueWiseAnalysisData([
         ...leagueWiseAnalysisData,
         maxRusherPoints,
@@ -275,6 +273,7 @@ const Tournament = () => {
       if (Object.keys(selMatchObject).length > 0)
         setMatchWiseDetails(selMatchObject);
     }
+   
   }, [selectedMatch, matchesListLeagueWise]);
 
   useEffect(() => {
@@ -307,7 +306,7 @@ const Tournament = () => {
           {(pathname === "/dashboard/tournamentSummary" ||
             pathname === "/dashboard/tournamentSummary/leagueWise") && (
               <LeagueWiseTournamentSummary
-                leagueWiseSummany={matchWiseAnalysisData}
+              selectedLeague={selectedLeague}
               />
             )}
 
