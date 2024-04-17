@@ -23,14 +23,12 @@ const CreateMatch = () => {
   } = useForm();
 
   const selectedLeague = watch("league");
-  console.log("selectedLeague::: ", selectedLeague);
 
   const handleOnChange = (e) => {
     setTeamFirstSelectedValue(e.target.value);
   };
 
   const handleCreateMatch = async (data) => {
-    console.log(data)
     try {
       const obj = {
         team1: data?.team1,
@@ -54,15 +52,15 @@ const CreateMatch = () => {
     }
   };
 
+  function filterTeamsByLeague(teams, leagueId) {
+    return teams.filter((team) => team?.clubId?.league === leagueId);
+  }
   // used to fetch the teams list
   const fetchTeams = async () => {
     try {
       const teamsData = await getTeam();
       console.log("Teams data:::", teamsData);
 
-      function filterTeamsByLeague(teams, leagueId) {
-        return teams.filter((team) => team?.clubId?.league === leagueId);
-      }
 
       const filteredTeams = filterTeamsByLeague(
         teamsData?.teams,
@@ -105,6 +103,7 @@ const CreateMatch = () => {
       );
     setTeamsSecondList(teamSecondFilteredData);
   }, [teamFirstSelectedValue]);
+
 
   return (
     <>
@@ -255,7 +254,7 @@ const CreateMatch = () => {
                       required: {
                         value: true,
                         message: "Start Time is required",
-                      },
+                      }
                     })}
                   />
                   <p className="text-red-500 text-xs italic">
