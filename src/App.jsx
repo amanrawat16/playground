@@ -24,6 +24,7 @@ import LeagueMatchSummary from "./pages/Tournaments-Summary/LeagueMatchSummary";
 import StartLeague from "./pages/StartLeague";
 import { ViewPlayers } from "./pages/Teams/ViewPlayers";
 import PlayerProfile from "./pages/Teams/PlayerProfile";
+import MyMatches from "./pages/Matches/MyMatches";
 
 // -----------------------------------------------------------------
 const App = () => {
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/dashboard/matches" element={<Matches />}>
           <Route path="viewMatches" element={<ViewMatches />} />
           <Route path="createMatch" element={<CreateMatch />} />
+          <Route path="myMatches" element={<MyMatches />} />
         </Route>
         <Route path="/dashboard/tournamentSummary" element={<Tournament />}>
           <Route index element={<Tournament />} />

@@ -51,7 +51,7 @@ const SideBar = ({ children }) => {
           name: "League Team Wise Summary",
           icon: <FaUser />,
         },
-        
+
       ],
     },
 
@@ -67,15 +67,15 @@ const SideBar = ({ children }) => {
         },
         {
           path: "/dashboard/matches/viewMatches",
-          name: "View Matches",
+          name: "View All Matches",
           icon: <FaUser />,
         },
       ],
     },
     {
-      path : '/dashboard/viewPlayers',
-      name : 'View Players',
-      icon :  <FaUser />,
+      path: '/dashboard/viewPlayers',
+      name: 'View Players',
+      icon: <FaUser />,
     },
     {
       path: "/dashboard/startLeague",
@@ -94,7 +94,24 @@ const SideBar = ({ children }) => {
       path: "/dashboard",
       name: "Update Team",
       icon: <FaHome />,
-    }
+    },
+    {
+      path: "/matches",
+      name: "Matches",
+      icon: <FaHome />,
+      subRoutes: [
+        {
+          path: "/dashboard/matches/viewMatches",
+          name: "View All Matches",
+          icon: <FaUser />,
+        },
+        {
+          path: "/dashboard/matches/myMatches",
+          name: "My Matches",
+          icon: <FaUser />
+        }
+      ],
+    },
   ];
 
   const teamRoutes = [
@@ -102,6 +119,23 @@ const SideBar = ({ children }) => {
       path: "/dashboard/updateTeam",
       name: "Update Team",
       icon: <FaHome />,
+    },
+    {
+      path: "/matches",
+      name: "Matches",
+      icon: <FaHome />,
+      subRoutes: [
+        {
+          path: "/dashboard/matches/viewMatches",
+          name: "View All Matches",
+          icon: <FaUser />,
+        },
+        {
+          path: "/dashboard/matches/myMatches",
+          name: "My Matches",
+          icon: <FaUser />
+        }
+      ],
     },
   ];
 

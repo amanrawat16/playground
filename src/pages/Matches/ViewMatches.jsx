@@ -9,6 +9,7 @@ import { BeatLoader } from "react-spinners";
 // ------------------------------------------------------------------------
 const baseURL = import.meta.env.VITE_BASE_URL;
 const ViewMatches = () => {
+  const userTypeValue = localStorage.getItem("userType");
   const { state } = useLocation()
   const leagueId = state?.leagueId
   const [viewMatchData, setViewMatchData] = useState([]);
@@ -92,12 +93,13 @@ const ViewMatches = () => {
                     <th className="px-2 whitespace-nowrap">
                       View
                     </th>
-                    <th className="px-2 py-3 whitespace-nowrap">
+                    {userTypeValue === 'admin' && <><th className="px-2 py-3 whitespace-nowrap">
                       Update Match
                     </th>
-                    <th className="px-2 py-3 whitespace-nowrap">
-                      Update Player
-                    </th>
+                      <th className="px-2 py-3 whitespace-nowrap">
+                        Update Player
+                      </th>
+                    </>}
                   </tr>
                 </thead>
 
@@ -143,33 +145,37 @@ const ViewMatches = () => {
                         <td>
                           <MatchModals viewDetails={{ item, index }} />
                         </td>
-                        <td>
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `/dashboard/match/${item?._id}/updateMatchSummary`,
-                                {
-                                  state: item,
+                        {
+                          userTypeValue === 'admin' && <>
+                            <td>
+                              <button
+                                onClick={() =>
+                                  navigate(
+                                    `/dashboard/match/${item?._id}/updateMatchSummary`,
+                                    {
+                                      state: item,
+                                    }
+                                  )
                                 }
-                              )
-                            }
-                          >
-                            <MdEditNote className="text-3xl text-green-600" />
+                              >
+                                <MdEditNote className="text-3xl text-green-600" />
 
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            className=""
-                            onClick={() =>
-                              navigate("/dashboard/updatePlayerSummary", {
-                                state: item,
-                              })
-                            }
-                          >
-                            <FaUsers className="text-2xl text-green-600" />
-                          </button>
-                        </td>
+                              </button>
+                            </td>
+                            <td>
+                              <button
+                                className=""
+                                onClick={() =>
+                                  navigate("/dashboard/updatePlayerSummary", {
+                                    state: item,
+                                  })
+                                }
+                              >
+                                <FaUsers className="text-2xl text-green-600" />
+                              </button>
+                            </td>
+                          </>
+                        }
                       </tr>
                     ))
                   ) : (

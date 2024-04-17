@@ -404,3 +404,13 @@ export const getPlayerPerformancesOfLeague = async (leagueId) => {
     throw error;
   }
 }
+
+export const getMyMatches = async (clubId) => {
+  try {
+    const response = await instance.get(`/comp/match/view/MyMatches/${clubId}`)
+    return response.data
+  } catch (error) {
+    console.error("Error finding my matches", error.response || error);
+    throw error;
+  }
+}

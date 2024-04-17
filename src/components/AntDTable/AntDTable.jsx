@@ -10,11 +10,11 @@ function AntDTable({ data, columns, onRowClick }) {
     };
 
     const getRowClassName = (record, index) => {
-        return `colorful-row-${index % 2}`; 
+        return `colorful-row-${index % 2}`;
     };
 
     return (
-        <Table dataSource={data} columns={columns} onRow={(record) => ({
+        <Table dataSource={data} columns={columns}  onRow={(record) => ({
             onClick: () => {
                 if (onRowClick) {
                     onRowClick(record);
