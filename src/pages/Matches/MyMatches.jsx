@@ -82,7 +82,12 @@ function MyMatches() {
     const handleFilterupcomingMatches = (e) => {
         let name = e.target.value;
         name = name.trim();
-        if (!name) return
+        if (!name) {
+            if (upcomingMatches.length !== matchdata.upcomingMatches.length) {
+                setcompletedMatches(matchdata.upcomingMatches)
+            }
+            return;
+        }
         const filteredMatches = matchdata.upcomingMatches.filter(match =>
             match.team1.teamName.toLowerCase().includes(name.toLowerCase()) ||
             match.team2.teamName.toLowerCase().includes(name.toLowerCase())
@@ -94,7 +99,12 @@ function MyMatches() {
     const handleFiltertodayMatches = (e) => {
         let name = e.target.value;
         name = name.trim();
-        if (!name) return
+        if (!name) {
+            if (todayMatches.length !== matchdata.todayMatches.length) {
+                setcompletedMatches(matchdata.todayMatches)
+            }
+            return;
+        }
         const filteredMatches = matchdata.todayMatches.filter(match =>
             match.team1.teamName.toLowerCase().includes(name.toLowerCase()) ||
             match.team2.teamName.toLowerCase().includes(name.toLowerCase())
@@ -106,7 +116,12 @@ function MyMatches() {
     const handlefiltercompletedMatches = (e) => {
         let name = e.target.value;
         name = name.trim();
-        if (!name) return
+        if (!name) {
+            if (completedMatches.length !== matchdata.completedMatches.length) {
+                setcompletedMatches(matchdata.completedMatches)
+            }
+            return;
+        }
         const filteredMatches = matchdata.completedMatches.filter(match =>
             match.team1.teamName.toLowerCase().includes(name.toLowerCase()) ||
             match.team2.teamName.toLowerCase().includes(name.toLowerCase())
@@ -125,7 +140,7 @@ function MyMatches() {
                         <div>
                             <div>
                                 <input type="text" onChange={handleFilterupcomingMatches} className="border-2 h-10 px-2"
-                                    placeholder="Search Team"/>
+                                    placeholder="Search Team" />
                             </div>
                             <AntDTable columns={columns} data={upcomingMatches} />
                         </div>
@@ -145,7 +160,7 @@ function MyMatches() {
                         <div>
                             <div>
                                 <input type="text" onChange={handleFiltertodayMatches} className="border-2 h-10 px-2"
-                                    placeholder="Search Team"/>
+                                    placeholder="Search Team" />
                             </div>
                             <AntDTable columns={columns} data={todayMatches} />
                         </div>
