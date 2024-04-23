@@ -4,22 +4,45 @@ import Select from "react-select";
 
 import AntDTable from "../../components/AntDTable/AntDTable";
 import { useNavigate } from "react-router-dom";
-import { getTeamPlayers, getTeams } from "../../services/api";
+import { getAllLeagues, getTeamPlayers, getTeams } from "../../services/api";
 // ----------------------------------------------------------------
 
 
 export const ViewPlayers = () => {
+    const [leagueList, setLeaguesList] = useState([])
+    const [modifiedLeaguelist, setModifiedLeagueList] = useState([])
+    const [selectedLeague, setSelectedLeague] = useState('')
     const [teamsList, setTeamsList] = useState([]);
     const [modifiedTeamList, setModifiedTeamList] = useState([])
     const [players, setPlayers] = useState([])
     const [tablePlayers, setTablePlayers] = useState([])
     const navigate = useNavigate()
-    const fetchTeams = async () => {
+
+
+    const fetchLeagues = async () => {
         try {
-            const response = await getTeams()
+            const response = await getAllLeagues()
+            if (response.status === "SUCCESS") {
+                setLeaguesList(response.leagues)
+                const modifiedList = response.leagues.map((el) => {
+                    return {
+                        label: el.leagueName,
+                        value: el._id
+                    }
+                })
+                setModifiedLeagueList(modifiedList)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const fetchTeams = async (leagueId) => {
+        setModifiedTeamList([])
+        try {
+            const response = await getTeams(leagueId)
             if (response.status === 'SUCCESS') {
                 setTeamsList(response.data)
-
                 const modifiedList = response.data.map((team) => {
                     return {
                         label: team.teamName,
@@ -105,25 +128,35 @@ export const ViewPlayers = () => {
     }
 
     useEffect(() => {
-        fetchTeams()
+        fetchLeagues()
     }, [])
 
 
     return (
         <div className="w-full h-auto p-20 flex flex-col  items-center">
             <div className="w-3/4 flex flex-col ">
-                <div className="    mb-20 flex justify-between   ">
-                    <div className=" w-1/3">
-                        <label className=" italic">Select team</label>
-                        <Select
-                            options={modifiedTeamList}
-                            onChange={(val) => {
-                                handlefetchTeamPlayers(val.value);
-                            }}
-                            placeholder="Please select the team..."
-                        />
+                <div className="    mb-20 flex justify-between items-center  ">
+                    <div className="w-[28%]">
+                        <label className=" italic">Select League</label>
+                        <Select options={modifiedLeaguelist} placeholder='Please select the league' onChange={(val) => {
+                            setSelectedLeague(val.value)
+                            fetchTeams(val.value)
+                        }} />
                     </div>
-                    <div className="w-1/3">
+                    {
+                        selectedLeague &&
+                        <div className="w-[28%]">
+                            <label className=" italic">Select team</label>
+                            <Select
+                                options={modifiedTeamList}
+                                onChange={(val) => {
+                                    handlefetchTeamPlayers(val.value);
+                                }}
+                                placeholder="Please select the team..."
+                            />
+                        </div>
+                    }
+                    <div className="w-[28%]">
                         {players.length > 0 &&
                             <>
                                 <label className="italic">Search Player</label>

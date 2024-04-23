@@ -365,9 +365,9 @@ export const getImage = async (imageName) => {
   }
 }
 
-export const getTeams = async () => {
+export const getTeams = async (leagueId) => {
   try {
-    const response = await instance.get('/comp/team/get')
+    const response = await instance.get(`/comp/team/get/${leagueId}`);
     return response.data
   } catch (error) {
     console.error("Error creating match", error.response || error);

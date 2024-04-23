@@ -261,7 +261,7 @@ export default function Admin() {
                   <div className="flex flex-wrap md:mb-6  md:my-1 mb-1 my-5">
                     <div className="md:w-[100%] w-[100%]">
                       <h2 className="text-start text-2xl font-bold leading-tight text-black my-2">
-                        Create a new League 
+                        Create a new League
                       </h2>
                       <label
                         className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
@@ -283,7 +283,7 @@ export default function Admin() {
                         </select>
                         <div className="border flex rounded-lg text-sm h-full justify-center items-center px-3 bg-black text-white cursor-pointer"
                           onClick={handleOpenModal}>
-                          Add New Category 
+                          Add New Category
                         </div>
                       </div>
                       {
@@ -709,7 +709,7 @@ export default function Admin() {
                         </label>
                         <input
                           className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                          type="text"
+                          type="number"
                           placeholder="Enter Jersey Number"
                           {...register(`players[${index}].jerseyNumber`, {
                             required: true,
