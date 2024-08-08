@@ -78,6 +78,11 @@ const SideBar = ({ children }) => {
       icon: <FaUser />,
     },
     {
+      path: '/dashboard/Teams',
+      name: 'View Teams',
+      icon: <FaUser />,
+    },
+    {
       path: "/dashboard/startLeague",
       name: "Start League",
       icon: <FaHome />
@@ -188,7 +193,7 @@ const SideBar = ({ children }) => {
 
   return (
     <>
-      <div className="main-container  bg-orange-700">
+      <div className="main-container  bg-orange-600">
         <motion.div
           animate={{
             width: isOpen ? "250px" : "45px",
@@ -198,7 +203,7 @@ const SideBar = ({ children }) => {
               damping: 10,
             },
           }}
-          className={`sidebar h-screen bg-orange-700 `}
+          className={`sidebar h-screen bg-orange-600 `}
         >
           <div className="top_section text-white">
             <AnimatePresence>

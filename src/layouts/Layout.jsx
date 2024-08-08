@@ -9,7 +9,7 @@ const Layout = () => {
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           <Header />
           <div className="p-0">
-            <div className="flex mx-auto max-w-screen-2xl">
+            <div className="flex mx-auto max-w-screen">
               <SideBar />
               <main>
                 <Outlet />

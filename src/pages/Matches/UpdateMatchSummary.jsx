@@ -4,6 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { getImage, updateMatch } from "../../services/api";
 import "react-toastify/dist/ReactToastify.css";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { ImSpinner3 } from "react-icons/im";
+import { FaChevronCircleRight } from "react-icons/fa";
 // ------------------------------------------------------------------------
 const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -11,6 +14,7 @@ const UpdateMatchSummary = () => {
   const navigate = useNavigate();
 
   const { state } = useLocation();
+  const [isSubmiting, setIsSubmitting] = useState(false)
   const [images, setImages] = useState({
     image1: "",
     image2: ''
@@ -23,27 +27,12 @@ const UpdateMatchSummary = () => {
 
   const modifyImages = () => {
     setImages({
-      image1: state.team1.teamImage.split("\\")[1],
-      image2: state.team2.teamImage.split("\\")[1]
+      image1: state?.team1?.teamImage?.split("\\")[1],
+      image2: state?.team2?.teamImage?.split("\\")[1]
     })
   }
 
-  useEffect(() => {
-    if (Object.keys(state)?.length > 0) {
-      const teamsData = [{ ...state?.team1, score: 0 }, { ...state?.team2, score: 0 }];
-      if (winningTeam === 'undefined' || loosingTeam === 'undefined') {
-        return;
-      }
-      if (teamsData[0]?.teamName === winningTeam?.teamName) {
-        teamsData[0].score = winningTeam?.winningTeamScore;
-        teamsData[1].score = loosingTeam?.losingTeamScore
-      } else {
-        teamsData[1].score = winningTeam?.winningTeamScore;
-        teamsData[0].score = loosingTeam?.losingTeamScore
-      }
-      teamsData?.length > 0 && setTeamsList(teamsData);
-    }
-  }, [state]);
+
 
   useEffect(() => {
     modifyImages()
@@ -53,20 +42,20 @@ const UpdateMatchSummary = () => {
     register,
     handleSubmit,
     formState: { errors },
-    control,
     reset,
   } = useForm({
     defaultValues: {
-
+      team1stScore: state?.team1?.goalsScoredByTeam,
+      team2ndScore: state?.team2?.goalsScoredByTeam
     },
   });
 
 
 
   const handleAddSummary = async (data) => {
+    setIsSubmitting(true)
     try {
       const matchId = state?._id;
-
       const reqPayload = {
         team1: state?.team1?._id,
         team2: state?.team2?._id,
@@ -81,8 +70,8 @@ const UpdateMatchSummary = () => {
           losingTeamScore: "",
         },
         isMatchDraw: false,
-        team1stPoints: { teamId: "", teamName: "", points: null },
-        team2ndPoints: { teamId: "", teamName: "", points: null },
+        team1stPoints: { teamId: "", teamName: "", points: null, score: data.team1stScore },
+        team2ndPoints: { teamId: "", teamName: "", points: null, score: data.team2ndScore }
       };
 
       // POINTS ALLOCATIONS CODE
@@ -102,11 +91,13 @@ const UpdateMatchSummary = () => {
           teamId: state?.team1?._id,
           teamName: state?.team1?.teamName,
           points: 3,
+          score: data.team1stScore
         };
         reqPayload.team2ndPoints = {
           teamId: state?.team2?._id,
           teamName: state?.team2?.teamName,
           points: 0,
+          score: data.team2ndScore
         };
       } else if (data?.team1stScore < data?.team2ndScore) {
         reqPayload.winningTeam = {
@@ -124,11 +115,13 @@ const UpdateMatchSummary = () => {
           teamId: state?.team2?._id,
           teamName: state?.team2?.teamName,
           points: 3,
+          score: data.team1stScore
         };
         reqPayload.team2ndPoints = {
           teamId: state?.team1?._id,
           teamName: state?.team1?.teamName,
           points: 0,
+          score: data.team2ndScore
         };
       } else if (data?.team1stScore === data?.team2ndScore) {
         reqPayload.winningTeam = {
@@ -146,45 +139,41 @@ const UpdateMatchSummary = () => {
           teamId: state?.team1?._id,
           teamName: state?.team1?.teamName,
           points: 1,
+          score: data.team1stScore
         };
         reqPayload.team2ndPoints = {
           teamId: state?.team2?._id,
           teamName: state?.team2?.teamName,
           points: 1,
+          score: data.team2ndScore
         };
       }
-      await updateMatch(matchId, {
+      const response = await updateMatch(matchId, {
         ...reqPayload,
         winningTeamName: reqPayload?.winningTeam?.winningTeamName,
         losingTeamName: reqPayload?.losingTeam?.losingTeamName,
       });
-
-      toast.success("Match details updated successfully!");
-      navigate("/dashboard/matches/viewMatches");
-      reset(); // Clear the form on success
+      if (response.status === "SUCCESS") {
+        toast.success("Match details updated successfully!");
+        navigate("/dashboard/matches/viewMatches");
+        reset(); // Clear the form on success
+      }
     } catch (error) {
       console.error("Error updating match:", error);
       toast.error("Error updating match. Please try again.");
+    } finally {
+      setIsSubmitting(false)
     }
   };
 
-  useEffect(() => {
-    if (Object.keys(state)?.length > 0) {
-      const teamsData = [{ ...state?.team1, score: 0 }, { ...state?.team2, score: 0 }];
-      if (teamsData[0].teamName === winningTeam.teamName) {
-        teamsData[0].score = winningTeam.winningTeamScore;
-        teamsData[1].score = loosingTeam.losingTeamScore
-      } else {
-        teamsData[1].score = winningTeam.winningTeamScore;
-        teamsData[0].score = loosingTeam.losingTeamScore
-      }
-      teamsData?.length > 0 && setTeamsList(teamsData);
-    }
-  }, [state]);
+
 
   return (
     <div className="">
       <section>
+        <div className="p-2">
+          <IoMdArrowRoundBack className="h-8 w-8 cursor-pointer" onClick={() => navigate(-1)} />
+        </div>
         <div className="flex items-center justify-center">
           <div className="md:w-1/2 flex flex-col items-center w-full mx-auto">
             <h2 className="text-center text-2xl font-bold leading-tight text-black my-5">
@@ -198,8 +187,8 @@ const UpdateMatchSummary = () => {
                 <div className="w-full md:w-1/2  mb-6 md:mb-0">
                   <div className="w-full px-3">
                     <div className=" h-42 flex items-center justify-center">
-                      <img src={`${baseURL}/uploads/${images.image1}`} alt={`${state.team1.teamName}`} 
-                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}className="border w-32 h-32 rounded-full object-cover " />
+                      <img src={`${baseURL}/uploads/${images?.image1}`} alt={`${state?.team1?.teamName}`}
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="border w-32 h-32 rounded-full object-cover " />
                     </div>
                     <h2 className="font-bold mb-5 text-center">
                       {state?.team1?.teamName}
@@ -211,8 +200,8 @@ const UpdateMatchSummary = () => {
                 <div className="w-full md:w-1/2  mb-6 md:mb-0">
                   <div className="w-full px-3">
                     <div className=" h-42 flex items-center justify-center">
-                      <img src={`${baseURL}/uploads/${images.image2}`} alt={`${state.team2.teamName}`} 
-                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}className="border w-32 h-32 rounded-full object-cover " />
+                      <img src={`${baseURL}/uploads/${images.image2}`} alt={`${state?.team2?.teamName}`}
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="border w-32 h-32 rounded-full object-cover " />
                     </div>
                     <h2 className="font-bold mb-5 text-center">
                       {state?.team2?.teamName}
@@ -273,9 +262,14 @@ const UpdateMatchSummary = () => {
               <div className="submit_button">
                 <button
                   type="submit"
-                  className="px-2 py-3 bg-gray-800 text-white rounded-md w-full"
+                  className="px-2 py-3 bg-gray-800 text-white rounded-md w-full disabled:bg-gray-600 flex items-center justify-center"
+                  disabled={isSubmiting}
                 >
-                  Submit
+                  Submit <>
+                    {
+                      isSubmiting ? <ImSpinner3 className="w-4 h-4 ml-2 animate-spin"/> : <FaChevronCircleRight className="w-4 h-4 ml-2"/>
+                    }
+                  </>
                 </button>
               </div>
             </form>

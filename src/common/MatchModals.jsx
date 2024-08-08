@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { TfiViewListAlt } from "react-icons/tfi";
 
-export default function ({ viewDetails }) {
+export default function MatchModals ({ viewDetails }) {
   // console.log("index::", viewDetails?.index);
   // console.log("item::", viewDetails?.item);
   const [isShowing, setIsShowing] = useState(false);
@@ -112,7 +112,7 @@ export default function ({ viewDetails }) {
         onClick={() => setIsShowing(true)}
         className=" bg-white"
       >
-        <TfiViewListAlt className="text-xl text-green-600"/> 
+        <TfiViewListAlt className="text-xl text-orange-500"/> 
       </button>
 
       {isShowing && typeof document !== "undefined"

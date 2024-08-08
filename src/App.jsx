@@ -25,12 +25,15 @@ import StartLeague from "./pages/StartLeague";
 import { ViewPlayers } from "./pages/Teams/ViewPlayers";
 import PlayerProfile from "./pages/Teams/PlayerProfile";
 import MyMatches from "./pages/Matches/MyMatches";
+import ViewTeams from "./pages/Teams/ViewTeams";
+import Home from "./pages/Home";
 
 // -----------------------------------------------------------------
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Layout />}>
         <Route index element={<Admin />} />
         <Route path="updateTeam" element={<AddPlayer />} />
@@ -63,6 +66,7 @@ const App = () => {
           <Route path="leagueMatchSummary" element={<LeagueMatchSummary />} />
         </Route>
         <Route path="/dashboard/ViewPlayers" element={<ViewPlayers />} />
+        <Route path="/dashboard/Teams" element={<ViewTeams />} />
         <Route path="/dashboard/playerProfile/:playerId" element={<PlayerProfile />} />
       </Route>
 

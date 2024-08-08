@@ -4,6 +4,9 @@ import { createMatch, getAllLeagues, getTeam } from "../../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router";
+import { Button } from "@/components/ui/button";
+import { ImSpinner3 } from "react-icons/im";
+import { Label } from "@/components/ui/label";
 // -------------------------------------------------------------------------------------
 const CreateMatch = () => {
   const navigate = useNavigate();
@@ -12,6 +15,7 @@ const CreateMatch = () => {
   const [teamFirstSelectedValue, setTeamFirstSelectedValue] = useState("");
   const [leaguesList, setLeaguesList] = useState([]);
   const matchType = ["Regular-round", 'Quater-final', 'Semi-final', 'Final']
+  const [isCreatingMatch, setIsCreatingMatch] = useState(false)
 
   const {
     register,
@@ -29,6 +33,7 @@ const CreateMatch = () => {
   };
 
   const handleCreateMatch = async (data) => {
+    setIsCreatingMatch(true)
     try {
       const obj = {
         team1: data?.team1,
@@ -49,26 +54,25 @@ const CreateMatch = () => {
       }, 500);
     } catch (error) {
       console.log("Getting an error while creating match: ", error);
+    } finally {
+      setIsCreatingMatch(false)
     }
   };
 
   function filterTeamsByLeague(teams, leagueId) {
-    return teams.filter((team) => team?.clubId?.league === leagueId);
+    return teams.filter((team) =>
+      team.leagueList.some((league) => league._id.toString() === leagueId)
+    );
   }
+
   // used to fetch the teams list
   const fetchTeams = async () => {
     try {
       const teamsData = await getTeam();
-      console.log("Teams data:::", teamsData);
-
-
       const filteredTeams = filterTeamsByLeague(
         teamsData?.teams,
         selectedLeague
       );
-
-      console.log("filteredTeams:::: ", filteredTeams);
-
       setTeamsList(filteredTeams);
       setTeamsSecondList(filteredTeams);
     } catch (error) {
@@ -80,7 +84,6 @@ const CreateMatch = () => {
   const fetchLeagues = async () => {
     try {
       const data = await getAllLeagues();
-      // console.log("data:::", data);
       setLeaguesList(data?.leagues);
     } catch (error) {
       console.log("Getting an error while fetching leagues list: ", error);
@@ -109,24 +112,24 @@ const CreateMatch = () => {
     <>
       <section>
         <div className="flex items-center justify-center">
-          <div className="md:w-1/2 w-full mx-auto">
-            <h2 className="text-center text-2xl font-bold leading-tight text-black my-1">
-              Create Match
-            </h2>
+          <div className=" w-full mx-auto">
             <form
-              className="w-full max-w-lg mt-5"
+              className="w-full max-w-lg  mx-auto px-10 py-5 shadow-md rounded-lg"
               onSubmit={handleSubmit(handleCreateMatch)}
             >
-              <div className="flex flex-wrap -mx-3 mb-2 ">
-                <div className="w-full mb-6 md:mb-0">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+              <h2 className="text-center text-2xl  leading-tight text-orange-600 my-3 font-semibold ">
+                Create Match
+              </h2>
+              <div className="flex flex-wrap -mx-3 mb-1 ">
+                <div className="w-full mb-6 md:mb-0 px-3">
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="grid-first-name"
                   >
                     Please Select League
-                  </label>
+                  </Label>
                   <select
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full h-12 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     {...register(`league`, {
                       required: {
                         value: true,
@@ -148,15 +151,15 @@ const CreateMatch = () => {
                     {errors?.league?.message}
                   </p>
                 </div>
-                <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                <div className="w-full md:w-1/2 px-3 mb-1 md:mb-0">
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="grid-first-name"
                   >
                     Team 1
-                  </label>
+                  </Label>
                   <select
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full h-12  text-gray-700  border  rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     {...register(`team1`, {
                       required: {
                         value: true,
@@ -180,14 +183,14 @@ const CreateMatch = () => {
                   </p>
                 </div>
                 <div className="w-full md:w-1/2 px-3">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="grid-last-name"
                   >
                     Team 2
-                  </label>
+                  </Label>
                   <select
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full h-12 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     {...register(`team2`, {
                       required: {
                         value: true,
@@ -212,16 +215,16 @@ const CreateMatch = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-wrap -mx-3 mb-2">
+              <div className="flex flex-wrap -mx-3 mb-1">
                 <div className="w-full px-3">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="clubName"
                   >
                     Match Date
-                  </label>
+                  </Label>
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full h-12  text-gray-700  border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="matchDate"
                     type="date"
                     placeholder="Enter Match Date"
@@ -237,16 +240,16 @@ const CreateMatch = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-wrap -mx-3 mb-2">
-                <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+              <div className="flex flex-wrap -mx-3 mb-1">
+                <div className="w-full md:w-1/2 px-3 mb-1 md:mb-0">
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="grid-first-name"
                   >
                     Start Time
-                  </label>
+                  </Label>
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  rounded py-3 px-4 mb-2 leading-tight focus:bg-white "
+                    className="appearance-none block w-full border h-12 text-gray-700  rounded py-3 px-4 mb-1 leading-tight focus:bg-white "
                     id="startTime"
                     type="time"
                     placeholder="Select Time"
@@ -262,14 +265,14 @@ const CreateMatch = () => {
                   </p>
                 </div>
                 <div className="w-full md:w-1/2 px-3">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="grid-last-name"
                   >
                     End Time
-                  </label>
+                  </Label>
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full  text-gray-700 h-12  border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:border-gray-500"
                     id="endTime"
                     type="time"
                     placeholder="Enter Tine"
@@ -286,13 +289,13 @@ const CreateMatch = () => {
                 </div>
               </div>
               <div className='w-full my-4'>
-                <label
-                  className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                <Label
+                  className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                   htmlFor="grid-last-name"
                 >
                   Chosse Match Type
-                </label>
-                <select name="matchType" id="matchType" className='w-full h-12 bg-gray-200' {
+                </Label>
+                <select name="matchType" id="matchType" className='w-full h-12 border rounded-sm' {
                   ...register('matchType', {
                     required: {
                       value: 'Regular-round',
@@ -310,16 +313,16 @@ const CreateMatch = () => {
                   {errors?.matchType?.message}
                 </p>
               </div>
-              <div className="flex flex-wrap -mx-3 mb-2">
+              <div className="flex flex-wrap -mx-3 mb-1">
                 <div className="w-full px-3">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                  <Label
+                    className="block uppercase tracking-wide text-gray-700  text-xs  mb-1"
                     htmlFor="clubName"
                   >
                     Location
-                  </label>
+                  </Label>
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full  text-gray-700 h-12 border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="locaion"
                     type="text"
                     placeholder="Please enter match venue"
@@ -337,12 +340,18 @@ const CreateMatch = () => {
               </div>
 
               <div className="submit_button my-4">
-                <button
+                <Button
                   type="submit"
-                  className="px-2 py-2 bg-gray-800 text-white rounded-md w-full"
+                  className="px-2 py-2 bg-orange-600 h-12 text-white rounded-md w-full"
+                  disabled={isCreatingMatch}
                 >
                   Create Match
-                </button>
+                  <>
+                    {
+                      isCreatingMatch && <ImSpinner3 className="h-4 w-4 ml-2 animate-spin" />
+                    }
+                  </>
+                </Button>
               </div>
             </form>
           </div>

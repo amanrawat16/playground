@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { getAllLeagues, viewMatches, viewMatchesByLeague, } from "../../services/api";
 import moment from "moment";
-import MatchModals from "../../common/MatchModals";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdEditNote } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
 import { BeatLoader } from "react-spinners";
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import MatchModals from "@/common/MatchModals";
+import { Spinner } from "@/components/ui/Spinner";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 // ------------------------------------------------------------------------
 const baseURL = import.meta.env.VITE_BASE_URL;
 const ViewMatches = () => {
@@ -30,8 +34,8 @@ const ViewMatches = () => {
   }
 
   const handleLeagueChange = (e) => {
-    setLeague(e.target.value)
-    handleViewMatches(e.target.value)
+    setLeague(e)
+    handleViewMatches(e)
   }
 
   const handleViewMatches = async (leagueId) => {
@@ -61,93 +65,90 @@ const ViewMatches = () => {
     <>
       <div>
         <section className="container mx-auto py-6 font-mono">
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-4">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-orange-600 mb-4">
             Matches List
           </h2>
           <div className="h-16 my-5 flex justify-end items-center px-10">
-            <select name="league" id="league" className="h-12 px-4" onChange={handleLeagueChange} defaultValue={'all'} value={league}>
-              <option value="all">All Leagues</option>
-              {
-                leaguesData.length > 0 && leaguesData.map((league) => {
-                  return <option value={league._id} key={league._id}>{league.leagueName}</option>
-                })
-              }
-            </select>
+            <Select name="league" id="league" className="h-12 px-4" onValueChange={handleLeagueChange} defaultValue={'all'} value={league}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a League" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Leagues</SelectLabel>
+                  < SelectItem value={'all'}>All</SelectItem>
+                  {
+                    leaguesData.length > 0 && leaguesData.map((league) => {
+                      return < SelectItem value={league._id} key={league._id}>{league.leagueName}</SelectItem>
+                    })
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="w-full mb-8 overflow-hidden rounded-lg my-10">
-            <div className="w-full overflow-x-auto">
-              <table className="w-full">
-                <thead className="text-center ">
-                  <tr className="text-md font-semibold tracking-wide text-center border-b">
-                    <th className="px-4 py-3">S.No</th>
-                    <th></th>
-                    <th className="px-4 py-3">Team 1</th>
-                    <th className="px-4 py-3">Scores</th>
-                    <th></th>
-                    <th className="px-4 py-3">Team 2</th>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Location</th>
-                    <th>Winner</th>
-                    <th className="px-2 py-3"></th>
-
-                    <th className="px-2 whitespace-nowrap">
-                      View
-                    </th>
-                    {userTypeValue === 'admin' && <><th className="px-2 py-3 whitespace-nowrap">
-                      Update Match
-                    </th>
-                      <th className="px-2 py-3 whitespace-nowrap">
-                        Update Player
-                      </th>
-                    </>}
-                  </tr>
-                </thead>
-
-                <tbody className="bg-white text-center w-full">
-                  {isLoading ? (
-                    <tr className="w-full flex items-center justify-center">
-                      <BeatLoader color="#36d7b7" />
-                    </tr>
-                  ) : Array.isArray(viewMatchData) &&
-                    viewMatchData?.length > 0 ? (
+            <Table className="shadow-lg">
+              <TableCaption> List of matches of selected League.</TableCaption>
+              <TableHeader>
+                <TableRow className="bg-orange-600 hover:bg-orange-600">
+                  <TableHead className="text-white">S.No</TableHead>
+                  <TableHead className="text-white">Team 1</TableHead>
+                  <TableHead className="text-white">Scores</TableHead>
+                  <TableHead className="text-white">Team 2</TableHead>
+                  <TableHead className="text-center text-white">Date</TableHead>
+                  <TableHead className="text-center text-white">League</TableHead>
+                  <TableHead className="text-center text-white">Location</TableHead>
+                  <TableHead className="text-center text-white">Winner</TableHead>
+                  <TableHead className="text-center text-white"></TableHead>
+                  <TableHead className="text-center text-white">View</TableHead>
+                  {userTypeValue === 'admin' && <><TableHead className="text-center text-white">
+                    Update Match
+                  </TableHead>
+                    <TableHead className="text-center text-white">
+                      Update Player
+                    </TableHead>
+                  </>}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {
+                  viewMatchData?.length > 0 && (
                     viewMatchData?.map((item, index) => (
-                      <tr key={index} className="text-gray-700 border-b">
-                        <td className="px-4 py-3 text-ms font-semibold ">
-                          {index + 1}
-                        </td>
-                        <td className="flex items-center justify-center">
-                          <img src={`${baseURL}/uploads/${item.team1.teamImage.split("\\")[1]}`} alt={`${item.team1.teamName}`}
-                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-10 h-10 rounded-full" />
-                        </td>
-                        <td className="px-4 py-3 text-ms font-semibold ">
-                          {item?.team1?.teamName}
-                        </td>
+                      <TableRow key={index} >
+                        <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                        <TableCell className="text-center"><img src={`${baseURL}/uploads/${item?.team1?.teamImage.split("\\")[1]}`} alt={`${item?.team1?.teamName}`}
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-10 h-10 rounded-full mx-auto" />
+                          <p>
+                            {item?.team1?.teamName}
+                          </p>
+                        </TableCell>
                         {
                           item?.winningTeam?.winningTeamId ?
-                            <td className="bg-orange-400 text-white">{
-                              item?.winningTeam?.winningTeamId === item?.team1?.teamName ? `${item?.winningTeam.winningTeamScore}-${item?.losingTeam?.losingTeamScore}` : `${item?.losingTeam?.losingTeamScore}-${item?.winningTeam.winningTeamScore}`
-                            }</td> : <td className="bg-orange-400 text-white">-</td>
+                            <TableCell className="bg-gray-50  text-center text-md">{item?.team1?.goalsScoredByTeam} - {item?.team2?.goalsScoredByTeam}</TableCell> : <TableCell className=" text-center bg-gray-50">-</TableCell>
                         }
-                        <td className="flex items-center justify-center px-3">
-                          <img src={`${baseURL}/uploads/${item.team2.teamImage.split("\\")[1]}`} alt={`${item.team2.teamName}`}
+                        <TableCell>
+                          <img src={`${baseURL}/uploads/${item?.team2?.teamImage?.split("\\")[1]}`} alt={`${item?.team2?.teamName}`}
                             onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}
-                            className="w-10 h-10 rounded-full" />
-                        </td>
-                        <td className="text-ms font-semibold ">
-                          {item?.team2?.teamName}
-                        </td>
-                        <td className="px-4 py-3 text-sm  whitespace-nowrap">
-                          {moment(item?.date).format("ddd,DD-MM-YYYY")}
-                        </td>
-                        <td className="px-4 py-3 text  whitespace-nowrap">{item?.location}</td>
-                        <td className="px-4 py-3">{item?.winningTeamName ? `${item.winningTeamName}` : '-'}</td>
-                        <td className=" text-sm font-bold">{item.matchType}</td>
-                        <td>
-                          <MatchModals viewDetails={{ item, index }} />
-                        </td>
+                            className="w-10 h-10 rounded-full mx-auto" />
+                          <p className="ml-2 text-center">
+                            {item?.team2?.teamName}
+                          </p>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {moment(item?.date).format("DD/MM/YYYY")}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {item?.league?.leagueName}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {item?.location}
+                        </TableCell>
+                        <TableCell className="text-center">{item?.winningTeamName ? `${item.winningTeamName}` : '-'}</TableCell>
+                        <TableCell className="text-center">{item.matchType}</TableCell>
+                        <TableCell className="text-center"><MatchModals viewDetails={{ item, index }} /></TableCell>
                         {
                           userTypeValue === 'admin' && <>
-                            <td>
+                            <TableCell className="text-center w-[140px]">
                               <button
                                 onClick={() =>
                                   navigate(
@@ -158,11 +159,11 @@ const ViewMatches = () => {
                                   )
                                 }
                               >
-                                <MdEditNote className="text-3xl text-green-600" />
+                                <MdEditNote className="text-3xl text-orange-400" />
 
                               </button>
-                            </td>
-                            <td>
+                            </TableCell>
+                            <TableCell className="text-center w-[140px]">
                               <button
                                 className=""
                                 onClick={() =>
@@ -171,19 +172,16 @@ const ViewMatches = () => {
                                   })
                                 }
                               >
-                                <FaUsers className="text-2xl text-green-600" />
+                                <FaUsers className="text-2xl text-orange-400" />
                               </button>
-                            </td>
+                            </TableCell>
                           </>
                         }
-                      </tr>
-                    ))
-                  ) : (
-                    <h3 className="p-4">No Data Found</h3>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      </TableRow>
+                    )))
+                }
+              </TableBody>
+            </Table>
           </div>
           {/* Modals Starts Here */}
 
@@ -202,8 +200,8 @@ const ViewMatches = () => {
             </div>
           </dialog>
           {/* Modals Ends Here */}
-        </section>
-      </div>
+        </section >
+      </div >
     </>
   );
 };

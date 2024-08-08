@@ -45,7 +45,6 @@ export const logoutCompClub = async (userData) => {
 export const createTeam = async (teamData) => {
   try {
     const response = await instance.post("/comp/club/createTeam", teamData);
-    console.log(response)
     return response.data;
   } catch (error) {
     console.error("Error creating team:", error.response || error);
@@ -75,6 +74,16 @@ export const getTeam = async (userData) => {
     throw error;
   }
 };
+
+export const getTeamById = async (teamId) => {
+  try {
+    const response = await instance.get(`/comp/team/getTeam/${teamId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching team by id:", error.response || error);
+    throw error;
+  }
+}
 
 export const getCompClubs = async (userData) => {
   try {
@@ -163,13 +172,13 @@ export const getAllLeagues = async () => {
 };
 
 export const updatePlayerDetails = async (
-  teamId,
   playerId,
+  matchId,
   updatedPlayerData
 ) => {
   try {
     const response = await instance.patch(
-      `/comp/match/updatePlayerMatchWise/${teamId}/${playerId}`,
+      `/comp/match/updatePlayerMatchWise/${playerId}/${matchId}`,
       updatedPlayerData
     );
     return response.data;
@@ -411,6 +420,41 @@ export const getMyMatches = async (clubId) => {
     return response.data
   } catch (error) {
     console.error("Error finding my matches", error.response || error);
+    throw error;
+  }
+}
+
+export const PlayerDetailUpdate = async (id, data) => {
+  try {
+    const response = await instance.patch(`/comp/player/update/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating player detail", error.response || error);
+    throw error;
+  }
+}
+
+
+export const ChangeTeamImage = async (id, formData) => {
+  try {
+    const response = await instance.patch(`/comp/team/updateImage/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating team image", error.response || error);
+    throw error;
+  }
+}
+
+export const updateTeamInfo = async (id, data) => {
+  try {
+    const response = await instance.patch(`/comp/team/update/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating team info", error.response || error);
     throw error;
   }
 }

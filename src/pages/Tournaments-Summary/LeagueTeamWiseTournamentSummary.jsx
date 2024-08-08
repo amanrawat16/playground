@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getAllTeamsBasedOnLeague } from "../../services/api";
 import Pagination from "../../common/Pagination";
+import { Spin, Table } from "antd";
+import AntDTable from "@/components/AntDTable/AntDTable";
 // ---------------------------------------------------------------------------------------------
 const baseURL = import.meta.env.VITE_BASE_URL;
 const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
@@ -39,6 +41,77 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
     if (selectedLeagueId) fetchTeamsListBasedOnLeague(selectedLeagueId);
   }, [selectedLeagueId]);
 
+  const columns = [
+    {
+      title: 'Image',
+      align: "center",
+      dataIndex: 'teamImage',
+      key: 'teamImage',
+      render: (text, record) => (
+        <img src={`${baseURL}/uploads/${record?.teamImage?.split("\\")[1]}`} alt={`${record?.teamImage || "teamImage"}`} className='h-10 w-10 rounded-full' onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}
+        />
+      ),
+    },
+    {
+      title: 'Team Name',
+      align: "center",
+      dataIndex: 'teamName',
+      key: 'teamName',
+    },
+    {
+      title: 'Points',
+      align: "center",
+      dataIndex: 'pointsScored',
+      key: 'pointsScored',
+    },
+    {
+      title: 'P',
+      align: "center",
+      dataIndex: 'totalMatchesPlayed',
+      key: 'totalMatchesPlayed',
+    },
+    {
+      title: 'W',
+      align: "center",
+      dataIndex: 'wonMatches',
+      key: 'wonMatches',
+    },
+    {
+      title: 'L',
+      align: "center",
+      dataIndex: 'lostMatches',
+      key: 'lostMatches',
+    },
+    {
+      title: 'T',
+      align: "center",
+      dataIndex: 'tieMatches',
+      key: 'tieMatches',
+    },
+    {
+      title: 'PF',
+      align: "center",
+      dataIndex: 'goalsScoredByTeam',
+      key: 'goalsScoredByTeam',
+    },
+    {
+      title: 'PA',
+      align: "center",
+      dataIndex: 'goalsScoredAgainstTeams',
+      key: 'goalsScoredAgainstTeams',
+    },
+    {
+      title: 'PD',
+      align: "center",
+      dataIndex: 'scoreDifference',
+      key: 'scoreDifference',
+      render: (_, record) => {
+        console.log(record)
+        return <div>{record.goalsScoredByTeam - record.goalsScoredAgainstTeams}</div>
+      }
+    },
+  ];
+
   return (
     <div className="container mx-auto px-4 sm:px-8 w-[90%]">
       <div className="py-8">
@@ -47,59 +120,16 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
             Team Standings List
           </h2>
         </div>
+
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-          <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-            <table className="min-w-full leading-normal">
-              <thead>
-                <tr>
-                  <th className='w-[100px] px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2'></th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 ">
-                    Team Name
-                  </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 ">
-                    Points
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.isArray(paginatedteamsList) &&
-                  paginatedteamsList?.length > 0 ? (
-                  paginatedteamsList.map((team, i) => {
-                    return (
-                      <tr key={team?._id || i}>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 flex items-center justify-center">
-                          <img src={`${baseURL}/uploads/${team?.teamImage?.split("\\")[1]}`} alt={`${team.teamName}`}
-                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className='w-10 h-10 rounded-full' />
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold">
-                            {team?.teamName}
-                          </p>
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap font-bold">
-                            {team?.pointsScored}
-                          </p>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <>
-                    <h2 className="font-bold p-5 text-lg">No Team Found</h2>
-                  </>
-                )}
-              </tbody>
-            </table>
-          </div>
+          {isLoading ? (
+            <Spin size="large" />
+          ) : (
+            <AntDTable
+              data={teamsList} columns={columns} onRowClick
+            />
+          )}
         </div>
-        {teamsList?.length > 0 && (
-          <Pagination
-            items={teamsList}
-            itemsPerPage={5}
-            sendDataToParent={(data) => setPaginatedteamsList(data)}
-          />
-        )}
       </div>
     </div>
   );

@@ -21,7 +21,6 @@ function PlayerProfile() {
     }
 
     const columns = [
-
         {
             title: 'League Name',
             dataIndex: ['matchId', 'league', 'leagueName'],

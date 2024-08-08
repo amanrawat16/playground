@@ -27,7 +27,7 @@ function AntDTable({ data, columns, onRowClick }) {
             pagination={{
                 position: ['bottomCenter'],
                 showSizeChanger: true,
-                defaultPageSize: 5,
+                defaultPageSize: 10,
                 pageSizeOptions: ['5', '10', '20', '30'],
                 showQuickJumper: true,
                 style: { padding: '20px 0' }

@@ -1,44 +1,69 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updatePlayerDetails } from "../../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ImSpinner3 } from "react-icons/im";
 
 const UpdatePlayerDetails = () => {
   const { state } = useLocation();
-
+  const PlayerDetails = state?.matchWiseDetails?.filter((e) => e.matchId === state.matchId)[0]
   const navigate = useNavigate();
+  const [updatingScore, setUpdatingScore] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      pointsSacks: PlayerDetails?.pointsSacks || 0,
+      pointsSafety: PlayerDetails?.pointsSafety || 0,
+      pointsfirstDown: PlayerDetails?.pointsfirstDown || 0,
+      interception: PlayerDetails?.interception || 0,
+      assist: PlayerDetails?.assist || 0,
+      extraPoint1: PlayerDetails?.extraPoint1 || 0,
+      extraPoint2: PlayerDetails?.extraPoint2 || 0,
+      returnVal: PlayerDetails?.returnVal || 0,
+      pickSix: PlayerDetails?.pickSix || 0,
+      touchdown: PlayerDetails?.touchdown || 0,
+    }
+  });
 
   const handleUpdatePlayerDetails = async (data) => {
+    setUpdatingScore(true);
     try {
-      const teamId = state?.teamId;
       const playerId = state?.playerId;
       const matchId = state?.matchId;
       const leagueId = state?.leagueId;
-      await updatePlayerDetails(teamId, playerId, { ...data, matchId, leagueId });
-      toast.success("Player details updated successfully!");
-      navigate("/dashboard/matches/viewMatches");
-      reset(); // Clear the form on success
+      const response = await updatePlayerDetails(playerId, matchId, { ...data, matchId, leagueId });
+      if (response.status === 'SUCCESS') {
+        await toast.success("Player details updated successfully!");
+        navigate("/dashboard/matches/viewMatches");
+        reset(); // Clear the form on success
+      }
     } catch (error) {
       console.error("Error updating Player details:", error);
       toast.error(error?.response?.data?.message || "");
+    } finally {
+      setUpdatingScore(false)
     }
   };
 
   return (
     <>
+      <ToastContainer position="bottom-right" autoClose={3000} />
       <section>
+        <div className="p-2">
+          <IoMdArrowRoundBack className="cursor-pointer h-8 w-8" onClick={() => navigate(-1)} />
+        </div>
         <div className="flex items-center justify-center">
-          <div className="md:w-1/2 w-full mx-auto my-1">
-            <h2 className="text-center text-2xl font-bold leading-tight text-black m-5">
+          <div className="md:w-1/2 w-full mx-auto my-1 flex flex-col items-center">
+            <h2 className="text-center text-2xl font-bold leading-tight text-orange-600 m-5">
               Update Player's Match Attributes
             </h2>
             <form
@@ -381,17 +406,20 @@ const UpdatePlayerDetails = () => {
                 </div>
               </div>
               <div className="submit_button mb-0">
-                <button
-                  type="submit"
-                  className="px-2 py-2 bg-gray-800 text-white rounded-md w-full mb-5"
+                <Button
+                  type="submit" disabled={updatingScore}
+                  className="px-2 py-2 bg-orange-600 h-12 text-white rounded-md w-full mb-5"
                 >
-                  Submit
-                </button>
+                  {updatingScore ? <>
+                    Updating<ImSpinner3 className="h-4 w-4 ml-2 animate-spin" />
+
+                  </> : "Update Player Score"}
+                </Button>
               </div>
             </form>
           </div>
         </div>
-        <ToastContainer position="bottom-right" autoClose={3000} />
+
       </section>
     </>
   );

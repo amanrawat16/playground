@@ -40,9 +40,7 @@ function MyMatches() {
             render: (text, record) => <div
             >
                 {record?.winningTeam?.winningTeamId ?
-                    <p >{
-                        record?.winningTeam?.winningTeamId === record?.team1?.teamName ? `${record?.winningTeam.winningTeamScore}-${record?.losingTeam?.losingTeamScore}` : `${record?.losingTeam?.losingTeamScore}-${record?.winningTeam.winningTeamScore}`
-                    }</p> : <p >-</p>}
+                    <p >{record.team1.goalsScoredByTeam} - {record.team2.goalsScoredByTeam}</p> : <p >-</p>}
             </div>
         },
         { title: "Team 2", dataIndex: ["team2", 'teamName'], key: "_id", 'align': "center" },
