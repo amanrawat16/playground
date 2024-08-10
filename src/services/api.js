@@ -442,6 +442,7 @@ export const ChangeTeamImage = async (id, formData) => {
         'Content-Type': 'multipart/form-data'
       }
     });
+    console.log(response)
     return response.data;
   } catch (error) {
     console.error("Error updating team image", error.response || error);
@@ -455,6 +456,36 @@ export const updateTeamInfo = async (id, data) => {
     return response.data;
   } catch (error) {
     console.error("Error updating team info", error.response || error);
+    throw error;
+  }
+}
+
+export const AddnewStaff = async (data) => {
+  try {
+    const response = await instance.post(`/comp/staff/create`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding staff", error.response || error);
+    throw error;
+  }
+}
+
+export const getStaff = async () => {
+  try {
+    const response = await instance.get(`/comp/staff/get`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching staff list", error.response || error);
+    throw error;
+  }
+}
+
+export const deleteStaff = async (id) => {
+  try {
+    const response = await instance.delete(`/comp/staff/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting staff", error.response || error);
     throw error;
   }
 }

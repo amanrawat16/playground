@@ -16,7 +16,6 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
     try {
       setIsLoading(true);
       const data = await getAllTeamsBasedOnLeague(selectedLeagueId);
-      console.log(data)
       if (data) setIsLoading(false);
       setTeamsList(data?.teams);
     } catch (error) {
@@ -48,7 +47,7 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
       dataIndex: 'teamImage',
       key: 'teamImage',
       render: (text, record) => (
-        <img src={`${baseURL}/uploads/${record?.teamImage?.split("\\")[1]}`} alt={`${record?.teamImage || "teamImage"}`} className='h-10 w-10 rounded-full' onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}
+        <img src={`${baseURL}/uploads/${record?.teamImage.split('\\').pop().split('/').pop()}`} alt={`${record?.teamImage || "teamImage"}`} className='h-10 w-10 rounded-full' onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}
         />
       ),
     },
@@ -116,7 +115,7 @@ const LeagueTeamWiseTournamentSummary = ({ selectedLeagueId }) => {
     <div className="container mx-auto px-4 sm:px-8 w-[90%]">
       <div className="py-8">
         <div>
-          <h2 className="text-2xl font-semibold leading-tight text-center">
+          <h2 className="text-2xl font-semibold leading-tight text-orange-600 text-center">
             Team Standings List
           </h2>
         </div>

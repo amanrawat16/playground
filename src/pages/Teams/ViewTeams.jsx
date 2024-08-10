@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom"
 import ReactSelect from 'react-select';
 import { IoMdCloudUpload } from "react-icons/io";
 import { toast } from "react-toastify"
+import { ImSpinner8 } from "react-icons/im"
 
 function ViewTeams() {
     const [modifiedLeaguelist, setModifiedLeagueList] = useState([])
@@ -23,13 +24,13 @@ function ViewTeams() {
     const navigate = useNavigate()
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isSubmiting, setIsSubmitting] = useState(false)
+    const [isUploadingImage, setIsUploadingImage] = useState(false)
 
     const fetchTeams = async (leagueId) => {
         setModifiedTeamList([])
         try {
             const response = await getTeams(leagueId)
             if (response.status === 'SUCCESS') {
-                console.log(response.data)
                 const modifiedList = response.data.map((team) => {
                     return {
                         ...team,
@@ -113,11 +114,13 @@ function ViewTeams() {
     }
 
     const handleImageChange = async (e) => {
+        setIsUploadingImage(true)
         const file = e.target.files[0];
         const formdata = new FormData()
         try {
             formdata.append('teamImage', file)
             const response = await ChangeTeamImage(dialogData.id, formdata)
+            console.log(response)
             if (response.status === 'SUCCESS') {
                 const teamList = modifiedTeamList.map(team => team._id === dialogData.id ? { ...team, teamImage: response.team.teamImage } : team)
                 setDialogData({ ...dialogData, image: response.team.teamImage })
@@ -127,6 +130,8 @@ function ViewTeams() {
         } catch (error) {
             console.log(error)
             toast.error("Error updating team Image")
+        } finally {
+            setIsUploadingImage(false)
         }
     }
 
@@ -154,7 +159,7 @@ function ViewTeams() {
             align: "text-center",
             key: "_id",
             render: (record) => <div className="flex items-center justify-center">
-                <img src={`${baseURL}/uploads/${record?.split("\\")[1]}`} alt={`${record}`}
+                <img src={`${baseURL}/uploads/${record?.split('/').pop().split('\\').pop()}`} alt={`${record}`}
                     onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-10 h-10 rounded-full" />
             </div>
         },
@@ -221,13 +226,25 @@ function ViewTeams() {
                                     <Input className="my-1" value={dialogData.teamName} name="teamName" onChange={handleDialogDataChange} />
                                 </div>
                                 <div className="my-5 flex items-center">
-                                    <img src={`${baseURL}/uploads/${dialogData.image?.split("\\")[1]}`} alt={`${dialogData?.image}`}
+                                    {
+                                        console.log(dialogData.image.split('/').pop().split('\\').pop())
+                                    }
+                                    <img src={`${baseURL}/uploads/${dialogData.image?.split('/').pop().split('\\').pop()}`} alt={`${dialogData?.image}`}
                                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-20 h-20 rounded-full" />
                                     <Button
                                         className="ml-4 flex items-center bg-orange-600"
                                         onClick={() => document.getElementById('fileInput').click()}
+                                        disabled={isUploadingImage}
                                     >
-                                        <IoMdCloudUpload className="w-6 h-6 mr-1" /> Upload Image
+                                        {
+                                            isUploadingImage ?
+                                                <>
+                                                    <ImSpinner8 className="w-4 h-4 mr-1 animate-spin" />Uploading Image
+                                                </> :
+                                                <>
+                                                    <IoMdCloudUpload className="w-6 h-6 mr-1" /> Upload Image
+                                                </>
+                                        }
                                     </Button>
                                     <input
                                         id="fileInput"

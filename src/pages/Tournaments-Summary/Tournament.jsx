@@ -246,9 +246,6 @@ const Tournament = () => {
       // ---------------------------------------------------------------------------
 
       // League Wise Calculation Start
-
-
-
       const maxRusherPoints = findMaxRusherPoints(resultData);
       const maxDefenderPoints = findMaxDefenderPoints(resultData);
       const maxAttackerPoints = findMaxAttackerPoints(resultData);
@@ -283,7 +280,7 @@ const Tournament = () => {
   return (
     <>
       <section className="container mx-auto font-mono">
-        <h1 className="text-3xl font-semibold text-center underline my-5">
+        <h1 className="text-3xl font-semibold text-center underline my-5 text-orange-600">
           Tournament Summary
         </h1>
 

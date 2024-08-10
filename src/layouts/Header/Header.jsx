@@ -7,8 +7,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const navigation = [
-  { name: "Dashboard", href: "/"},
-  { name: "Login", href: "/login"  }
+  { name: "Dashboard", href: "/" },
+  { name: "Match Summary", href: "/summary" },
+  { name: "Login", href: "/login" }
 ];
 
 function classNames(...classes) {
@@ -57,7 +58,7 @@ export default function Header() {
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
 
                   <div className="hidden sm:ml-6 sm:block">
-                   {!userType &&  <div className="flex space-x-4">
+                    {!userType && <div className="flex space-x-4">
                       {navigation.map((item) => (
                         <Link
                           key={item.name}

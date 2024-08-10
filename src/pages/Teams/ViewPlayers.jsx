@@ -32,7 +32,8 @@ export const ViewPlayers = () => {
         role: '',
         emailId: '',
         position: '',
-        jerseyNumber: ""
+        jerseyNumber: "",
+        dateofBirth: ""
     })
     const [isSubmiting, setIsSubmitting] = useState(false)
 
@@ -107,6 +108,7 @@ export const ViewPlayers = () => {
             emailId: record.email,
             position: record.position,
             jerseyNumber: record.jerseyNumber,
+            dateofBirth: record?.dateofBirth
         })
         setIsDialogOpen(true)
     }
@@ -121,7 +123,8 @@ export const ViewPlayers = () => {
             role: '',
             emailId: '',
             position: '',
-            jerseyNumber: ""
+            jerseyNumber: "",
+            dateofBirth: ""
         })
     }
 
@@ -196,6 +199,15 @@ export const ViewPlayers = () => {
                     <FaEdit className="h-4 w-4 cursor-pointer text-orange-600" />
                 </p>
             </div>
+        },
+        {
+            title: "Date of Birth",
+            dataIndex: "dateofBirth",
+            key: "_id",
+            align: "center",
+            render: (dob) => <div>
+                <p className="text-center">{dob || "-"}</p>
+            </div>
         }
     ]
 
@@ -206,7 +218,7 @@ export const ViewPlayers = () => {
             position: dialogData.position,
             email: dialogData.emailId,
             role: dialogData.role,
-            jerseyNumber: dialogData.jerseyNumber,
+            jerseyNumber: dialogData.jerseyNumber
         }
         try {
             const response = await PlayerDetailUpdate(dialogData.id, formData)

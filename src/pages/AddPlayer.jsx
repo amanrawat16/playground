@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { baseURL, getTeam, getTeamById, updateTeam } from "../services/api";
@@ -9,6 +9,11 @@ import { FaPlus } from "react-icons/fa";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ImSpinner3 } from "react-icons/im";
+import { DatePicker }
+  from
+  "antd"
+  ;
+import moment from "moment";
 // -----------------------------------------------------------------------------
 const AddPlayer = () => {
   const {
@@ -29,7 +34,7 @@ const AddPlayer = () => {
 
   const handleUpdateTeam = async (data) => {
     setIsUpdatingTeam(true)
-    const { playerName, position, role, jerseyNumber, email } = data;
+    const { playerName, position, role, jerseyNumber, email, dateofBirth } = data;
     const players = [];
     players.push({
       playerName,
@@ -37,6 +42,7 @@ const AddPlayer = () => {
       role,
       jerseyNumber,
       email,
+      dateofBirth
     });
 
     try {
@@ -60,7 +66,6 @@ const AddPlayer = () => {
   const fetchTeams = async () => {
     try {
       const data = await getTeamById(id);
-      console.log(data.data)
       setTeamData(data.data);
     } catch (error) {
       console.log("Getting an error while fetching teams list: ", error);
@@ -98,6 +103,17 @@ const AddPlayer = () => {
       align: "center",
       key: 'jerseyNumber',
     },
+    {
+      title: "Date of Birth",
+      dataIndex: 'dateofBirth',
+      key: 'dateofBirth',
+      align: "center",
+      render: (dob) => <div>
+        {
+          moment(dob).format('YYYY-MM-DD')
+        }
+      </div>
+    }
   ];
 
   const handleShowDialog = () => {
@@ -234,6 +250,28 @@ const AddPlayer = () => {
 
                   {/* Add similar structure for other player fields */}
                   {/* ... */}
+                  <div className="w-full md:w-2/3 px-3">
+                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                      Date of Birth
+                    </label>
+                    <Controller
+                      name="dateofBirth"
+                      control={control}
+                      rules={{ required: "Date of Birth is required" }}
+                      render={({ field }) => (
+                        <DatePicker
+                          {...field}
+                          value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
+                          className="h-12 w-1/2"
+                          onChange={(date, dateString) => field.onChange(dateString)}
+                        />
+                      )}
+                    />
+                    <p className="text-red-500 text-xs italic">
+                      {errors?.dateofBirth?.message}
+                    </p>
+                  </div>
+
                 </div>
               </div>
 

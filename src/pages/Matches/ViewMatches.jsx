@@ -101,7 +101,7 @@ const ViewMatches = () => {
                   <TableHead className="text-center text-white">Winner</TableHead>
                   <TableHead className="text-center text-white"></TableHead>
                   <TableHead className="text-center text-white">View</TableHead>
-                  {userTypeValue === 'admin' && <><TableHead className="text-center text-white">
+                  {userTypeValue === 'admin' || userTypeValue === 'staff' && <><TableHead className="text-center text-white">
                     Update Match
                   </TableHead>
                     <TableHead className="text-center text-white">
@@ -124,7 +124,7 @@ const ViewMatches = () => {
                         </TableCell>
                         {
                           item?.winningTeam?.winningTeamId ?
-                            <TableCell className="bg-gray-50  text-center text-md">{item?.team1?.goalsScoredByTeam} - {item?.team2?.goalsScoredByTeam}</TableCell> : <TableCell className=" text-center bg-gray-50">-</TableCell>
+                            <TableCell className="bg-gray-50  text-center text-md">{item?.team1stPoints?.score} - {item?.team2ndPoints?.score}</TableCell> : <TableCell className=" text-center bg-gray-50">-</TableCell>
                         }
                         <TableCell>
                           <img src={`${baseURL}/uploads/${item?.team2?.teamImage?.split("\\")[1]}`} alt={`${item?.team2?.teamName}`}
@@ -147,16 +147,17 @@ const ViewMatches = () => {
                         <TableCell className="text-center">{item.matchType}</TableCell>
                         <TableCell className="text-center"><MatchModals viewDetails={{ item, index }} /></TableCell>
                         {
-                          userTypeValue === 'admin' && <>
+                          userTypeValue === 'admin' || userTypeValue === 'staff' && <>
                             <TableCell className="text-center w-[140px]">
                               <button
-                                onClick={() =>
+                                onClick={() => {
                                   navigate(
                                     `/dashboard/match/${item?._id}/updateMatchSummary`,
                                     {
                                       state: item,
                                     }
                                   )
+                                }
                                 }
                               >
                                 <MdEditNote className="text-3xl text-orange-400" />

@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImSpinner3 } from "react-icons/im";
 import { FaChevronCircleRight } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 // ------------------------------------------------------------------------
 const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -14,6 +15,7 @@ const UpdateMatchSummary = () => {
   const navigate = useNavigate();
 
   const { state } = useLocation();
+  console.log(state)
   const [isSubmiting, setIsSubmitting] = useState(false)
   const [images, setImages] = useState({
     image1: "",
@@ -24,20 +26,6 @@ const UpdateMatchSummary = () => {
   const [winningTeam, setWinningTeam] = useState(state?.winningTeam || '')
   const [loosingTeam, setloosingTeam] = useState(state?.losingTeam || '')
 
-
-  const modifyImages = () => {
-    setImages({
-      image1: state?.team1?.teamImage?.split("\\")[1],
-      image2: state?.team2?.teamImage?.split("\\")[1]
-    })
-  }
-
-
-
-  useEffect(() => {
-    modifyImages()
-  }, [state])
-
   const {
     register,
     handleSubmit,
@@ -45,8 +33,8 @@ const UpdateMatchSummary = () => {
     reset,
   } = useForm({
     defaultValues: {
-      team1stScore: state?.team1?.goalsScoredByTeam,
-      team2ndScore: state?.team2?.goalsScoredByTeam
+      team1stScore: state?.team1stPoints?.score || 0,
+      team2ndScore: state?.team2ndPoints?.score || 0
     },
   });
 
@@ -75,77 +63,77 @@ const UpdateMatchSummary = () => {
       };
 
       // POINTS ALLOCATIONS CODE
-      if (data?.team1stScore > data?.team2ndScore) {
+      if (Number(data?.team1stScore) > Number(data?.team2ndScore)) {
         reqPayload.winningTeam = {
           winningTeamId: state?.team1?._id,
           winningTeamName: state?.team1?.teamName,
-          winningTeamScore: data?.team1stScore,
+          winningTeamScore: Number(data?.team1stScore),
         };
         reqPayload.losingTeam = {
           losingTeamId: state?.team2?._id,
           losingTeamName: state?.team2?.teamName,
-          losingTeamScore: data?.team2ndScore,
+          losingTeamScore: Number(data?.team2ndScore),
         };
         reqPayload.isMatchDraw = false;
         reqPayload.team1stPoints = {
           teamId: state?.team1?._id,
           teamName: state?.team1?.teamName,
           points: 3,
-          score: data.team1stScore
+          score: Number(data.team1stScore)
         };
         reqPayload.team2ndPoints = {
           teamId: state?.team2?._id,
           teamName: state?.team2?.teamName,
           points: 0,
-          score: data.team2ndScore
+          score: Number(data.team2ndScore)
         };
-      } else if (data?.team1stScore < data?.team2ndScore) {
+      } else if (Number(data?.team1stScore) < Number(data?.team2ndScore)) {
         reqPayload.winningTeam = {
           winningTeamId: state?.team2?._id,
           winningTeamName: state?.team2?.teamName,
-          winningTeamScore: data?.team2ndScore,
+          winningTeamScore: Number(data?.team2ndScore),
         };
         reqPayload.losingTeam = {
           losingTeamId: state?.team1?._id,
           losingTeamName: state?.team1?.teamName,
-          losingTeamScore: data?.team1stScore,
+          losingTeamScore: Number(data?.team1stScore),
         };
         reqPayload.isMatchDraw = false;
         reqPayload.team1stPoints = {
           teamId: state?.team2?._id,
           teamName: state?.team2?.teamName,
           points: 3,
-          score: data.team1stScore
+          score: Number(data.team1stScore)
         };
         reqPayload.team2ndPoints = {
           teamId: state?.team1?._id,
           teamName: state?.team1?.teamName,
           points: 0,
-          score: data.team2ndScore
+          score: Number(data.team2ndScore)
         };
-      } else if (data?.team1stScore === data?.team2ndScore) {
+      } else if (Number(data?.team1stScore) === Number(data?.team2ndScore)) {
         reqPayload.winningTeam = {
-          winningTeamId: "N.A",
-          winningTeamName: "N.A",
-          winningTeamScore: "N.A",
+          winningTeamId: "Tie",
+          winningTeamName: "Tie",
+          winningTeamScore: "Tie",
         };
         reqPayload.losingTeam = {
-          losingTeamId: "N.A",
-          losingTeamName: "N.A",
-          losingTeamScore: "N.A",
+          losingTeamId: "Tie",
+          losingTeamName: "Tie",
+          losingTeamScore: "Tie",
         };
         reqPayload.isMatchDraw = true;
         reqPayload.team1stPoints = {
           teamId: state?.team1?._id,
           teamName: state?.team1?.teamName,
           points: 1,
-          score: data.team1stScore
+          score: Number(data.team1stScore)
         };
         reqPayload.team2ndPoints = {
           teamId: state?.team2?._id,
           teamName: state?.team2?.teamName,
           points: 1,
-          score: data.team2ndScore
+          score: Number(data.team2ndScore)
         };
       }
       const response = await updateMatch(matchId, {
@@ -176,7 +164,7 @@ const UpdateMatchSummary = () => {
         </div>
         <div className="flex items-center justify-center">
           <div className="md:w-1/2 flex flex-col items-center w-full mx-auto">
-            <h2 className="text-center text-2xl font-bold leading-tight text-black my-5">
+            <h2 className="text-center text-2xl font-bold leading-tight text-orange-600 my-5">
               Update Match Summary Details
             </h2>
             <form
@@ -187,7 +175,7 @@ const UpdateMatchSummary = () => {
                 <div className="w-full md:w-1/2  mb-6 md:mb-0">
                   <div className="w-full px-3">
                     <div className=" h-42 flex items-center justify-center">
-                      <img src={`${baseURL}/uploads/${images?.image1}`} alt={`${state?.team1?.teamName}`}
+                      <img src={`${baseURL}/uploads/${state?.team1?.teamImage.split('/').pop().split('\\').pop()}`} alt={`${state?.team1?.teamName}`}
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="border w-32 h-32 rounded-full object-cover " />
                     </div>
                     <h2 className="font-bold mb-5 text-center">
@@ -200,7 +188,7 @@ const UpdateMatchSummary = () => {
                 <div className="w-full md:w-1/2  mb-6 md:mb-0">
                   <div className="w-full px-3">
                     <div className=" h-42 flex items-center justify-center">
-                      <img src={`${baseURL}/uploads/${images.image2}`} alt={`${state?.team2?.teamName}`}
+                      <img src={`${baseURL}/uploads/${state.team2.teamImage.split('/').pop().split('\\').pop()}`} alt={`${state?.team2?.teamName}`}
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="border w-32 h-32 rounded-full object-cover " />
                     </div>
                     <h2 className="font-bold mb-5 text-center">
@@ -210,16 +198,17 @@ const UpdateMatchSummary = () => {
                 </div>
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                   <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                    className="block uppercase tracking-wide text-gray-500  text-xs font-bold mb-2"
                     htmlFor="1stTeamScore"
                   >
                     Team 1st Score
                   </label>
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full  text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="1stTeamScore"
-                    type="text"
+                    type="number"
                     placeholder="Enter 1st Team Score"
+                    min={0}
                     {...register("team1stScore", {
                       required: {
                         value: true,
@@ -235,15 +224,16 @@ const UpdateMatchSummary = () => {
                 </div>
                 <div className="w-full md:w-1/2 px-3">
                   <label
-                    className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
+                    className="block uppercase tracking-wide text-gray-500  text-xs font-bold mb-2"
                     htmlFor="2ndTeamScore"
                   >
                     Team 2nd Score
                   </label>
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full  text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="2ndTeamScore"
-                    type="text"
+                    type="number"
+                    min={0}
                     placeholder="Enter 2nd Team Score"
                     {...register("team2ndScore", {
                       required: {
@@ -260,17 +250,17 @@ const UpdateMatchSummary = () => {
                 </div>
               </div>
               <div className="submit_button">
-                <button
+                <Button
                   type="submit"
-                  className="px-2 py-3 bg-gray-800 text-white rounded-md w-full disabled:bg-gray-600 flex items-center justify-center"
+                  className="px-2 py-3 bg-orange-600 text-white rounded-md w-full disabled:bg-gray-600 flex items-center justify-center"
                   disabled={isSubmiting}
                 >
                   Submit <>
                     {
-                      isSubmiting ? <ImSpinner3 className="w-4 h-4 ml-2 animate-spin"/> : <FaChevronCircleRight className="w-4 h-4 ml-2"/>
+                      isSubmiting ? <ImSpinner3 className="w-4 h-4 ml-2 animate-spin" /> : <FaChevronCircleRight className="w-4 h-4 ml-2" />
                     }
                   </>
-                </button>
+                </Button>
               </div>
             </form>
           </div>

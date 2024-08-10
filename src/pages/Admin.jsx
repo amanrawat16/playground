@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -19,6 +19,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { DatePicker } from "antd";
+import moment from "moment";
 // --------------------------------------------------------------------------------------------
 
 export default function Admin() {
@@ -43,7 +45,6 @@ export default function Admin() {
 
   // Used to store comp teams list
   const [teamsList, setTeamsList] = useState([]);
-
   // Used to store the leage name value
   const [leagueName, setLeagueName] = useState("");
   const [leagueCategory, setLeagueCategory] = useState(""); // New state for league category
@@ -65,7 +66,7 @@ export default function Admin() {
   const [isCreatingClub, setIsCreatingClub] = useState(false)
   const [clubPasswordVisible, setClubPasswordVisible] = useState(false)
   const [teamPasswordVisible, setTeamPasswordVisible] = useState(false)
-  const [updatingTeam , setIsUpdatingTeam] = useState(false)
+  const [updatingTeam, setIsUpdatingTeam] = useState(false)
 
 
   const userType = localStorage.getItem("userType");
@@ -146,16 +147,22 @@ export default function Admin() {
 
   // used to handle the team updation
   const handleUpdateTeam = async (data) => {
+    setIsUpdatingTeam(true)
     try {
       await updateTeam(data.teamId, {
         players: data?.players,
         clubId: id,
       });
       toast.success("Team details updated successfully!");
-      reset(); // Clear the form on success
+      reset({
+        players: [],
+        teamId: ""
+      });
     } catch (error) {
       console.error("Error creating team:", error);
       toast.error("Error creating team. Please try again.");
+    } finally {
+      setIsUpdatingTeam(false)
     }
   };
 
@@ -291,7 +298,7 @@ export default function Admin() {
                           League Category <span className="text-red-600">*</span>
                         </Label>
                         <div className="h-12 w-full flex justify-between items-center mb-3">
-                          <Select onValueChange={(e) => setLeagueCategory(e.target.value)}>
+                          <Select onValueChange={(e) => setLeagueCategory(e)}>
                             <SelectTrigger className="w-8/12 h-12">
                               <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
@@ -346,6 +353,7 @@ export default function Admin() {
                           className="appearance-none block w-full  text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                           id="matchesInRegularRound"
                           type="number"
+                          min={0}
                           placeholder="Enter Matches"
                           value={matchesInRegularRound}
                           onChange={(e) => setMatchesInRegularRound(e.target.value)}
@@ -556,15 +564,15 @@ export default function Admin() {
       {
         userType === "clubadmin" ? (
           <div className="flex items-center justify-center">
-            <div className="md:w-1/2 w-full mx-auto">
+            <div className="md:w-1/2 w-full mx-auto flex flex-col items-center">
               <h2 className="text-center text-2xl font-bold leading-tight text-orange-600 my-2">
                 Update Team
               </h2>
               <form
-                className="w-full max-w-lg mt-5"
+                className="w-full max-w-lg mt-5 "
                 onSubmit={handleSubmit(handleUpdateTeam)}
               >
-                <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="flex flex-wrap -mx-3 mb-6 justify-center">
                   <div className="w-full px-3">
                     <Label
                       className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -716,41 +724,67 @@ export default function Admin() {
                         </p>
                       </div>
 
+                      <div className="w-full md:w-2/3 px-3">
+                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                          Date of Birth
+                        </label>
+                        <Controller
+                          name={`players[${index}].dateofBirth`}
+                          control={control}
+                          rules={{ required: "Date of Birth is required" }}
+                          render={({ field }) => (
+                            <DatePicker
+                              {...field}
+                              value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
+                              className="h-12 w-1/2"
+                              onChange={(date, dateString) => field.onChange(dateString)}
+                            />
+                          )}
+                        />
+                        <p className="text-red-500 text-xs italic">
+                          {errors?.dateofBirth?.message}
+                        </p>
+                      </div>
+
                       {/* Add similar structure for other player fields */}
                       {/* ... */}
 
                       <div className="w-full flex justify-end px-3">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => remove(index)}
-                          className="px-2 py-1 bg-red-500 text-white rounded-md"
+                          className="px-3 py-1 bg-red-500 text-white rounded-md h-12"
                         >
                           Remove Player
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ))}
 
                   {/* Add Player Button */}
                   <div className="w-full flex justify-end">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => handleAddTeam()}
-                      className="px-2 py-1 bg-green-500 text-white rounded-md"
+                      className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-700"
                     >
                       Add Player
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
                 {/* Submit Button */}
                 <div className="submit_button">
-                  <button
+                  <Button
                     type="submit"
                     className="px-2 py-3 bg-orange-600  text-white rounded-md w-full"
+                    disabled={updatingTeam}
                   >
-                    Update Team
-                  </button>
+                    {
+                      updatingTeam ? <>
+                        Updating Team <ImSpinner3 className="h-3 w-3 ml-2 animate-spin" /></> : "Update Team"
+                    }
+                  </Button>
                 </div>
               </form>
             </div>
@@ -760,7 +794,7 @@ export default function Admin() {
         )
       }
       {userType === "team" && navigate("/dashboard/updateTeam")}
-
+      {userType === 'staff' && navigate('/dashboard/matches/viewMatches')}
       <ToastContainer position="bottom-right" autoClose={3000} />
     </section >
   );

@@ -30,7 +30,11 @@ const SideBar = ({ children }) => {
       name: "Add Team",
       icon: <FaHome />,
     },
-
+    {
+      path: "/dashboard/addStaff",
+      name: "Add Staff",
+      icon: <FaHome />,
+    },
     {
       path: "/tournamentSummary",
       name: "Tournament Summary",
@@ -144,14 +148,30 @@ const SideBar = ({ children }) => {
     },
   ];
 
+  const StaffRoutes = [
+    {
+      path: "/matches",
+      name: "Matches",
+      icon: <FaHome />,
+      subRoutes: [
+        {
+          path: "/dashboard/matches/viewMatches",
+          name: "View All Matches",
+          icon: <FaUser />,
+        },
+      ],
+    },
+  ]
+
   const routes =
     userType === "admin"
       ? adminRoutes
-      : userType === "clubadmin"
-        ? clubAdminRoutes
-        : userType === "team"
-          ? teamRoutes
-          : [];
+      : userType === 'staff' ? StaffRoutes
+        : userType === "clubadmin"
+          ? clubAdminRoutes
+          : userType === "team"
+            ? teamRoutes
+            : [];
 
   // ===========================================================================
 

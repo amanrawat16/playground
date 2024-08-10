@@ -27,6 +27,8 @@ import PlayerProfile from "./pages/Teams/PlayerProfile";
 import MyMatches from "./pages/Matches/MyMatches";
 import ViewTeams from "./pages/Teams/ViewTeams";
 import Home from "./pages/Home";
+import Summary from "./pages/Summary";
+import AddStaff from "./pages/AddStaff";
 
 // -----------------------------------------------------------------
 const App = () => {
@@ -34,10 +36,12 @@ const App = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/summary" element={<Summary />} />
       <Route path="/dashboard" element={<Layout />}>
         <Route index element={<Admin />} />
         <Route path="updateTeam" element={<AddPlayer />} />
         <Route path="addTeam" element={<AddTeam />} />
+        <Route path="addStaff" element={<AddStaff />} />
         <Route path="updateUsers" element={<Users />} />
         <Route path="startLeague" element={<StartLeague />} />
         <Route
