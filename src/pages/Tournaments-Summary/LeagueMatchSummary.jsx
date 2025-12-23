@@ -69,35 +69,35 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
 
     return (
       <>
-        <tr key={team?._id || index}>
-          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-            <p className="text-gray-900 whitespace-no-wrap font-bold">
+        <tr key={team?._id || index} className="hover:bg-slate-800/50 transition-colors">
+          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+            <p className="text-slate-200 whitespace-no-wrap font-bold">
               {index + 1}
             </p>
           </td>
 
-          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-            <p className="text-gray-900 whitespace-no-wrap font-bold">
+          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+            <p className="text-slate-200 whitespace-no-wrap font-bold">
               {team?.teamName}
             </p>
           </td>
-          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-            <p className="text-gray-900 whitespace-no-wrap font-bold">
+          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+            <p className="text-slate-200 whitespace-no-wrap font-bold">
               {team?.totalMatchesPlayed}
             </p>
           </td>
-          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-            <p className="text-gray-900 whitespace-no-wrap font-bold">
+          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+            <p className="text-slate-200 whitespace-no-wrap font-bold">
               {team?.pointsScored}
             </p>
           </td>
-          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-            <p className="text-gray-900 whitespace-no-wrap font-bold">NO</p>
+          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+            <p className="text-slate-200 whitespace-no-wrap font-bold">NO</p>
           </td>
-          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2">
-            <p className="text-gray-900 whitespace-no-wrap font-bold">
+          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm">
+            <p className="text-slate-200 whitespace-no-wrap font-bold">
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded"
                 onClick={() => {
                   setShowTeamPlayerModal(true);
                 }}
@@ -105,7 +105,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                 View Details
               </button>
               <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded ml-3"
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-2 rounded ml-3"
                 onClick={manageTeamFixturesApproval}
               >
                 Approve Team
@@ -118,17 +118,17 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
             <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
               <div className="relative w-auto my-6 mx-auto max-w-3xl">
                 {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-[#1e293b] border border-slate-700 outline-none focus:outline-none">
                   {/*header*/}
-                  <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-                    <h3 className="text-2xl font-semibold">
+                  <div className="flex items-start justify-between p-5 border-b border-solid border-slate-700 rounded-t">
+                    <h3 className="text-2xl font-semibold text-white">
                       {team?.teamName} - Player Details
                     </h3>
                     <button
-                      className="p-1 ml-auto border-0 text-black float-right text-3xl opacity-1 leading-none font-semibold outline-none focus:outline-none"
+                      className="p-1 ml-auto border-0 text-slate-400 float-right text-3xl opacity-1 leading-none font-semibold outline-none focus:outline-none hover:text-white"
                       onClick={() => setShowTeamPlayerModal(false)}
                     >
-                      <span className="text-black opacity-1 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                      <span className="opacity-1 h-6 w-6 text-2xl block outline-none focus:outline-none">
                         ×
                       </span>
                     </button>
@@ -138,9 +138,9 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                     <TeamPlayerDetails teamPlayersData={team} />
                   </div>
                   {/*footer*/}
-                  <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                  <div className="flex items-center justify-end p-6 border-t border-solid border-slate-700 rounded-b">
                     <button
-                      className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 hover:bg-slate-800 rounded"
                       type="button"
                       onClick={() => setShowTeamPlayerModal(false)}
                     >
@@ -150,7 +150,7 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                 </div>
               </div>
             </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            <div className="opacity-75 fixed inset-0 z-40 bg-black"></div>
           </>
         )}
       </>
@@ -175,32 +175,32 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
       <div className="container mx-auto px-4 sm:px-8 w-[100%]">
         <div className="py-8">
           <div>
-            <h2 className="text-2xl font-semibold leading-tight text-center">
+            <h2 className="text-2xl font-semibold leading-tight text-center text-white">
               Teams List
             </h2>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 py-4 overflow-x-auto">
-            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden border border-slate-700">
               <table className="min-w-full leading-normal">
                 <thead>
                   <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2  text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       S.No.
                     </th>
 
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2  text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Team Name
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2  text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Total Matches Played
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2  text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Total Points Scored
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2  text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Is Team Approved?
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Actions
                     </th>
                   </tr>
@@ -210,13 +210,15 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                     paginatedTeamsList?.length > 0 ? (
                     paginatedTeamsList.map((team, i) => {
                       return (
-                        <LeagueMatchIndividualSummary team={team} index={i} key={i}/>
+                        <LeagueMatchIndividualSummary team={team} index={i} key={i} />
                       );
                     })
                   ) : (
-                    <>
-                      <h2 className="font-bold p-5 text-lg ">No Team Found</h2>
-                    </>
+                    <tr>
+                      <td colSpan="6" className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                        <h2 className="font-bold p-5 text-lg text-slate-400">No Team Found</h2>
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -234,32 +236,32 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
       <div className="container mx-auto px-4 sm:px-8 w-[90%]">
         <div className="py-8">
           <div>
-            <h2 className="text-2xl font-semibold leading-tight text-center">
+            <h2 className="text-2xl font-semibold leading-tight text-center text-white">
               Matches List
             </h2>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 py-4 overflow-x-auto">
-            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden border border-slate-700">
               <table className="min-w-full leading-normal">
                 <thead>
                   <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700 uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       S.No.
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Match Date and Time
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Team 1 Name
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Team 2 Name
                     </th>
 
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Is Match Completed?
                     </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100  text-xs font-semibold text-gray-700  uppercase tracking-wider border-r-2 text-center">
+                    <th className="px-5 py-3 border-b border-slate-700 bg-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider text-center">
                       Winning Team
                     </th>
                   </tr>
@@ -269,14 +271,14 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                     paginatedMatchesList?.length > 0 ? (
                     paginatedMatchesList.map((match, i) => {
                       return (
-                        <tr key={match?._id || i}>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold">
+                        <tr key={match?._id || i} className="hover:bg-slate-800/50 transition-colors">
+                          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                            <p className="text-slate-200 whitespace-no-wrap font-bold">
                               {i + 1}
                             </p>
                           </td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold">
+                          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                            <p className="text-slate-200 whitespace-no-wrap font-bold">
                               {moment(match?.date).format("LL") +
                                 " Time: " +
                                 match?.time?.[0]?.startTime +
@@ -284,19 +286,19 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                                 match?.time?.[0]?.endTime}
                             </p>
                           </td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold">
+                          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                            <p className="text-slate-200 whitespace-no-wrap font-bold">
                               {match?.team1?.teamName}
                             </p>
                           </td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold">
+                          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                            <p className="text-slate-200 whitespace-no-wrap font-bold">
                               {match?.team2?.teamName}
                             </p>
                           </td>
 
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                            <p className="text-gray-900 whitespace-no-wrap font-bold">
+                          <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                            <p className="text-slate-200 whitespace-no-wrap font-bold">
                               {new Date().getTime() >
                                 new Date(match?.date).getTime()
                                 ? "YES"
@@ -305,8 +307,8 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                           </td>
                           {new Date().getTime() >
                             new Date(match?.date).getTime() && (
-                              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm border-r-2 text-center">
-                                <p className="text-gray-900 whitespace-no-wrap font-bold">
+                              <td className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                                <p className="text-slate-200 whitespace-no-wrap font-bold">
                                   {match?.winningTeam?.winningTeamName}
                                 </p>
                               </td>
@@ -315,9 +317,11 @@ const LeagueMatchSummary = ({ selectedLeagueId }) => {
                       );
                     })
                   ) : (
-                    <>
-                      <h2 className="font-bold p-5 text-lg ">No Match Found</h2>
-                    </>
+                    <tr>
+                      <td colSpan="6" className="px-5 py-5 border-b border-slate-700 bg-[#1e293b] text-sm text-center">
+                        <h2 className="font-bold p-5 text-lg text-slate-400">No Match Found</h2>
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>

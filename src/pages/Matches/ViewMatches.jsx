@@ -99,15 +99,18 @@ const ViewMatches = () => {
                   <TableHead className="text-center text-white">League</TableHead>
                   <TableHead className="text-center text-white">Location</TableHead>
                   <TableHead className="text-center text-white">Winner</TableHead>
-                  <TableHead className="text-center text-white"></TableHead>
+                  <TableHead className="text-center text-white">Match Type</TableHead>
                   <TableHead className="text-center text-white">View</TableHead>
-                  {userTypeValue === 'admin' || userTypeValue === 'staff' && <><TableHead className="text-center text-white">
-                    Update Match
-                  </TableHead>
-                    <TableHead className="text-center text-white">
-                      Update Player
-                    </TableHead>
-                  </>}
+                  {(userTypeValue === 'admin' || userTypeValue === 'staff') && (
+                    <>
+                      <TableHead className="text-center text-white">
+                        Update Match
+                      </TableHead>
+                      <TableHead className="text-center text-white">
+                        Update Player
+                      </TableHead>
+                    </>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -116,10 +119,30 @@ const ViewMatches = () => {
                     viewMatchData?.map((item, index) => (
                       <TableRow key={index} >
                         <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                        <TableCell className="text-center"><img src={`${baseURL}/uploads/${item?.team1?.teamImage.split("\\")[1]}`} alt={`${item?.team1?.teamName}`}
-                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-10 h-10 rounded-full mx-auto" />
+                        <TableCell className="text-center">
+                          <img 
+                            src={
+                              (() => {
+                                const teamImage = item?.team1?.teamImage;
+                                if (!teamImage) {
+                                  return 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg';
+                                }
+                                if (teamImage.includes("\\")) {
+                                  const parts = teamImage.split("\\");
+                                  return parts.length > 1 ? `${baseURL}/uploads/${parts[parts.length - 1]}` : `${baseURL}/uploads/${teamImage}`;
+                                }
+                                if (teamImage.includes("/")) {
+                                  return `${baseURL}/uploads/${teamImage.split('/').pop()}`;
+                                }
+                                return `${baseURL}/uploads/${teamImage}`;
+                              })()
+                            }
+                            alt={item?.team1?.teamName || 'Team 1'}
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} 
+                            className="w-10 h-10 rounded-full mx-auto" 
+                          />
                           <p>
-                            {item?.team1?.teamName}
+                            {item?.team1?.teamName || 'Unknown Team'}
                           </p>
                         </TableCell>
                         {
@@ -127,11 +150,29 @@ const ViewMatches = () => {
                             <TableCell className="bg-gray-50  text-center text-md">{item?.team1stPoints?.score} - {item?.team2ndPoints?.score}</TableCell> : <TableCell className=" text-center bg-gray-50">-</TableCell>
                         }
                         <TableCell>
-                          <img src={`${baseURL}/uploads/${item?.team2?.teamImage?.split("\\")[1]}`} alt={`${item?.team2?.teamName}`}
+                          <img 
+                            src={
+                              (() => {
+                                const teamImage = item?.team2?.teamImage;
+                                if (!teamImage) {
+                                  return 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg';
+                                }
+                                if (teamImage.includes("\\")) {
+                                  const parts = teamImage.split("\\");
+                                  return parts.length > 1 ? `${baseURL}/uploads/${parts[parts.length - 1]}` : `${baseURL}/uploads/${teamImage}`;
+                                }
+                                if (teamImage.includes("/")) {
+                                  return `${baseURL}/uploads/${teamImage.split('/').pop()}`;
+                                }
+                                return `${baseURL}/uploads/${teamImage}`;
+                              })()
+                            }
+                            alt={item?.team2?.teamName || 'Team 2'}
                             onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }}
-                            className="w-10 h-10 rounded-full mx-auto" />
+                            className="w-10 h-10 rounded-full mx-auto" 
+                          />
                           <p className="ml-2 text-center">
-                            {item?.team2?.teamName}
+                            {item?.team2?.teamName || 'Unknown Team'}
                           </p>
                         </TableCell>
                         <TableCell className="text-center">
@@ -144,11 +185,11 @@ const ViewMatches = () => {
                           {item?.location}
                         </TableCell>
                         <TableCell className="text-center">{item?.winningTeamName ? `${item.winningTeamName}` : '-'}</TableCell>
-                        <TableCell className="text-center">{item.matchType}</TableCell>
+                        <TableCell className="text-center">{item.matchType || '-'}</TableCell>
                         <TableCell className="text-center"><MatchModals viewDetails={{ item, index }} /></TableCell>
-                        {
-                          userTypeValue === 'admin' || userTypeValue === 'staff' && <>
-                            <TableCell className="text-center w-[140px]">
+                        {(userTypeValue === 'admin' || userTypeValue === 'staff') && (
+                          <>
+                            <TableCell className="text-center">
                               <button
                                 onClick={() => {
                                   navigate(
@@ -157,27 +198,30 @@ const ViewMatches = () => {
                                       state: item,
                                     }
                                   )
-                                }
-                                }
+                                }}
+                                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-md transition-colors shadow-sm hover:shadow-md"
+                                title="Update Match Scores"
                               >
-                                <MdEditNote className="text-3xl text-orange-400" />
-
+                                <MdEditNote className="w-5 h-5" />
+                                <span className="hidden sm:inline">Edit</span>
                               </button>
                             </TableCell>
-                            <TableCell className="text-center w-[140px]">
+                            <TableCell className="text-center">
                               <button
-                                className=""
                                 onClick={() =>
                                   navigate("/dashboard/updatePlayerSummary", {
                                     state: item,
                                   })
                                 }
+                                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors shadow-sm hover:shadow-md"
+                                title="Update Player Details"
                               >
-                                <FaUsers className="text-2xl text-orange-400" />
+                                <FaUsers className="w-5 h-5" />
+                                <span className="hidden sm:inline">Players</span>
                               </button>
                             </TableCell>
                           </>
-                        }
+                        )}
                       </TableRow>
                     )))
                 }

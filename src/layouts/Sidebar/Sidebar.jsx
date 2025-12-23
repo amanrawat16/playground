@@ -1,78 +1,66 @@
 import { NavLink } from "react-router-dom";
-import { FaBars, FaHome, FaLock, FaMoneyBill, FaUser } from "react-icons/fa";
-import { MdMessage } from "react-icons/md";
-import { BiAnalyse, BiSearch } from "react-icons/bi";
-import { BiCog } from "react-icons/bi";
-import { AiFillHeart, AiTwotoneFileExclamation } from "react-icons/ai";
-import { BsCartCheck } from "react-icons/bs";
+import { FaBars, FaHome, FaUser, FaUsers, FaTrophy, FaCalendarAlt, FaFutbol, FaCog } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
-// -----------------------------------------------------------------------------
+import { Trophy, X } from "lucide-react";
 
-const SideBar = ({ children }) => {
+const SideBar = ({ children, isMobileOpen, setIsMobileOpen }) => {
   const [userType, setUserType] = useState("admin");
 
   useEffect(() => {
     const userTypeValue = localStorage.getItem("userType");
-
     setUserType(userTypeValue);
   }, []);
 
   const adminRoutes = [
     {
       path: "/dashboard",
-      name: "Add Clubs",
+      name: "Dashboard",
       icon: <FaHome />,
     },
     {
       path: "/dashboard/addTeam",
       name: "Add Team",
-      icon: <FaHome />,
+      icon: <FaUsers />,
     },
     {
       path: "/dashboard/addStaff",
       name: "Add Staff",
-      icon: <FaHome />,
+      icon: <FaUser />,
     },
     {
       path: "/tournamentSummary",
       name: "Tournament Summary",
-      icon: <FaHome />,
+      icon: <FaTrophy />,
       subRoutes: [
         {
           path: "/dashboard/tournamentSummary/leagueWise",
-          name: "League Wise Summary ",
-          icon: <FaUser />,
+          name: "League Wise Summary",
+          icon: <FaTrophy />,
         },
         {
           path: "/dashboard/tournamentSummary/matchWise",
           name: "Match Wise Summary",
-          icon: <FaUser />,
+          icon: <FaCalendarAlt />,
         },
         {
           path: "/dashboard/tournamentSummary/leagueTeamWise",
           name: "League Team Wise Summary",
-          icon: <FaUser />,
+          icon: <FaUsers />,
         },
-
       ],
     },
-
     {
       path: "/matches",
       name: "Matches",
-      icon: <FaHome />,
+      icon: <FaFutbol />,
       subRoutes: [
-        {
-          path: "/dashboard/matches/createMatch",
-          name: "Create Match ",
-          icon: <FaUser />,
-        },
+
         {
           path: "/dashboard/matches/viewMatches",
           name: "View All Matches",
-          icon: <FaUser />,
+          icon: <FaCalendarAlt />,
         },
       ],
     },
@@ -84,17 +72,12 @@ const SideBar = ({ children }) => {
     {
       path: '/dashboard/Teams',
       name: 'View Teams',
-      icon: <FaUser />,
+      icon: <FaUsers />,
     },
     {
-      path: "/dashboard/startLeague",
-      name: "Start League",
-      icon: <FaHome />
-    },
-    {
-      path: "/dashboard/updateUsers",
-      name: "Update Users Credentials",
-      icon: <FaHome />,
+      path: "/dashboard/tournaments",
+      name: "Tournament Hub",
+      icon: <FaTrophy />
     },
   ];
 
@@ -173,25 +156,27 @@ const SideBar = ({ children }) => {
             ? teamRoutes
             : [];
 
-  // ===========================================================================
-
   const [isOpen, setIsOpen] = useState(true);
-  const toggle = () => setIsOpen(!isOpen);
-  const inputAnimation = {
-    hidden: {
-      width: 0,
-      padding: 0,
-      transition: {
-        duration: 0.2,
-      },
-    },
-    show: {
-      width: "140px",
-      padding: "5px 15px",
-      transition: {
-        duration: 0.2,
-      },
-    },
+
+  // On mobile, always show full sidebar when open
+  useEffect(() => {
+    if (isMobileOpen) {
+      setIsOpen(true);
+    }
+  }, [isMobileOpen]);
+
+  const toggle = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen && typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsMobileOpen(false);
+    }
+  };
+
+  const handleLinkClick = () => {
+    // Close mobile sidebar when a link is clicked
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsMobileOpen(false);
+    }
   };
 
   const showAnimation = {
@@ -199,92 +184,114 @@ const SideBar = ({ children }) => {
       width: 0,
       opacity: 0,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
       },
     },
     show: {
       opacity: 1,
       width: "auto",
       transition: {
-        duration: 0.5,
+        duration: 0.3,
       },
     },
   };
 
   return (
     <>
-      <div className="main-container  bg-orange-600">
-        <motion.div
-          animate={{
-            width: isOpen ? "250px" : "45px",
-            transition: {
-              duration: 0.5,
-              type: "spring",
-              damping: 10,
-            },
-          }}
-          className={`sidebar h-screen bg-orange-600 `}
-        >
-          <div className="top_section text-white">
-            <AnimatePresence>
-              {isOpen && (
-                <motion.h1
-                  variants={showAnimation}
-                  initial="hidden"
-                  animate="show"
-                  exit="hidden"
-                  className="logo"
-                >
-                  Sports App
-                </motion.h1>
-              )}
-            </AnimatePresence>
+      <motion.div
+        animate={{
+          width: isOpen ? "280px" : "80px",
+          transition: {
+            duration: 0.3,
+            type: "spring",
+            damping: 15,
+          },
+        }}
+        className="sidebar h-full bg-[#0f172a] border-r border-slate-800 shadow-xl flex flex-col"
+      >
+        {/* Header */}
+        <div className="top_section text-white border-b border-slate-800">
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                variants={showAnimation}
+                initial="hidden"
+                animate="show"
+                exit="hidden"
+                className="flex items-center gap-2"
+              >
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Trophy className="w-5 h-5" />
+                </div>
+                <h1 className="logo font-bold text-lg">Playground</h1>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            <div className="bars">
-              <FaBars onClick={toggle} />
-            </div>
+          <div className="flex items-center gap-2">
+            {/* Mobile Close Button */}
+            {isMobileOpen && (
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="p-1.5 hover:bg-white/20 rounded-lg transition-colors lg:hidden"
+                aria-label="Close sidebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+            {/* Desktop Toggle */}
+            <button
+              onClick={toggle}
+              className="bars p-1.5 hover:bg-white/20 rounded-lg transition-colors hidden lg:block"
+              aria-label="Toggle sidebar"
+            >
+              <FaBars className="w-5 h-5" />
+            </button>
           </div>
-          <section className="routes">
-            {routes.map((route, index) => {
-              if (route.subRoutes) {
-                return (
-                  <SidebarMenu
-                    setIsOpen={setIsOpen}
-                    route={route}
-                    showAnimation={showAnimation}
-                    isOpen={isOpen}
-                    key={index}
-                  />
-                );
-              }
+        </div>
 
+        {/* Navigation Routes */}
+        <section className="routes py-4 flex-1 overflow-y-auto">
+          {routes.map((route, index) => {
+            if (route.subRoutes) {
               return (
-                <NavLink
-                  to={route.path}
+                <SidebarMenu
+                  setIsOpen={setIsOpen}
+                  route={route}
+                  showAnimation={showAnimation}
+                  isOpen={isOpen}
                   key={index}
-                  className="link"
-                  activeClassName="active"
-                >
-                  <div className="icon">{route.icon}</div>
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        variants={showAnimation}
-                        initial="hidden"
-                        animate="show"
-                        exit="hidden"
-                        className="link_text"
-                      >
-                        {route.name}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </NavLink>
+                  onLinkClick={handleLinkClick}
+                />
               );
-            })}
-          </section>
-        </motion.div>
-      </div>
+            }
+
+            return (
+              <NavLink
+                to={route.path}
+                key={index}
+                className={({ isActive }) => `link ${isActive ? 'active' : ''}`}
+                onClick={handleLinkClick}
+              >
+                <div className="icon flex items-center justify-center">{route.icon}</div>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      variants={showAnimation}
+                      initial="hidden"
+                      animate="show"
+                      exit="hidden"
+                      className="link_text"
+                    >
+                      {route.name}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </NavLink>
+            );
+          })}
+        </section>
+      </motion.div>
     </>
   );
 };

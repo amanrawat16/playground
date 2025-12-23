@@ -132,23 +132,23 @@ const AddPlayer = () => {
 
   return (
     <>
-      <Dialog open={showDialog} >
-        <DialogContent onClick={handleCloseDialog}>
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent onClick={handleCloseDialog} className="bg-[#1e293b] border-slate-700 text-slate-200 sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="mb-2">Add a new player to your team</DialogTitle>
+            <DialogTitle className="mb-2 text-white">Add a new player to your team</DialogTitle>
             <form
-              className="w-full max-w-lg mt-5"
+              className="w-full mt-5"
               onSubmit={handleSubmit(handleUpdateTeam)}
             >
               {/* Player Fields */}
               <div className="mb-6">
                 <div className="flex flex-wrap -mx-3 mb-10">
                   <div className="w-full md:w-2/3 px-3">
-                    <label className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2">
+                    <label className="block uppercase tracking-wide text-slate-300 text-xs font-bold mb-2">
                       Player Name
                     </label>
                     <Input
-                      className="appearance-none block w-full h-12 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      className="appearance-none block w-full h-12 bg-[#0f172a] text-slate-200 border border-slate-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-orange-500 placeholder:text-slate-500"
                       type="text"
                       placeholder="Enter Player Name"
                       {...register(`playerName`, {
@@ -164,11 +164,11 @@ const AddPlayer = () => {
                   </div>
 
                   <div className="w-full md:w-1/3 px-3">
-                    <label className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2">
+                    <label className="block uppercase tracking-wide text-slate-300 text-xs font-bold mb-2">
                       Position
                     </label>
                     <select
-                      className="appearance-none block w-full  text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      className="appearance-none block w-full h-12 bg-[#0f172a] text-slate-200 border border-slate-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-orange-500"
                       {...register(`position`, {
                         required: {
                           value: true,
@@ -176,11 +176,11 @@ const AddPlayer = () => {
                         },
                       })}
                     >
-                      <option value="Quarterback">Quarterback</option>
-                      <option value="Rusher">Rusher</option>
-                      <option value="Offensive Player">Offensive Player</option>
-                      <option value="Defensive Player">Defensive Player</option>
-                      <option value="NONE">NONE</option>
+                      <option value="Quarterback" className="bg-[#0f172a]">Quarterback</option>
+                      <option value="Rusher" className="bg-[#0f172a]">Rusher</option>
+                      <option value="Offensive Player" className="bg-[#0f172a]">Offensive Player</option>
+                      <option value="Defensive Player" className="bg-[#0f172a]">Defensive Player</option>
+                      <option value="NONE" className="bg-[#0f172a]">NONE</option>
                     </select>
                     <p className="text-red-500 text-xs italic">
                       {errors?.position?.message}
@@ -188,11 +188,11 @@ const AddPlayer = () => {
                   </div>
 
                   <div className="w-full md:w-full px-3">
-                    <label className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2">
+                    <label className="block uppercase tracking-wide text-slate-300 text-xs font-bold mb-2">
                       Player Email
                     </label>
                     <Input
-                      className="appearance-none block w-full h-12   text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      className="appearance-none block w-full h-12 bg-[#0f172a] text-slate-200 border border-slate-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-orange-500 placeholder:text-slate-500"
                       type="email"
                       placeholder="Enter Player Email"
                       {...register(`email`, {
@@ -208,11 +208,11 @@ const AddPlayer = () => {
                   </div>
 
                   <div className="w-full md:w-1/3 px-3">
-                    <label className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2">
+                    <label className="block uppercase tracking-wide text-slate-300 text-xs font-bold mb-2">
                       Role
                     </label>
                     <select
-                      className="appearance-none block w-full h-12 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      className="appearance-none block w-full h-12 bg-[#0f172a] text-slate-200 border border-slate-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-orange-500"
                       {...register(`role`, {
                         required: {
                           value: true,
@@ -220,8 +220,8 @@ const AddPlayer = () => {
                         },
                       })}
                     >
-                      <option value="PLAYER">Player</option>
-                      <option value="STAFF">Staff</option>
+                      <option value="PLAYER" className="bg-[#0f172a]">Player</option>
+                      <option value="STAFF" className="bg-[#0f172a]">Staff</option>
                     </select>
                     <p className="text-red-500 text-xs italic">
                       {errors?.role?.message}
@@ -229,11 +229,11 @@ const AddPlayer = () => {
                   </div>
 
                   <div className="w-full md:w-2/3 px-3">
-                    <label className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2">
+                    <label className="block uppercase tracking-wide text-slate-300 text-xs font-bold mb-2">
                       Jersey Number
                     </label>
                     <Input
-                      className="appearance-none block w-full h-12 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      className="appearance-none block w-full h-12 bg-[#0f172a] text-slate-200 border border-slate-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-orange-500 placeholder:text-slate-500"
                       type="text"
                       placeholder="Enter Jersey Number"
                       {...register(`jerseyNumber`, {
@@ -251,7 +251,7 @@ const AddPlayer = () => {
                   {/* Add similar structure for other player fields */}
                   {/* ... */}
                   <div className="w-full md:w-2/3 px-3">
-                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    <label className="block uppercase tracking-wide text-slate-300 text-xs font-bold mb-2">
                       Date of Birth
                     </label>
                     <Controller
@@ -262,7 +262,8 @@ const AddPlayer = () => {
                         <DatePicker
                           {...field}
                           value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
-                          className="h-12 w-1/2"
+                          className="h-12 w-full bg-[#0f172a] text-slate-200 border-slate-700 hover:border-orange-500 focus:border-orange-500"
+                          style={{ backgroundColor: '#0f172a', color: 'white', borderColor: '#334155' }}
                           onChange={(date, dateString) => field.onChange(dateString)}
                         />
                       )}
@@ -279,7 +280,7 @@ const AddPlayer = () => {
               <div className="submit_button mb-5">
                 <Button
                   type="submit"
-                  className="px-2 py-3 bg-orange-600 h-12 text-white rounded-md w-full"
+                  className="px-2 py-3 bg-orange-600 h-12 text-white rounded-md w-full hover:bg-orange-700"
                   disabled={updatingTeam}
                 >
                   {updatingTeam ?
@@ -295,27 +296,29 @@ const AddPlayer = () => {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-      <div className="flex items-center justify-center">
-        <div className="md:w-4/5 w-full mx-auto my-10">
-          <h2 className="text-center text-2xl font-bold leading-tight text-orange-600 my-2">
+      <div className="flex items-center justify-center min-h-screen bg-[#0f172a] py-6">
+        <div className="md:w-4/5 w-full mx-auto my-10 bg-[#1e293b] p-6 rounded-xl border border-slate-700 shadow-lg">
+          <h2 className="text-center text-2xl font-bold leading-tight text-white my-2">
             Update Team
           </h2>
           <div className="my-10">
-            <div className="flex">
-              <div className="h-full w-32">
+            <div className="flex items-center">
+              <div className="h-full w-32 flex-shrink-0">
                 <img src={`${baseURL}/uploads/${teamData?.teamImage?.split("\\")[1]}`} alt={`${teamData?.teamName}`}
-                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-20 h-20 rounded-full mx-auto" />
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://st4.depositphotos.com/14695324/25366/v/450/depositphotos_253661618-stock-illustration-team-player-group-vector-illustration.jpg' }} className="w-20 h-20 rounded-full mx-auto border-2 border-slate-600" />
               </div>
               <div className="px-4 py-2">
-                <p className="font-bold text-2xl text-orange-600">
+                <p className="font-bold text-2xl text-orange-500">
                   {teamData?.teamName}</p>
-                <p className='text-sm text-gray-500'>{teamData?.teamEmail}</p>
+                <p className='text-sm text-slate-400'>{teamData?.teamEmail}</p>
               </div>
             </div>
             <div className="w-full flex justify-end my-4">
-              <Button className="flex items-center justify-center bg-orange-600" onClick={handleShowDialog} >Add Player<FaPlus className="ml-2" /></Button>
+              <Button className="flex items-center justify-center bg-orange-600 hover:bg-orange-700 text-white" onClick={handleShowDialog} >Add Player<FaPlus className="ml-2" /></Button>
             </div>
-            <AntDTable columns={columns} data={teamData?.players} />
+            <div className="ant-table-dark-theme-wrapper">
+              <AntDTable columns={columns} data={teamData?.players} />
+            </div>
           </div>
 
         </div>

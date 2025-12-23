@@ -380,83 +380,90 @@ function StartLeague() {
         fetchLeagues()
     }, [])
     return (
-        <div className="w-full h-full flex flex-col items-center">
-            <h1 className="text-center text-4xl mb-5 font-bold my-10">Start League</h1>
-            <div className="md:w-2/3 sm:w-5/6 mx-auto  border rounded-lg shadow-lg px-12 py-5 mb-10">
+        <div className="min-h-screen bg-[#0f172a] text-slate-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6 sm:mb-8">Start League</h1>
+                <div className="bg-[#1e293b] rounded-xl shadow-lg border border-slate-700 px-6 sm:px-12 py-6 mb-6">
 
-                <div className="flex justify-between">
-                    <div className="w-1/3">
-                        <label htmlFor="league" className="text-sm font-medium">Select League</label>
-                        <select name="league" id="league" className='w-full border h-10 border-gray-300 rounded' onChange={handleLeagueChange} value={leagueId}>
+                    <div className="flex flex-col sm:flex-row justify-between gap-4">
+                        <div className="flex-1">
+                            <label htmlFor="league" className="block text-sm font-semibold text-slate-300 mb-2">Select League</label>
+                            <select
+                                name="league"
+                                id="league"
+                                className='w-full border h-12 border-slate-600 rounded-lg bg-[#0f172a] text-slate-200 px-4 focus:border-orange-500 focus:outline-none'
+                                onChange={handleLeagueChange}
+                                value={leagueId}
+                            >
+                                {
+                                    leagues.length > 0 ? leagues.map((league) => {
+                                        return <option value={league._id} key={league._id}>{league.leagueName}</option>
+                                    }) : null
+                                }
+                            </select>
+
+                        </div>
+                        <div className="flex-1 flex items-end relative">
                             {
-                                leagues.length > 0 ? leagues.map((league) => {
-                                    return <option value={league._id} key={league._id}>{league.leagueName}</option>
-                                }) : null
+                                LeagueTeams.length > 0 && <>
+                                    <input
+                                        type="text"
+                                        className="w-full border h-12 rounded-lg border-slate-600 bg-[#0f172a] text-slate-200 px-4 pr-10 placeholder:text-slate-500 focus:border-orange-500 focus:outline-none"
+                                        name="team"
+                                        placeholder="Search team"
+                                        onChange={handleSearchTeam}
+                                    />
+                                    <CiSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl" />
+                                </>
                             }
-                        </select>
-
+                        </div>
                     </div>
-                    <div className="w-1/3 flex items-end relative">
+                    <div className="w-full py-6">
+
                         {
-                            LeagueTeams.length > 0 && <>
-                                <input type="text" className="w-full border h-10 rounded border-gray-300 px-2" name="team" placeholder="Search team" onChange={handleSearchTeam} />
-                                <CiSearch className=" absolute right-2 top-[60%] text-gray-400 font-bold" />
-                            </>
+                            LeagueTeams.length > 0 ?
+                                <>
+                                    <h1 className="text-center text-xl mb-5 font-bold text-white">Approve Teams</h1>
+                                    <AntDTable data={tableTeams}
+                                        columns={columns}
+                                        handleApproveTeam={handleApproveTeam} handleUnapproveTeam={handleUnapproveTeam} isRegularRoundStarted={isRegularRoundStarted} />
+                                </>
+                                :
+                                <div className="w-full h-48 rounded-lg flex justify-center items-center py-4">
+                                    <BeatLoader color="#f97316" />
+                                </div>
                         }
                     </div>
-                </div>
-                <div className="w-full  py-4">
-
-                    {
-                        LeagueTeams.length > 0 ?
-                            <>
-                                <h1 className="text-center text-xl mb-5 font-bold">Approve Teams</h1>
-                                <AntDTable data={tableTeams}
-                                    columns={columns}
-                                    handleApproveTeam={handleApproveTeam} handleUnapproveTeam={handleUnapproveTeam} isRegularRoundStarted={isRegularRoundStarted} />
-                            </>
-                            :
-                            <div className="w-full h-48   rounded-lg  flex justify-center items-center py-4">
-                                <BeatLoader color="#36d7b7" />
-                            </div>
-                    }
-                </div>
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="light"
-                />
-            </div>
-            {
-                approvedTeams.length > 0 &&
-                <div className='w-full px-10'>
-                    <Tabs
-                        defaultActiveKey={activekey}
-                        size={"large"}
-                        style={{
-                            marginBottom: 32,
-                        }}
-                        onChange={handleKeyChange}
-                        items={tabs}
+                    <ToastContainer
+                        position="bottom-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="dark"
                     />
                 </div>
-            }
-        </div >
+                {
+                    approvedTeams.length > 0 &&
+                    <div className='w-full'>
+                        <Tabs
+                            defaultActiveKey={activekey}
+                            size={"large"}
+                            style={{
+                                marginBottom: 32,
+                            }}
+                            onChange={handleKeyChange}
+                            items={tabs}
+                        />
+                    </div>
+                }
+            </div>
+        </div>
     )
 }
 
 export default StartLeague
-
-
-
-
-
-
-

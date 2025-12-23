@@ -44,14 +44,13 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <div
+      <DialogPrimitive.Close
         className="absolute ring-offset-white transition-transform focus:outline-none  w-[30px] h-[30px] rounded-full shadow-lg disabled:pointer-events-none data-[state=open]:bg-gray-100 data-[state=open]:text-gray-500 flex items-center justify-center cursor-pointer z-[200] bg-orange-600 hover:rotate-90 -top-3 -right-2"
         style={{ transition: "transform 0.5s " }}
-        onClick={onClick} // Adding transition property
       >
-        <X className="h-4 w-4 text-white " /> {/* Adding transition delay */}
+        <X className="h-4 w-4 text-white " />
         <span className="sr-only">Close</span>
-      </div>
+      </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
 ));

@@ -1,294 +1,321 @@
-import React from 'react'
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { createLeagueFixtureMatch, startQuaterFinals } from '../../services/api';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2'
-import { useEffect } from 'react';
-import { VscDebugStart } from 'react-icons/vsc';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Calendar, Clock, MapPin, Save, Shuffle, Trash2 } from "lucide-react";
+import { startQuaterFinals, saveRegularRoundMatches } from "../../services/api";
+import { toast } from "react-toastify";
+import Swal from 'sweetalert2';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./datepicker-dark.css";
 
-function Creatematches({ approvedTeams, leagueName, fixtureId, leagueId, quaterFinalsStarted, setIsQuaterFinalStarted, fetchLeagueFixture }) {
-    const [teamsList, setTeamList] = useState(approvedTeams)
-    const [teamsSecondList, setTeamsSecondList] = useState(approvedTeams);
-    const [teamFirstSelectedValue, setTeamFirstSelectedValue] = useState("");
-    const {
-        register,
-        handleSubmit, reset,
-        formState: { errors },
-    } = useForm();
-    const matchType = ["Regular-round", 'Quater-final', 'Semi-final', 'Final']
+// Helper to generate Round Robin schedule
+const generateRoundRobin = (groups, rounds = 1) => {
+    let matches = [];
 
+    // Ensure rounds is at least 1
+    const totalRounds = Math.max(1, parseInt(rounds) || 1);
 
-    const handleCreateMatch = async (data) => {
-        setIsQuaterFinalStarted(true)
+    groups.forEach(group => {
+        const teams = group.teams.map(t => t.team); // Extract team objects
+        if (teams.length < 2) return;
 
-        const newData = {
-            ...data, league: leagueName, time: [{
-                startTime: data.startTime,
-                endTime: data.endTime
-            }
-            ],
-            date: data.matchDate
-        }
-        try {
+        // Round Robin Logic
+        for (let r = 0; r < totalRounds; r++) {
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    // For even rounds (0, 2, ...), Team A vs Team B
+                    // For odd rounds (1, 3, ...), Team B vs Team A (Home/Away swap)
+                    const isEvenRound = r % 2 === 0;
 
-            const response = await createLeagueFixtureMatch(fixtureId, leagueId, newData)
-            if (response.status === 'SUCCESS') {
-                toast.success(response.message)
-                reset()
-            }
-        } catch (error) {
-            toast.error("Error creating match")
-            console.log(error)
-        } finally {
-            setIsQuaterFinalStarted(false)
-        }
-    }
-
-    const handleOnChange = (e) => {
-        setTeamFirstSelectedValue(e.target.value);
-    };
-
-
-    const handleStartQuaterFinals = () => {
-        try {
-            Swal.fire({
-                title: "Start Quater Finals?",
-                text: "Add atleast 8 teams to start QuaterFinals",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#357a38",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Start"
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const response = await startQuaterFinals(leagueId)
-                        if (response.status === 'SUCCESS') {
-                            console.log(response)
-                            toast.success("QuaterFinals Started")
-                            setIsQuaterFinalStarted(true)
-                            fetchLeagueFixture(leagueId)
-                        }
-                    } catch (error) {
-                        console.log(error)
-                        toast.error("Error starting QuaterFinals")
-                    }
+                    matches.push({
+                        team1: isEvenRound ? teams[i]._id : teams[j]._id,
+                        team2: isEvenRound ? teams[j]._id : teams[i]._id,
+                        team1Name: isEvenRound ? teams[i].teamName : teams[j].teamName,
+                        team2Name: isEvenRound ? teams[j].teamName : teams[i].teamName,
+                        date: '',
+                        time: '',
+                        location: '',
+                        groupName: `${group.groupName} - Round ${r + 1}`
+                    });
                 }
-            });
-
-        } catch (error) {
-            console.log(error)
+            }
         }
-    }
+    });
 
+    return matches;
+};
 
+const Creatematches = ({
+    handleNextComponent,
+    fixtureGroups,
+    approvedTeams,
+    leagueName,
+    fixtureId,
+    leagueId,
+    quaterFinalsStarted,
+    setIsQuaterFinalStarted,
+    fetchLeagueFixture,
+    existingMatches,
+    matchesInRegularRound
+}) => {
+    const [matches, setMatches] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    // Extract all teams from fixture groups
+    const allTeams = fixtureGroups?.flatMap(group =>
+        group.teams?.map(t => t.team) || []
+    ) || [];
 
     useEffect(() => {
-        const teamSecondCompleteData = [...teamsList];
-        const teamSecondFilteredData =
-            teamSecondCompleteData.length > 0 &&
-            teamSecondCompleteData.filter(
-                (ele) => ele?.team?._id !== teamFirstSelectedValue
-            );
-        setTeamsSecondList(teamSecondFilteredData);
-    }, [teamFirstSelectedValue]);
+        if (existingMatches && existingMatches.length > 0) {
+            const loaded = existingMatches.map(m => ({
+                ...m,
+                date: m.date ? new Date(m.date).toISOString().split('T')[0] : '',
+                time: m.time && m.time[0] ? m.time[0].startTime : '',
+            }));
+            setMatches(loaded);
+        }
+    }, [existingMatches]);
 
+    const handleGenerateSchedule = () => {
+        if (!fixtureGroups || fixtureGroups.length === 0) {
+            toast.error("No groups found to generate matches from.");
+            return;
+        }
+
+        const generated = generateRoundRobin(fixtureGroups, matchesInRegularRound);
+        setMatches(generated);
+        toast.info(`Generated ${generated.length} matches (${matchesInRegularRound} rounds). Please set dates and locations.`);
+    };
+
+    const handleMatchChange = (index, field, value) => {
+        const newMatches = [...matches];
+        newMatches[index][field] = value;
+        setMatches(newMatches);
+    };
+
+    const handleDeleteMatch = (index) => {
+        const newMatches = [...matches];
+        newMatches.splice(index, 1);
+        setMatches(newMatches);
+    };
+
+    const handleSaveSchedule = async () => {
+        const invalid = matches.find(m => !m.date || !m.time || !m.location);
+        if (invalid) {
+            toast.warn("Please fill in Date, Time, and Location for all matches before saving.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Transform matches to match backend schema (time as array with startTime/endTime)
+            const transformedMatches = matches.map(match => ({
+                ...match,
+                time: [{
+                    startTime: match.time,
+                    endTime: match.time // Using same time for now, can be different if needed
+                }]
+            }));
+
+            const response = await saveRegularRoundMatches(leagueId, fixtureId, transformedMatches);
+
+            if (response.status === "SUCCESS") {
+                toast.success("Schedule saved successfully!");
+                handleNextComponent(); // Move to Quarter Finals view or just Refresh
+                fetchLeagueFixture(leagueId);
+            } else {
+                toast.error(response.error || "Failed to save schedule");
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Error saving schedule");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStartQuarterFinals = () => {
+        Swal.fire({
+            title: "Start Quarter Finals?",
+            text: "This will conclude Regular Rounds.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Start!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await startQuaterFinals(leagueId);
+                    if (response.status === "SUCCESS") {
+                        toast.success("Quarter Finals Started");
+                        setIsQuaterFinalStarted(true);
+                        fetchLeagueFixture(leagueId);
+                        handleNextComponent();
+                    }
+                } catch (error) {
+                    toast.error("Error starting Quarter Finals");
+                }
+            }
+        });
+    };
 
     return (
-        <div className=' w-full h-full flex justify-center items-center flex-col'>
-            <div className='w-full  flex flex-col items-center'>
-                <form
-                    className="w-full max-w-lg mt-5"
-                    onSubmit={handleSubmit(handleCreateMatch)}
-                >
-                    <div className="flex flex-wrap -mx-3 mb-2 ">
-                        <div className="w-full mb-6 md:mb-0">
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.league?.message}
-                            </p>
-                        </div>
-                        <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                                htmlFor="grid-first-name"
-                            >
-                                Team 1
-                            </label>
-                            <select
-                                className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                {...register(`team1`, {
-                                    required: {
-                                        value: true,
-                                        message: "Team is required",
-                                    },
-                                    onChange: (e) => handleOnChange(e),
-                                })}
-                            >
-                                <option value="">Select Team</option>
-                                {teamsList?.length > 0 &&
-                                    teamsList.map((team, i) => {
-                                        return (
-                                            <option key={team?._id || i} value={team?.team?._id}>
-                                                {team.team?.teamName}
-                                            </option>
-                                        );
-                                    })}
-                            </select>
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.team1?.message}
-                            </p>
-                        </div>
-                        <div className="w-full md:w-1/2 px-3">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                                htmlFor="grid-last-name"
-                            >
-                                Team 2
-                            </label>
-                            <select
-                                className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                {...register(`team2`, {
-                                    required: {
-                                        value: true,
-                                        message: "Team2 is required",
-                                    },
-                                })}
-                            >
-                                <option value="">Select Team</option>
+        <div className="w-full max-w-6xl mx-auto py-6">
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h2 className="text-2xl font-bold text-white">Regular Round Matches</h2>
+                    <p className="text-sm text-slate-400">Rounds: {matchesInRegularRound}</p>
+                </div>
 
-                                {teamsSecondList.length > 0 &&
-                                    teamsSecondList.map((team, i) => {
-                                        return (
-                                            <option key={team?._id || i} value={team?.team?._id}>
-                                                {team.team?.teamName}
-                                            </option>
-                                        );
-                                    })}
-                            </select>
+                <div className="space-x-4">
+                    {/* Only show Generate Schedule if no matches exist and quarter finals not started */}
+                    {matches.length === 0 && !quaterFinalsStarted && (
+                        <Button onClick={handleGenerateSchedule} className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Shuffle className="w-4 h-4 mr-2" />
+                            Generate Schedule
+                        </Button>
+                    )}
 
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.team2?.message}.
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-2">
-                        <div className="w-full px-3">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                                htmlFor="clubName"
-                            >
-                                Match Date
-                            </label>
-                            <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="matchDate"
-                                type="date"
-                                placeholder="Enter Match Date"
-                                {...register("matchDate", {
-                                    required: {
-                                        value: true,
-                                        message: "Match Date is required",
-                                    },
-                                })}
-                            />
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.matchDate?.message}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-2">
-                        <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                                htmlFor="grid-first-name"
-                            >
-                                Start Time
-                            </label>
-                            <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700  rounded py-3 px-4 mb-2 leading-tight focus:bg-white "
-                                id="startTime"
-                                type="time"
-                                placeholder="Select Time"
-                                {...register("startTime", {
-                                    required: {
-                                        value: true,
-                                        message: "Start Time is required",
-                                    },
-                                })}
-                            />
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.startTime?.message}
-                            </p>
-                        </div>
-                        <div className="w-full md:w-1/2 px-3">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                                htmlFor="grid-last-name"
-                            >
-                                End Time
-                            </label>
-                            <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 leading-tight focus:bg-white focus:border-gray-500"
-                                id="endTime"
-                                type="time"
-                                placeholder="Enter Tine"
-                                {...register("endTime", {
-                                    required: {
-                                        value: true,
-                                        message: "End Time is required",
-                                    },
-                                })}
-                            />
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.endTime?.message}.
-                            </p>
-                        </div>
-                    </div>
-                    
+                    {/* Only show Save button if matches exist and quarter finals not started */}
+                    {matches.length > 0 && !quaterFinalsStarted && (
+                        <Button onClick={handleSaveSchedule} disabled={loading} className="bg-green-600 hover:bg-green-700 text-white">
+                            <Save className="w-4 h-4 mr-2" />
+                            {loading ? "Saving..." : "Approve & Save Schedule"}
+                        </Button>
+                    )}
 
-                    <div className="flex flex-wrap -mx-3 mb-2">
-                        <div className="w-full px-3">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700  text-xs font-bold mb-2"
-                                htmlFor="clubName"
-                            >
-                                Location
-                            </label>
-                            <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="locaion"
-                                type="text"
-                                placeholder="Please enter match venue"
-                                {...register("location", {
-                                    required: {
-                                        value: true,
-                                        message: "Location is required",
-                                    },
-                                })}
-                            />
-                            <p className="text-red-500 text-xs italic">
-                                {errors?.location?.message}
-                            </p>
-                        </div>
-                    </div>
+                    {/* Only show Start Quarter Finals if matches are saved (existingMatches) and not yet started */}
+                    {existingMatches && existingMatches.length > 0 && !quaterFinalsStarted && (
+                        <Button onClick={handleStartQuarterFinals} variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-500/10 hover:text-orange-400 bg-transparent">
+                            Start Quarter Finals
+                        </Button>
+                    )}
 
-                    <div className="submit_button my-4">
-                        <button
-                            type="submit"
-                            className="px-2 py-2 bg-gray-800 text-white rounded-md w-full disabled:bg-gray-500"
-                            disabled={quaterFinalsStarted}
-                        >
-                            Create Match
-                        </button>
-                    </div>
-                </form>
+                    {/* Show status badge if quarter finals started */}
+                    {quaterFinalsStarted && (
+                        <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500 text-orange-500 px-4 py-2 rounded-lg">
+                            <Flag className="w-4 h-4" />
+                            <span className="font-semibold">Quarter Finals In Progress</span>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div className='w-2/5 my-10 flex items-center justify-center'>
-                <button className='bg-black rounded-md flex items-center justify-center  text-white px-4 py-2 disabled:bg-gray-400' disabled={quaterFinalsStarted} onClick={handleStartQuaterFinals}><VscDebugStart className='mr-2' />Start QuaterFinals</button>
-            </div>
+
+            {matches.length > 0 ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {matches.map((match, index) => (
+                        <div key={index} className="bg-[#1e293b] p-4 rounded-lg border border-slate-700 shadow-sm flex flex-col gap-3">
+                            <div className="flex justify-between items-center border-b border-slate-700 pb-2">
+                                <span className="font-semibold text-slate-300">{match.groupName || 'Match'}</span>
+                                <Button variant="ghost" size="sm" onClick={() => handleDeleteMatch(index)} className="text-red-400 hover:text-red-600 hover:bg-red-400/10 h-6 w-6 p-0">
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {/* Team Selection */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <Label className="text-xs text-slate-400 mb-1 block">Team 1</Label>
+                                        <select
+                                            value={match.team1}
+                                            onChange={(e) => {
+                                                const selectedTeam = allTeams.find(t => t._id === e.target.value);
+                                                handleMatchChange(index, 'team1', e.target.value);
+                                                handleMatchChange(index, 'team1Name', selectedTeam?.teamName || '');
+                                            }}
+                                            className="w-full h-9 px-2 text-sm border border-slate-700 rounded bg-[#0f172a] text-slate-200 focus:border-orange-500 focus:outline-none"
+                                        >
+                                            {allTeams?.map((team) => (
+                                                <option key={team._id} value={team._id} className="bg-[#1e293b] text-white">
+                                                    {team.teamName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs text-slate-400 mb-1 block">Team 2</Label>
+                                        <select
+                                            value={match.team2}
+                                            onChange={(e) => {
+                                                const selectedTeam = allTeams.find(t => t._id === e.target.value);
+                                                handleMatchChange(index, 'team2', e.target.value);
+                                                handleMatchChange(index, 'team2Name', selectedTeam?.teamName || '');
+                                            }}
+                                            className="w-full h-9 px-2 text-sm border border-slate-700 rounded bg-[#0f172a] text-slate-200 focus:border-orange-500 focus:outline-none"
+                                        >
+                                            {allTeams?.map((team) => (
+                                                <option key={team._id} value={team._id} className="bg-[#1e293b] text-white">
+                                                    {team.teamName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Date, Time, Location */}
+                                <div className="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <Label className="text-xs text-slate-400 mb-1 block">Date</Label>
+                                        <DatePicker
+                                            selected={match.date ? new Date(match.date) : null}
+                                            onChange={(date) => {
+                                                const dateStr = date ? date.toISOString().split('T')[0] : '';
+                                                handleMatchChange(index, 'date', dateStr);
+                                            }}
+                                            dateFormat="yyyy-MM-dd"
+                                            placeholderText="Select date"
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs text-slate-400 mb-1 block">Time</Label>
+                                        <DatePicker
+                                            selected={match.time ? new Date(`2000-01-01T${match.time}`) : null}
+                                            onChange={(time) => {
+                                                if (time) {
+                                                    const hours = time.getHours().toString().padStart(2, '0');
+                                                    const minutes = time.getMinutes().toString().padStart(2, '0');
+                                                    handleMatchChange(index, 'time', `${hours}:${minutes}`);
+                                                }
+                                            }}
+                                            showTimeSelect
+                                            showTimeSelectOnly
+                                            timeIntervals={15}
+                                            timeCaption="Time"
+                                            dateFormat="HH:mm"
+                                            timeFormat="HH:mm"
+                                            placeholderText="Select time"
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs text-slate-400 mb-1 block">Location</Label>
+                                        <Input
+                                            placeholder="Stadium/Venue"
+                                            value={match.location}
+                                            onChange={(e) => handleMatchChange(index, 'location', e.target.value)}
+                                            className="h-9 text-sm bg-[#0f172a] border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-orange-500"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-20 bg-[#1e293b] rounded-lg border border-dashed border-slate-700">
+                    <p className="text-slate-400 mb-4">No matches scheduled yet.</p>
+                    <p className="text-sm text-slate-500">Click "Generate Schedule" to create a Round Robin fixture from your groups.</p>
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default Creatematches
+export default Creatematches;

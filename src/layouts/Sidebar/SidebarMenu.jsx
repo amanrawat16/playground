@@ -35,7 +35,7 @@ const menuItemAnimation = {
   }),
 };
 
-const SidebarMenu = ({ route, showAnimation, isOpen, setIsOpen }) => {
+const SidebarMenu = ({ route, showAnimation, isOpen, setIsOpen, onLinkClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -47,6 +47,12 @@ const SidebarMenu = ({ route, showAnimation, isOpen, setIsOpen }) => {
       setIsMenuOpen(false);
     }
   }, [isOpen]);
+
+  const handleSubLinkClick = () => {
+    if (onLinkClick) {
+      onLinkClick();
+    }
+  };
   return (
     <>
       <div className="menu" onClick={toggleMenu}>
@@ -91,7 +97,11 @@ const SidebarMenu = ({ route, showAnimation, isOpen, setIsOpen }) => {
           >
             {route.subRoutes.map((subRoute, i) => (
               <motion.div variants={menuItemAnimation} key={i} custom={i}>
-                <NavLink to={subRoute.path} className="link">
+                <NavLink 
+                  to={subRoute.path} 
+                  className={({ isActive }) => `link ${isActive ? 'active' : ''}`} 
+                  onClick={handleSubLinkClick}
+                >
                   <div className="icon">{subRoute.icon}</div>
                   <motion.div className="link_text">{subRoute.name}</motion.div>
                 </NavLink>

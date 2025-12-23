@@ -9,6 +9,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #020617; /* Slate 950 */
+  color: #e2e8f0; /* Slate 200 */
 }
 
 

@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { getCompClubs, updateUsersData } from "../services/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Shield, Lock, Building2, User } from "lucide-react";
+import { IoEye, IoEyeOff } from "react-icons/io5";
+import { ImSpinner3 } from "react-icons/im";
 
 const Users = () => {
   // Used to store comp clubs list
   const [clubs, setClubs] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm();
 
   const handleChange = (e) => {
@@ -23,15 +34,25 @@ const Users = () => {
   // Used to fetch existing clubs list
   const fetchClubs = async () => {
     try {
+      setIsLoading(true);
       const data = await getCompClubs();
       if (data) setClubs(data);
     } catch (error) {
-      console.log("Getting an error while fetching clubs: ", error);
+      console.error("Error fetching clubs: ", error);
+      toast.error("Failed to load clubs. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleUsers = async (data) => {
-    // console.log(data);
+    // Client-side validation
+    if (!data.newPassword || data.newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const clubId = data?.clubName;
       let updatedData = { ...data };
@@ -42,11 +63,21 @@ const Users = () => {
       delete updatedData?.user;
       delete updatedData?.newPassword;
       delete updatedData?.clubName;
+
       await updateUsersData(clubId, updatedData);
+      toast.success(`Password updated successfully for ${selectedUser === "admin" ? "Admin" : "Team Member"}`);
       reset(); // Clear the form on success
+      setSelectedUser(""); // Reset selected user
+      setShowPassword(false); // Reset password visibility
     } catch (error) {
       console.error("Error updating User:", error);
-      toast.error("Error updating user. Please try again.");
+      // Extract error message from API response
+      const errorMessage = error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        "Failed to update password. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -55,128 +86,192 @@ const Users = () => {
     fetchClubs();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading clubs...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <div className="flex  flex-col items-center justify-center">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Update User's Credentials
-          </h2>
+    <div className="min-h-screen bg-[#0f172a] py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-900/20 mb-4">
+            <Shield className="w-8 h-8 text-orange-600" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            Update User Credentials
+          </h1>
+          <p className="text-slate-400 text-sm sm:text-base">
+            Change password for club administrators or team members
+          </p>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {/* Form Card */}
+        <div className="bg-[#1e293b] rounded-2xl shadow-xl border border-slate-700 p-6 sm:p-8">
           <form className="space-y-6" onSubmit={handleSubmit(handleUsers)}>
-            {/* Club Section Starts Here */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Club Name
-              </label>
-              <div className="mt-2">
-                <select
-                  className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  {...register(`clubName`, {
-                    required: {
-                      value: true,
-                      message: "Club Name is required",
-                    },
-                  })}
-                >
-                  <option value="">Select Club</option>
-                  {clubs?.length > 0 &&
-                    clubs.map((val, i) => {
-                      return (
-                        <option key={val?._id || i} value={val?._id}>
-                          {val?.clubName}
-                        </option>
-                      );
-                    })}
-                </select>
-                <p className="text-red-500 text-sm my-2">
-                  {errors?.clubName?.message}
+            {/* Club Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="clubName" className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-orange-600" />
+                Club Name <span className="text-red-500">*</span>
+              </Label>
+              <Controller
+                name="clubName"
+                control={control}
+                rules={{ required: "Club Name is required" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger className="w-full h-11 border-2 border-slate-600 bg-[#0f172a] text-slate-200 focus:border-orange-500">
+                      <SelectValue placeholder="Select a club" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1e293b] border-slate-700 text-slate-200">
+                      {clubs?.length > 0 ? (
+                        clubs.map((club) => (
+                          <SelectItem key={club._id} value={club._id} className="focus:bg-slate-700 focus:text-white">
+                            {club.clubName}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>No clubs available</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors?.clubName && (
+                <p className="text-red-500 text-sm flex items-center gap-1">
+                  <span>⚠</span> {errors.clubName.message}
                 </p>
-              </div>
+              )}
             </div>
-            {/* Club Section Ends Here  */}
 
-            {/* Admin Section Starts Here */}
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  User
-                </label>
-              </div>
-              <div className="mt-2">
-                <select
-                  className="appearance-none block w-full bg-gray-200 text-gray-700  border border-gray-200 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  {...register(`user`, {
-                    required: {
-                      value: true,
-                      message: "User is required",
-                    },
-                    onChange: (e) => handleChange(e),
-                  })}
-                >
-                  <option value="">Select Users</option>
-                  <option value="admin">Admin</option>
-                  <option value="team-member">Team Member</option>
-                </select>
-                <p className="text-red-500 text-sm my-2">
-                  {errors?.user?.message}
+            {/* User Type Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="user" className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                <User className="w-4 h-4 text-orange-600" />
+                User Type <span className="text-red-500">*</span>
+              </Label>
+              <Controller
+                name="user"
+                control={control}
+                rules={{ required: "User type is required" }}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleChange({ target: { value } });
+                    }}
+                    value={field.value || ""}
+                  >
+                    <SelectTrigger className="w-full h-11 border-2 border-slate-600 bg-[#0f172a] text-slate-200 focus:border-orange-500">
+                      <SelectValue placeholder="Select user type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1e293b] border-slate-700 text-slate-200">
+                      <SelectItem value="admin" className="focus:bg-slate-700 focus:text-white">Admin</SelectItem>
+                      <SelectItem value="team-member" className="focus:bg-slate-700 focus:text-white">Team Member</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors?.user && (
+                <p className="text-red-500 text-sm flex items-center gap-1">
+                  <span>⚠</span> {errors.user.message}
                 </p>
-              </div>
+              )}
+              {selectedUser && (
+                <p className="text-sm text-slate-400 bg-blue-900/20 p-2 rounded-lg border border-blue-800">
+                  You are updating the password for: <span className="font-semibold text-blue-400">
+                    {selectedUser === "admin" ? "Club Administrator" : "Team Member"}
+                  </span>
+                </p>
+              )}
             </div>
-            {/* Admin Section Ends Here  */}
 
-            {/* Team Section Starts Here */}
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  New Password
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="Please enter new password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            {/* New Password */}
+            <div className="space-y-2">
+              <Label htmlFor="newPassword" className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                <Lock className="w-4 h-4 text-orange-600" />
+                New Password <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter new password (min. 6 characters)"
+                  className="w-full h-11 pr-10 border-2 border-slate-600 bg-[#0f172a] text-slate-200 focus:border-orange-500"
                   {...register("newPassword", {
-                    required: {
-                      value: true,
-                      message: "New Password is required",
+                    required: "New Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters long",
                     },
                   })}
                 />
-                <p className="text-red-500 text-sm my-2">
-                  {errors?.newPassword?.message}
-                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? (
+                    <IoEyeOff className="w-5 h-5" />
+                  ) : (
+                    <IoEye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
+              {errors?.newPassword && (
+                <p className="text-red-500 text-sm flex items-center gap-1">
+                  <span>⚠</span> {errors.newPassword.message}
+                </p>
+              )}
+              <p className="text-xs text-slate-500">
+                Password must be at least 6 characters long
+              </p>
             </div>
-            {/* Team Section Ends Here  */}
-            <div>
-              <button
+
+            {/* Submit Button */}
+            <div className="pt-4">
+              <Button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-gray-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                disabled={isSubmitting}
+                className="w-full h-12 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white font-semibold text-base shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Update
-              </button>
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <ImSpinner3 className="w-5 h-5 animate-spin" />
+                    Updating...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Shield className="w-5 h-5" />
+                    Update Password
+                  </span>
+                )}
+              </Button>
             </div>
           </form>
+
+          {/* Info Section */}
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-4">
+              <p className="text-sm text-blue-400">
+                <strong>Note:</strong> This will update the password for the selected user type in the chosen club.
+                Make sure you have the proper authorization to perform this action.
+              </p>
+            </div>
+          </div>
         </div>
-        <ToastContainer />
       </div>
-    </>
+      <ToastContainer position="top-center" />
+    </div>
   );
 };
 

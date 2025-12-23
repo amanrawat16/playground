@@ -11,7 +11,7 @@ const initialTeams = {
     match4: []
 }
 
-function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, setIsSemiFinalsStarted, semiFinalsStarted, quaterFinalMatchesStarted, setQuaterFinalMatchesStarted }) {
+function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFinalMatches, setIsSemiFinalsStarted, semiFinalsStarted, quaterFinalMatchesStarted, setQuaterFinalMatchesStarted }) {
     console.log(approvedTeams)
     const [teams, setTeams] = useState(approvedTeams)
     const [matches, setmatches] = useState(initialTeams)
@@ -147,10 +147,105 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, setIsSem
 
     if (quaterFinalMatchesStarted) {
         return (
-            <div className="w-full flex items-center justify-center">
-                <h1 className=" text-2xl font-bold text-green-500 py-20">QuaterFinals Started...</h1>
+            <div className="w-full flex flex-col items-center justify-center py-20 px-4">
+                <div className="flex items-center gap-3 mb-4">
+                    <ImCross className="text-orange-500" />
+                    <h2 className="text-2xl font-bold text-white">Quarter Finals In Progress</h2>
+                </div>
+                <p className="text-slate-400 text-center mb-2">Quarter final matches are currently being played.</p>
+                <p className="text-slate-500 text-sm text-center">Match results will be available in the Semi Finals stage.</p>
             </div>
         )
+    }
+
+    // If Semi Finals started, show completed Quarter Finals as read-only
+    if (semiFinalsStarted && quaterFinalMatches && quaterFinalMatches.length > 0) {
+        return (
+            <div className="w-full max-w-6xl mx-auto py-6">
+                <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-white mb-2">Quarter Finals Results</h2>
+                    <p className="text-sm text-slate-400">Quarter Finals have been completed</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {quaterFinalMatches.map((match, index) => (
+                        <div key={index} className="bg-[#1e293b] border border-slate-700 rounded-lg p-4">
+                            <h3 className="text-lg font-bold text-orange-500 mb-3 pb-2 border-b border-slate-700">
+                                Match {index + 1}
+                            </h3>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between bg-[#0f172a] border border-slate-700 rounded px-3 py-2">
+                                    <span className="text-sm text-slate-200">{match.team1?.teamName || 'Team 1'}</span>
+                                    {match.winningTeam && match.winningTeam.toString() === match.team1?._id?.toString() && (
+                                        <span className="text-xs bg-green-600 text-white px-2 py-1 rounded">Winner</span>
+                                    )}
+                                </div>
+                                <div className="flex items-center justify-between bg-[#0f172a] border border-slate-700 rounded px-3 py-2">
+                                    <span className="text-sm text-slate-200">{match.team2?.teamName || 'Team 2'}</span>
+                                    {match.winningTeam && match.winningTeam.toString() === match.team2?._id?.toString() && (
+                                        <span className="text-xs bg-green-600 text-white px-2 py-1 rounded">Winner</span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="mt-3 pt-2 border-t border-slate-700 text-xs text-slate-400">
+                                <p>Date: {match.date ? new Date(match.date).toLocaleDateString() : 'Not set'}</p>
+                                <p>Location: {match.location || 'Not set'}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-6 p-4 bg-green-900/20 border border-green-700 rounded-lg">
+                    <p className="text-green-400 text-sm flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+                        Quarter Finals completed. Winners advanced to Semi Finals.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    // NEW: If QF matches are saved (but not yet started), show them as saved fixtures
+    if (quaterFinalMatches && quaterFinalMatches.length > 0 && !quaterFinalMatchesStarted && !semiFinalsStarted) {
+        return (
+            <div className="w-full max-w-6xl mx-auto py-6">
+                <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-white mb-2">Saved Quarter Finals Fixtures</h2>
+                    <p className="text-sm text-slate-400">These fixtures have been created and saved</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {quaterFinalMatches.map((match, index) => (
+                        <div key={index} className="bg-[#1e293b] border border-slate-700 rounded-lg p-4">
+                            <h3 className="text-lg font-bold text-orange-500 mb-3 pb-2 border-b border-slate-700">
+                                Quarter Final Match {index + 1}
+                            </h3>
+                            <div className="space-y-3">
+                                <div className="bg-[#0f172a] border border-slate-700 rounded px-3 py-2">
+                                    <span className="text-sm text-slate-200">{match.team1?.teamName || 'Team 1'}</span>
+                                </div>
+                                <div className="text-center text-slate-500 text-xs">VS</div>
+                                <div className="bg-[#0f172a] border border-slate-700 rounded px-3 py-2">
+                                    <span className="text-sm text-slate-200">{match.team2?.teamName || 'Team 2'}</span>
+                                </div>
+                            </div>
+                            <div className="mt-3 pt-2 border-t border-slate-700 text-xs text-slate-400 space-y-1">
+                                <p><strong>Date:</strong> {match.date ? new Date(match.date).toLocaleDateString() : 'Not set'}</p>
+                                <p><strong>Time:</strong> {match.time?.[0]?.startTime || 'Not set'} - {match.time?.[0]?.endTime || 'Not set'}</p>
+                                <p><strong>Location:</strong> {match.location || 'Not set'}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-6 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+                    <p className="text-blue-400 text-sm flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+                        Quarter Finals fixtures are saved. Matches can be played and results updated.
+                    </p>
+                </div>
+            </div>
+        );
     }
 
     return (

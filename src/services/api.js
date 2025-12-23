@@ -65,6 +65,56 @@ export const updateTeam = async (teamId, updatedTeamData) => {
   }
 };
 
+export const deleteLeague = async (leagueId) => {
+  try {
+    const response = await instance.delete(`/comp/league/deleteLeague/${leagueId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting league:", error.response || error);
+    throw error;
+  }
+};
+
+export const deleteCompClub = async (clubId) => {
+  try {
+    const response = await instance.delete(`/comp/club/deleteCompClub/${clubId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting comp club:", error.response || error);
+    throw error;
+  }
+};
+
+export const deleteTeam = async (teamId) => {
+  try {
+    const response = await instance.delete(`/comp/club/deleteTeam/${teamId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting team:", error.response || error);
+    throw error;
+  }
+};
+
+export const deleteCompPlayer = async (playerId) => {
+  try {
+    const response = await instance.delete(`/comp/player/delete/${playerId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting player:", error.response || error);
+    throw error;
+  }
+};
+
+export const updateCompPlayer = async (playerId, playerData) => {
+  try {
+    const response = await instance.patch(`/comp/player/update/${playerId}`, playerData);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating player:", error.response || error);
+    throw error;
+  }
+};
+
 export const getTeam = async (userData) => {
   try {
     const response = await instance.get(`/comp/club/getAllTeam`);
@@ -80,10 +130,10 @@ export const getTeamById = async (teamId) => {
     const response = await instance.get(`/comp/team/getTeam/${teamId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching team by id:", error.response || error);
+    console.error(`Error fetching team ${teamId}:`, error.response || error);
     throw error;
   }
-}
+};
 
 export const getCompClubs = async (userData) => {
   try {
@@ -201,6 +251,32 @@ export const getSingleCompClubs = async (clubId) => {
   }
 };
 
+export const updateLeague = async (leagueId, leagueData) => {
+  try {
+    const response = await instance.patch(`/comp/league/updateLeague/${leagueId}`, leagueData);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating league:", error.response || error);
+    throw error;
+  }
+};
+
+export const updateCompClub = async (clubId, clubData) => {
+  try {
+    // Check if clubData contains a file (for image upload)
+    const headers = {};
+    if (clubData instanceof FormData) {
+      headers['Content-Type'] = 'multipart/form-data';
+    }
+
+    const response = await instance.patch(`/comp/club/updateCompClub/${clubId}`, clubData, { headers });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating club:", error.response || error);
+    throw error;
+  }
+};
+
 export const updateUsersData = async (clubId, payload) => {
   try {
     const response = await instance.patch(
@@ -241,6 +317,16 @@ export const getAllTeamsBasedOnLeague = async (leagueId) => {
   }
 };
 
+export const getAllTeams = async () => {
+  try {
+    const response = await instance.get("/comp/team/all");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all teams:", error.response || error);
+    throw error;
+  }
+};
+
 
 export const getAllCategories = async () => {
   try {
@@ -272,9 +358,12 @@ export const createLeagueFixture = async (leagueFixtureData) => {
   }
 }
 
-export const viewLeagueFixture = async (leagueId) => {
+export const viewLeagueFixture = async (leagueId, categoryId) => {
   try {
-    const response = await instance.get(`/comp/leagueFixture/viewLeagueFixture/${leagueId}`)
+    const url = categoryId
+      ? `/comp/leagueFixture/viewLeagueFixture/${leagueId}/${categoryId}`
+      : `/comp/leagueFixture/viewLeagueFixture/${leagueId}`;
+    const response = await instance.get(url)
     return response.data;
   } catch (error) {
     console.log("Error fetching League Fixture data", error.response || error)
@@ -489,3 +578,256 @@ export const deleteStaff = async (id) => {
     throw error;
   }
 }
+
+// Team Management
+export const createWildcardTeam = async (teamData) => {
+  try {
+    const response = await instance.post("/comp/team/create", teamData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating wildcard team:", error.response || error);
+    throw error;
+  }
+}
+
+export const addTeamToLeague = async (data) => {
+  try {
+    const response = await instance.post("/comp/team/add-to-league", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding team to league:", error.response || error);
+    throw error;
+  }
+}
+
+export const removeTeamFromLeague = async (data) => {
+  try {
+    const response = await instance.post("/comp/team/remove-from-league", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error removing team from league:", error.response || error);
+    throw error;
+  }
+}
+
+export const saveRegularRoundMatches = async (leagueId, fixtureId, matches) => {
+  try {
+    const response = await instance.post(`/comp/leagueFixture/saveRegularRoundMatches/${leagueId}/${fixtureId}`, { matches });
+    return response.data;
+  } catch (error) {
+    console.error("Error saving regular round matches:", error.response || error);
+    throw error;
+  }
+}
+
+export const createTeamUpdateRequest = async (requestData) => {
+  try {
+    const response = await instance.post("/comp/teamUpdateRequests/create", requestData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating team update request:", error.response || error);
+    throw error;
+  }
+}
+
+export const getPendingRequests = async () => {
+  try {
+    const response = await instance.get("/comp/teamUpdateRequests/pending");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pending requests:", error.response || error);
+    throw error;
+  }
+}
+
+export const approveRequest = async (requestId) => {
+  try {
+    const response = await instance.post(`/comp/teamUpdateRequests/approve/${requestId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error approving request:", error.response || error);
+    throw error;
+  }
+}
+
+export const rejectRequest = async (requestId) => {
+  try {
+    const response = await instance.post(`/comp/teamUpdateRequests/reject/${requestId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error rejecting request:", error.response || error);
+    throw error;
+  }
+}
+
+export const createClubUpdateRequest = async (requestData) => {
+  try {
+    const response = await instance.post("/comp/clubUpdateRequests/create", requestData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating club update request:", error.response || error);
+    throw error;
+  }
+}
+
+export const getPendingClubRequests = async () => {
+  try {
+    const response = await instance.get("/comp/clubUpdateRequests/pending");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pending club requests:", error.response || error);
+    throw error;
+  }
+}
+
+export const approveClubRequest = async (requestId) => {
+  try {
+    const response = await instance.post(`/comp/clubUpdateRequests/approve/${requestId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error approving club request:", error.response || error);
+    throw error;
+  }
+}
+
+export const rejectClubRequest = async (requestId) => {
+  try {
+    const response = await instance.post(`/comp/clubUpdateRequests/reject/${requestId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error rejecting club request:", error.response || error);
+    throw error;
+  }
+}
+
+// V2 APIs
+export const getTournamentPlayerRankings = async (tournamentId) => {
+  try {
+    const response = await instance.get(`/v2/tournaments/${tournamentId}/player-rankings?limit=50`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching player rankings:", error.response || error);
+    throw error;
+  }
+}
+
+export const getMatchPlayerStats = async (matchId) => {
+  try {
+    const response = await instance.get(`/v2/matches/${matchId}/player-performance`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching match player stats:", error.response || error);
+    throw error;
+  }
+}
+
+export const getTournamentTeamPlayerStats = async (tournamentId, teamId) => {
+  try {
+    const response = await instance.get(`/v2/tournaments/${tournamentId}/teams/${teamId}/stats`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tournament team player stats:", error);
+    throw error;
+  }
+};
+
+export const getTournamentStandings = async (tournamentId, groupId = null, stage = null) => {
+  try {
+    let url = `/v2/tournaments/${tournamentId}/standings?`;
+    if (groupId) url += `groupId=${groupId}&`;
+    if (stage) url += `stage=${stage}&`;
+
+    // Remove trailing & or ?
+    if (url.endsWith('&') || url.endsWith('?')) {
+      url = url.slice(0, -1);
+    }
+
+    const response = await instance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tournament standings:", error.response || error);
+    throw error;
+  }
+}
+
+export const getAllTournamentsV2 = async () => {
+  try {
+    const response = await instance.get('/v2/tournaments');
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all tournaments:", error.response || error);
+    throw error;
+  }
+}
+
+export const getTournamentsByLeague = async (leagueId) => {
+  try {
+    const response = await instance.get(`/v2/leagues/${leagueId}/tournaments`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tournaments by league:", error.response || error);
+    throw error;
+  }
+}
+
+export const getTournamentMatches = async (tournamentId) => {
+  try {
+    const response = await instance.get(`/v2/tournaments/${tournamentId}/matches`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tournament matches:", error.response || error);
+    throw error;
+  }
+}
+
+export const getTournamentTeams = async (tournamentId) => {
+  try {
+    const response = await instance.get(`/v2/tournaments/${tournamentId}/teams`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tournament teams:", error.response || error);
+    throw error;
+  }
+}
+
+
+export const updateMatchV2 = async (matchId, data) => {
+  try {
+    const response = await instance.put(`/v2/matches/${matchId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating match V2:", error.response || error);
+    throw error;
+  }
+}
+
+export const savePlayerPerformanceV2 = async (matchId, data) => {
+  try {
+    const response = await instance.post(`/v2/matches/${matchId}/player-stats`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error saving player performance V2:", error.response || error);
+    throw error;
+  }
+}
+
+export const getMatchPerformancesV2 = async (matchId) => {
+  try {
+    const response = await instance.get(`/v2/matches/${matchId}/player-stats`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching match performances V2:", error.response || error);
+    throw error;
+  }
+}
+
+export const deletePlayerPerformanceV2 = async (matchId, playerId) => {
+  try {
+    const response = await instance.delete(`/v2/matches/${matchId}/player-stats/${playerId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting player performance V2:", error.response || error);
+    throw error;
+  }
+}
+

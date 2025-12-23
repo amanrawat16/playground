@@ -7,7 +7,7 @@ const ReactLoader = () => {
         height={100}
         width={100}
         radius={5}
-        color="#4fa94d"
+        color="#ea580c"
         ariaLabel="ball-triangle-loading"
         wrapperStyle={{}}
         wrapperclassName=""
