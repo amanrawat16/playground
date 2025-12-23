@@ -15,7 +15,8 @@ import {
     Shuffle,
     Shield,
     Medal,
-    AlertCircle
+    AlertCircle,
+    Plus
 } from 'lucide-react';
 import KnockoutGeneratorModal from './KnockoutGeneratorModal';
 import PromotionModal from './PromotionModal';
