@@ -197,7 +197,7 @@ const AddPlayer = () => {
                       placeholder="Enter Player Email"
                       {...register(`email`, {
                         required: {
-                          value: true,
+                          value: false,
                           message: "Player email is required",
                         },
                       })}
@@ -237,10 +237,7 @@ const AddPlayer = () => {
                       type="text"
                       placeholder="Enter Jersey Number"
                       {...register(`jerseyNumber`, {
-                        required: {
-                          value: true,
-                          message: "Jersey Number is required",
-                        },
+                        required: selectedRole === 'STAFF' ? false : "Jersey Number is required"
                       })}
                     />
                     <p className="text-red-500 text-xs italic">

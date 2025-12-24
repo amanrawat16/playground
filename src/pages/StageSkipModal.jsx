@@ -158,46 +158,60 @@ const StageSkipModal = ({ isOpen, onClose, onSuccess, tournamentId, currentStage
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
-                                {standings?.standings?.map((team) => {
-                                    const isSelected = selectedTeams.includes(team.tournamentTeam);
+                                {(() => {
+                                    let teamsPool = [];
+                                    if (Array.isArray(standings)) {
+                                        // Flatten teams from all groups
+                                        standings.forEach(group => {
+                                            if (group.standings) {
+                                                teamsPool.push(...group.standings);
+                                            }
+                                        });
+                                    } else if (standings?.standings) {
+                                        teamsPool = standings.standings;
+                                    }
 
-                                    return (
-                                        <button
-                                            key={team.tournamentTeam}
-                                            onClick={() => handleTeamToggle(team.tournamentTeam)}
-                                            className={`p-4 rounded-xl border-2 transition-all text-left ${isSelected
-                                                ? 'border-orange-500 bg-orange-500/10'
-                                                : 'border-slate-700 bg-slate-900/50 hover:border-slate-600'
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${isSelected
-                                                    ? 'border-orange-500 bg-orange-500'
-                                                    : 'border-slate-600'
-                                                    }`}>
-                                                    {isSelected && (
-                                                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                        </svg>
+                                    return teamsPool.map((team) => {
+                                        const isSelected = selectedTeams.includes(team.tournamentTeam);
+
+                                        return (
+                                            <button
+                                                key={team.tournamentTeam}
+                                                onClick={() => handleTeamToggle(team.tournamentTeam)}
+                                                className={`p-4 rounded-xl border-2 transition-all text-left ${isSelected
+                                                    ? 'border-orange-500 bg-orange-500/10'
+                                                    : 'border-slate-700 bg-slate-900/50 hover:border-slate-600'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${isSelected
+                                                        ? 'border-orange-500 bg-orange-500'
+                                                        : 'border-slate-600'
+                                                        }`}>
+                                                        {isSelected && (
+                                                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+
+                                                    {team.team?.logo && (
+                                                        <img src={team.team.logo} className="w-8 h-8 rounded" alt="" />
                                                     )}
-                                                </div>
 
-                                                {team.team?.logo && (
-                                                    <img src={team.team.logo} className="w-8 h-8 rounded" alt="" />
-                                                )}
-
-                                                <div className="flex-1">
-                                                    <h4 className="text-white font-medium">{team.team?.name}</h4>
-                                                    <div className="flex gap-3 text-xs text-slate-400 mt-1">
-                                                        <span>Pos: {team.position}</span>
-                                                        <span>Pts: {team.points}</span>
-                                                        <span>GD: {team.goalDifference}</span>
+                                                    <div className="flex-1">
+                                                        <h4 className="text-white font-medium">{team.team?.name}</h4>
+                                                        <div className="flex gap-3 text-xs text-slate-400 mt-1">
+                                                            <span>Pos: {team.position}</span>
+                                                            <span>Pts: {team.points}</span>
+                                                            <span>GD: {team.goalDifference}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </button>
-                                    );
-                                })}
+                                            </button>
+                                        );
+                                    });
+                                })()}
                             </div>
                         </div>
                     )}

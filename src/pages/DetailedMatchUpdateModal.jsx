@@ -41,12 +41,12 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
             // Fetch players from both teams
             fetchTeamPlayers();
             fetchTournamentTeams();
+            fetchExistingPerformances();
             setScores({
                 home: match.homeScore || 0,
                 away: match.awayScore || 0
             });
             setIsCompleted(match.status === 'completed');
-            setPlayerPerformances([]);
             setReplacementTeams({ home: '', away: '' });
             setScheduledAt(match.scheduledAt ? new Date(match.scheduledAt).toISOString().split('T')[0] : '');
             setScheduledTime(match.scheduledTime || '');
@@ -115,6 +115,26 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
         } catch (error) {
             console.error('Error fetching players:', error);
             toast.error('Failed to load players');
+        }
+    };
+
+    const fetchExistingPerformances = async () => {
+        try {
+            const response = await axios.get(`${API_BASE}/api/v2/matches/${match._id}/player-stats`, {
+                headers: { 'api_key': 'THE123FIELD' }
+            });
+            if (response.data.status === 'SUCCESS') {
+                const performances = response.data.performances.map(p => ({
+                    playerId: p.player?._id,
+                    playerName: p.player?.playerName,
+                    teamId: p.team?._id,
+                    team: p.team?._id === match.homeTeam?._id ? 'home' : 'away',
+                    stats: p.stats
+                }));
+                setPlayerPerformances(performances);
+            }
+        } catch (error) {
+            console.error('Error fetching existing performances:', error);
         }
     };
 

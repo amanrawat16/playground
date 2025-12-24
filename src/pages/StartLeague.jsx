@@ -43,7 +43,7 @@ const items = [
         icon: <CiFlag1 />
     },
     {
-        title: "Start QuaterFinals",
+        title: "Start QuarterFinals",
         status: 'wait',
         icon: <GiBabyfootPlayers />
     }
@@ -264,7 +264,7 @@ function StartLeague() {
         },
         {
             key: '5',
-            label: "Quater Finals",
+            label: "Quarter Finals",
             children: <QuaterFinals approvedTeams={approvedTeams} leagueId={leagueId} setQuaterFinalMatches={setQuaterFinalMatches} semiFinalsStarted={semiFinalsStarted} setIsSemiFinalsStarted={setIsSemiFinalsStarted} quaterFinalMatchesStarted={quaterFinalMatchesStarted} setQuaterFinalMatchesStarted={setQuaterFinalMatchesStarted} />
         }, {
             key: "6",

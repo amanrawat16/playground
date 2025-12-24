@@ -89,7 +89,7 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
                 }],
                 location: data.location1,
                 league: leagueId,
-                matchType: "Quater-final"
+                matchType: "Quarter-final"
             },
             Match2: {
                 team1: matches.match2[0].team._id,
@@ -101,7 +101,7 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
                 }],
                 location: data.location2,
                 league: leagueId,
-                matchType: "Quater-final"
+                matchType: "Quarter-final"
             },
             Match3: {
                 team1: matches.match3[0].team._id,
@@ -113,7 +113,7 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
                 }],
                 location: data.location3,
                 league: leagueId,
-                matchType: "Quater-final"
+                matchType: "Quarter-final"
             },
             Match4: {
                 team1: matches.match4[0].team._id,
@@ -125,21 +125,21 @@ function QuaterFinals({ approvedTeams, leagueId, setQuaterFinalMatches, quaterFi
                 }],
                 location: data.location4,
                 league: leagueId,
-                matchType: "Quater-final"
+                matchType: "Quarter-final"
             }
         }
         try {
             const response = await startQuaterFinalMatches(leagueId, newData)
 
             if (response.status === 'SUCCESS') {
-                toast.success("Quater Final Matches started")
+                toast.success("Quarter Final Matches started")
                 setQuaterFinalMatches(response?.leagueFixture?.quaterFinalMatches)
                 setQuaterFinalMatchesStarted(response?.leagueFixture?.quaterFinalMatchesStarted)
                 reset()
             }
         } catch (error) {
             console.log(error)
-            toast.error(error.response.data.error || "Error starting quater final matches")
+            toast.error(error.response.data.error || "Error starting quarter final matches")
         } finally {
             setIsButtonDisabled(false)
         }

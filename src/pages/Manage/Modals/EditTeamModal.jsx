@@ -255,20 +255,34 @@ const EditTeamModal = ({ isOpen, onClose, team, onUpdate }) => {
                         <div className="space-y-3">
                             {fields.map((field, index) => (
                                 <div key={field.id} className="grid grid-cols-12 gap-2 bg-slate-800/50 p-3 rounded-lg border border-slate-700 items-start">
-                                    <div className="col-span-3">
+                                    <div className="col-span-2">
                                         <Input placeholder="Name" {...register(`players.${index}.name`, { required: true })} className="bg-slate-900 border-slate-600 h-8 text-xs" />
                                     </div>
-                                    <div className="col-span-3">
-                                        <Input placeholder="Email" {...register(`players.${index}.email`, { required: true })} className="bg-slate-900 border-slate-600 h-8 text-xs" />
+                                    <div className="col-span-2">
+                                        <Input placeholder="Email" {...register(`players.${index}.email`, { required: false })} className="bg-slate-900 border-slate-600 h-8 text-xs" />
                                     </div>
                                     <div className="col-span-2">
-                                        <Input type="number" placeholder="#" {...register(`players.${index}.jerseyNumber`, { required: true })} className="bg-slate-900 border-slate-600 h-8 text-xs" />
+                                        <select {...register(`players.${index}.role`)} className="w-full bg-slate-900 border border-slate-600 rounded-md h-8 text-xs text-white px-2">
+                                            <option value="PLAYER">Player</option>
+                                            <option value="STAFF">Staff</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <Input
+                                            type="number"
+                                            placeholder="#"
+                                            {...register(`players.${index}.jerseyNumber`, {
+                                                required: watch(`players.${index}.role`) === 'STAFF' ? false : "Req"
+                                            })}
+                                            className="bg-slate-900 border-slate-600 h-8 text-xs"
+                                        />
                                     </div>
                                     <div className="col-span-3">
                                         <select {...register(`players.${index}.position`)} className="w-full bg-slate-900 border border-slate-600 rounded-md h-8 text-xs text-white px-2">
                                             <option value="Offensive Player">Offense</option>
                                             <option value="Defensive Player">Defense</option>
                                             <option value="Rusher">Rusher</option>
+                                            <option value="NONE">NONE</option>
                                         </select>
                                     </div>
                                     <div className="col-span-1 flex justify-end">
@@ -276,8 +290,6 @@ const EditTeamModal = ({ isOpen, onClose, team, onUpdate }) => {
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
                                     </div>
-                                    {/* Hidden fields for required backend structure if defaults needed */}
-                                    <input type="hidden" {...register(`players.${index}.role`)} value="PLAYER" />
                                 </div>
                             ))}
                             {fields.length === 0 && (

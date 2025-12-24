@@ -198,9 +198,10 @@ const Creatematches = ({
 
                     {/* Show status badge if quarter finals started */}
                     {quaterFinalsStarted && (
-                        <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500 text-orange-500 px-4 py-2 rounded-lg">
-                            <Flag className="w-4 h-4" />
-                            <span className="font-semibold">Quarter Finals In Progress</span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-orange-500 font-bold bg-orange-500/10 px-4 py-2 rounded-lg border border-orange-500/20">
+                                Quarter Finals Started
+                            </span>
                         </div>
                     )}
                 </div>

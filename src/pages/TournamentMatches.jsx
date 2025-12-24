@@ -16,7 +16,8 @@ import {
     Shield,
     Medal,
     AlertCircle,
-    Plus
+    Plus,
+    Users
 } from 'lucide-react';
 import KnockoutGeneratorModal from './KnockoutGeneratorModal';
 import PromotionModal from './PromotionModal';
@@ -766,13 +767,22 @@ const TournamentMatches = () => {
                                                             )}
                                                         </div>
 
-                                                        <button
-                                                            onClick={() => handleEditMatch(match)}
-                                                            className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
-                                                            title="Update Score"
-                                                        >
-                                                            <Edit className="w-5 h-5" />
-                                                        </button>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => navigate(`/dashboard/playerSummary`, { state: match })}
+                                                                className="p-2 bg-slate-700 hover:bg-blue-600 hover:text-white rounded-lg transition-colors"
+                                                                title="Player Stats"
+                                                            >
+                                                                <Users className="w-5 h-5" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleEditMatch(match)}
+                                                                className="p-2 bg-slate-700 hover:bg-orange-600 hover:text-white rounded-lg transition-colors"
+                                                                title="Update Match & Stats"
+                                                            >
+                                                                <Edit className="w-5 h-5" />
+                                                            </button>
+                                                        </div>
                                                     </div>
 
                                                     <div className="flex items-center justify-between">

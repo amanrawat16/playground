@@ -640,6 +640,16 @@ export const getPendingRequests = async () => {
   }
 }
 
+export const getPendingRequestsByTeam = async (teamId) => {
+  try {
+    const response = await instance.get(`/comp/teamUpdateRequests/pending/${teamId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching team pending requests:", error.response || error);
+    throw error;
+  }
+}
+
 export const approveRequest = async (requestId) => {
   try {
     const response = await instance.post(`/comp/teamUpdateRequests/approve/${requestId}`);

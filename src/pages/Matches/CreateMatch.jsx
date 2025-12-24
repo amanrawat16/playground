@@ -14,7 +14,7 @@ const CreateMatch = () => {
   const [teamsSecondList, setTeamsSecondList] = useState([]);
   const [teamFirstSelectedValue, setTeamFirstSelectedValue] = useState("");
   const [leaguesList, setLeaguesList] = useState([]);
-  const matchType = ["Regular-round", 'Quater-final', 'Semi-final', 'Final']
+  const matchType = ["Regular-round", 'Quarter-final', 'Semi-final', 'Final']
   const [isCreatingMatch, setIsCreatingMatch] = useState(false)
 
   const {

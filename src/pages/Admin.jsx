@@ -1325,14 +1325,14 @@ export default function Admin() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label className="block text-sm font-semibold text-slate-300 mb-2">
-                            Player Email <span className="text-red-600">*</span>
+                            Player Email
                           </Label>
                           <Input
                             className="w-full h-12 border border-slate-600 rounded-lg px-4 focus:border-orange-500 bg-[#1e293b] text-slate-200"
                             type="email"
                             placeholder="Enter player email"
                             {...register(`players[${index}].email`, {
-                              required: true,
+                              required: false,
                               message: "Player Email is required",
                             })}
                           />
@@ -1366,15 +1366,14 @@ export default function Admin() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label className="block text-sm font-semibold text-slate-300 mb-2">
-                            Jersey Number <span className="text-red-600">*</span>
+                            Jersey Number {watch(`players[${index}].role`) !== 'STAFF' && <span className="text-red-600">*</span>}
                           </Label>
                           <Input
                             className="w-full h-12 border border-slate-600 rounded-lg px-4 focus:border-orange-500 bg-[#1e293b] text-slate-200"
                             type="number"
                             placeholder="Enter jersey number"
                             {...register(`players[${index}].jerseyNumber`, {
-                              required: true,
-                              message: "Jersey Number is required",
+                              required: watch(`players[${index}].role`) === 'STAFF' ? false : "Jersey Number is required"
                             })}
                           />
                           <p className="text-red-500 text-xs mt-1">
