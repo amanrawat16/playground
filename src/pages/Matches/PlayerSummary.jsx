@@ -254,27 +254,27 @@ const PlayerSummary = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Home Score */}
             <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-700 flex flex-col items-center">
-              <span className="text-slate-400 mb-2 font-medium uppercase tracking-wider">{match.homeTeam?.team?.teamName || "Home"}</span>
+              <span className="text-blue-400 mb-2 font-medium uppercase tracking-wider">{match.homeTeam?.team?.teamName || "Home Team"}</span>
               <div className="relative w-full max-w-[150px]">
                 <input
                   type="number"
                   min="0"
                   value={scores.home}
                   onChange={(e) => setScores({ ...scores, home: e.target.value })}
-                  className="w-full bg-slate-800 text-5xl font-bold text-center py-4 rounded-xl border-2 border-slate-600 focus:border-orange-500 focus:outline-none text-white transition-all"
+                  className="w-full bg-slate-800 text-5xl font-bold text-center py-4 rounded-xl border-2 border-slate-600 focus:border-blue-500 focus:outline-none text-white transition-all"
                 />
               </div>
             </div>
             {/* Away Score */}
             <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-700 flex flex-col items-center">
-              <span className="text-slate-400 mb-2 font-medium uppercase tracking-wider">{match.awayTeam?.team?.teamName || "Away"}</span>
+              <span className="text-emerald-400 mb-2 font-medium uppercase tracking-wider">{match.awayTeam?.team?.teamName || "Away Team"}</span>
               <div className="relative w-full max-w-[150px]">
                 <input
                   type="number"
                   min="0"
                   value={scores.away}
                   onChange={(e) => setScores({ ...scores, away: e.target.value })}
-                  className="w-full bg-slate-800 text-5xl font-bold text-center py-4 rounded-xl border-2 border-slate-600 focus:border-blue-500 focus:outline-none text-white transition-all"
+                  className="w-full bg-slate-800 text-5xl font-bold text-center py-4 rounded-xl border-2 border-slate-600 focus:border-emerald-500 focus:outline-none text-white transition-all"
                 />
               </div>
             </div>
@@ -295,12 +295,17 @@ const PlayerSummary = () => {
               <select
                 value={selectedTeam}
                 onChange={(e) => setSelectedTeam(e.target.value)}
-                className="bg-slate-800 text-white border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
+                className={`bg-slate-800 text-white border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none transition-colors ${selectedTeam === 'home' ? 'focus:border-blue-500' : 'focus:border-emerald-500'
+                  }`}
               >
                 <option value="home">{match.homeTeam?.team?.teamName || "Home Team"}</option>
                 <option value="away">{match.awayTeam?.team?.teamName || "Away Team"}</option>
               </select>
-              <Button size="sm" onClick={addPlayerPerformance} className="bg-orange-600 hover:bg-orange-500">
+              <Button
+                size="sm"
+                onClick={addPlayerPerformance}
+                className={selectedTeam === 'home' ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500'}
+              >
                 <Plus className="w-4 h-4 mr-1" /> Add Player
               </Button>
             </div>
@@ -324,10 +329,10 @@ const PlayerSummary = () => {
                 const isHome = perf.team === 'home';
 
                 return (
-                  <div key={index} className={`bg-slate-900/60 border ${isHome ? 'border-l-4 border-l-orange-500 border-y-slate-700 border-r-slate-700' : 'border-l-4 border-l-blue-500 border-y-slate-700 border-r-slate-700'} rounded-xl p-4 transition-all hover:bg-slate-900`}>
+                  <div key={index} className={`bg-slate-900/60 border ${isHome ? 'border-l-4 border-l-blue-500 border-y-slate-700 border-r-slate-700' : 'border-l-4 border-l-emerald-500 border-y-slate-700 border-r-slate-700'} rounded-xl p-4 transition-all hover:bg-slate-900`}>
                     <div className="flex items-center justify-between gap-4 mb-4">
                       <div className="flex items-center gap-3 flex-1">
-                        <div className={`p-2 rounded-full ${isHome ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                        <div className={`p-2 rounded-full ${isHome ? 'bg-blue-500/10 text-blue-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
                           <User className="w-5 h-5" />
                         </div>
                         <div className="flex-1 max-w-sm">
@@ -343,7 +348,8 @@ const PlayerSummary = () => {
                                   updatePlayerInfo(index, 'playerName', player.playerName);
                                 }
                               }}
-                              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-orange-500 focus:outline-none"
+                              className={`w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none transition-colors ${isHome ? 'focus:border-blue-500' : 'focus:border-emerald-500'
+                                }`}
                             >
                               <option value="">Select Player...</option>
                               {availablePlayers
@@ -356,8 +362,8 @@ const PlayerSummary = () => {
                               }
                             </select>
                           )}
-                          <div className={`text-xs uppercase font-bold tracking-wider mt-1 ${isHome ? 'text-orange-400' : 'text-blue-400'}`}>
-                            {isHome ? 'Home Team' : 'Away Team'}
+                          <div className={`text-xs uppercase font-bold tracking-wider mt-1 ${isHome ? 'text-blue-400' : 'text-emerald-400'}`}>
+                            {isHome ? (match.homeTeam?.team?.teamName || 'Home Team') : (match.awayTeam?.team?.teamName || 'Away Team')}
                           </div>
                         </div>
                       </div>
@@ -379,7 +385,8 @@ const PlayerSummary = () => {
                             min="0"
                             value={perf.stats[statKey]}
                             onChange={(e) => updatePlayerStat(index, statKey, e.target.value)}
-                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-center font-mono text-sm focus:border-orange-500 focus:outline-none text-white group-hover:bg-slate-700/50 transition-colors"
+                            className={`w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-center font-mono text-sm focus:outline-none text-white group-hover:bg-slate-700/50 transition-all ${isHome ? 'focus:border-blue-500' : 'focus:border-emerald-500'
+                              }`}
                           />
                         </div>
                       ))}
@@ -392,7 +399,8 @@ const PlayerSummary = () => {
                         <span className="bg-slate-800 px-2 py-1 rounded text-slate-300">Attacker: <b className="text-white">{points.attacker}</b></span>
                         <span className="bg-slate-800 px-2 py-1 rounded text-slate-300">Defence: <b className="text-white">{points.defence}</b></span>
                         <span className="bg-slate-800 px-2 py-1 rounded text-slate-300">QB: <b className="text-white">{points.qb}</b></span>
-                        <span className="ml-auto bg-green-900/30 text-green-400 px-3 py-1 rounded-full font-bold border border-green-500/30">
+                        <span className={`ml-auto px-3 py-1 rounded-full font-bold border ${isHome ? 'bg-blue-900/30 text-blue-400 border-blue-500/30' : 'bg-emerald-900/30 text-emerald-400 border-emerald-500/30'
+                          }`}>
                           Total Points: {points.total}
                         </span>
                       </div>

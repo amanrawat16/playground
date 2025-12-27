@@ -171,8 +171,21 @@ const StageSkipModal = ({ isOpen, onClose, onSuccess, tournamentId, currentStage
                                         teamsPool = standings.standings;
                                     }
 
-                                    return teamsPool.map((team) => {
-                                        const isSelected = selectedTeams.includes(team.tournamentTeam);
+                                    // Create a unique set of teams based on tournamentTeam ID to avoid duplicates
+                                    const uniqueTeams = [];
+                                    const seenTeamIds = new Set();
+
+                                    teamsPool.forEach(team => {
+                                        const teamId = team.tournamentTeam?._id || team.tournamentTeam;
+                                        if (teamId && !seenTeamIds.has(teamId)) {
+                                            seenTeamIds.add(teamId);
+                                            uniqueTeams.push(team);
+                                        }
+                                    });
+
+                                    return uniqueTeams.map((team) => {
+                                        const teamId = team.tournamentTeam?._id || team.tournamentTeam;
+                                        const isSelected = selectedTeams.includes(teamId);
 
                                         return (
                                             <button

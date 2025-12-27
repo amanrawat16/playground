@@ -26,12 +26,27 @@ const KnockoutGeneratorModal = ({
 
     const fetchQualifiedTeams = async () => {
         // If standings logic is preferred for seeding, use it
-        if (standings?.standings && stage === 'quarter_final' && standings.standings.length > 0) {
-            const teamsToAdvance = 8;
-            const topTeams = standings.standings.slice(0, teamsToAdvance).map(s => s.team);
-            setQualifiedTeams(topTeams);
-            generateInitialMatches(topTeams);
-            return;
+        if (standings && stage === 'quarter_final') {
+            let flatStandings = [];
+            if (Array.isArray(standings)) {
+                standings.forEach(group => {
+                    if (group.standings) flatStandings.push(...group.standings);
+                });
+                flatStandings.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference);
+            } else if (standings?.standings) {
+                flatStandings = standings.standings;
+            }
+
+            if (flatStandings.length > 0) {
+                const teamsToAdvance = 8;
+                const topTeams = flatStandings.slice(0, teamsToAdvance).map(s => {
+                    // Ensure we return the tournament team object which has the same structure as the backend response
+                    return s.tournamentTeam && typeof s.tournamentTeam === 'object' ? s.tournamentTeam : s;
+                });
+                setQualifiedTeams(topTeams);
+                generateInitialMatches(topTeams);
+                return;
+            }
         }
 
         // Otherwise fetch from backend based on progression flags

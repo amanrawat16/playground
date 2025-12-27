@@ -432,14 +432,20 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
                                 <select
                                     value={selectedTeam}
                                     onChange={(e) => setSelectedTeam(e.target.value)}
-                                    className="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
+                                    className={`px-3 py-2 border rounded-lg text-white text-sm focus:outline-none transition-all ${selectedTeam === 'home'
+                                        ? 'bg-blue-900/30 border-blue-500/30 text-blue-100'
+                                        : 'bg-emerald-900/30 border-emerald-500/30 text-emerald-100'
+                                        }`}
                                 >
                                     <option value="home">{match.homeTeam?.team?.teamName || 'Home'}</option>
                                     <option value="away">{match.awayTeam?.team?.teamName || 'Away'}</option>
                                 </select>
                                 <button
                                     onClick={addPlayerPerformance}
-                                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium flex items-center gap-2 text-sm transition-colors"
+                                    className={`px-4 py-2 text-white rounded-lg font-medium flex items-center gap-2 text-sm transition-all shadow-lg ${selectedTeam === 'home'
+                                        ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'
+                                        : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20'
+                                        }`}
                                 >
                                     <Plus className="w-4 h-4" />
                                     Add Player
@@ -451,17 +457,31 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
                             <div className="bg-slate-900/30 border border-slate-700 rounded-xl p-8 text-center">
                                 <AlertCircle className="w-12 h-12 text-slate-500 mx-auto mb-3" />
                                 <p className="text-slate-400">No player statistics added yet</p>
-                                <p className="text-sm text-slate-500 mt-1">Click "Add Player" to record player performance</p>
+                                <p className="text-sm text-slate-500 mt-1">Click &quot;Add Player&quot; to record player performance</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 {playerPerformances.map((perf, index) => {
                                     const points = calculatePlayerPoints(perf.stats);
+                                    const isHome = perf.team === 'home';
+
                                     return (
-                                        <div key={index} className="bg-slate-900/50 border border-slate-700 rounded-xl p-4">
+                                        <div
+                                            key={index}
+                                            className={`rounded-xl p-4 transition-all duration-300 border ${isHome
+                                                ? 'bg-blue-500/5 border-blue-500/30'
+                                                : 'bg-emerald-500/5 border-emerald-500/30'
+                                                }`}
+                                        >
                                             <div className="flex items-center justify-between mb-4">
                                                 <div className="flex items-center gap-3 flex-1">
-                                                    <User className="w-5 h-5 text-orange-500" />
+                                                    <div className="flex items-center gap-2">
+                                                        <User className={`w-5 h-5 ${isHome ? 'text-blue-400' : 'text-emerald-400'}`} />
+                                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${isHome ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
+                                                            }`}>
+                                                            {isHome ? (match.homeTeam?.team?.teamName || 'Home') : (match.awayTeam?.team?.teamName || 'Away')}
+                                                        </span>
+                                                    </div>
                                                     <select
                                                         value={perf.playerId}
                                                         onChange={(e) => {
@@ -471,11 +491,12 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
                                                                 updatePlayerInfo(index, 'playerName', player.playerName);
                                                             }
                                                         }}
-                                                        className="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-orange-500"
+                                                        className={`flex-1 px-3 py-2 bg-slate-800/80 border rounded-lg text-white focus:outline-none transition-colors ${isHome ? 'border-blue-500/30 focus:border-blue-500' : 'border-emerald-500/30 focus:border-emerald-500'
+                                                            }`}
                                                     >
                                                         <option value="">Select Player</option>
                                                         {availablePlayers
-                                                            .filter(p => p.teamType === perf.team) // Filter by the team assigned to this performance row
+                                                            .filter(p => p.teamType === perf.team)
                                                             .map(player => (
                                                                 <option key={player._id} value={player._id}>
                                                                     {player.playerName} ({player.position})
@@ -503,7 +524,8 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
                                                             type="number"
                                                             value={perf.stats[stat]}
                                                             onChange={(e) => updatePlayerStat(index, stat, e.target.value)}
-                                                            className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-sm text-center focus:outline-none focus:border-orange-500"
+                                                            className={`w-full px-2 py-1.5 bg-slate-800/50 border rounded text-white text-sm text-center focus:outline-none transition-colors ${isHome ? 'border-blue-500/20 focus:border-blue-500' : 'border-emerald-500/20 focus:border-emerald-500'
+                                                                }`}
                                                             min="0"
                                                         />
                                                     </div>
@@ -524,8 +546,13 @@ const DetailedMatchUpdateModal = ({ isOpen, onClose, match, onSuccess, tournamen
                                                 <div className="bg-purple-900/20 border border-purple-700/50 px-3 py-1.5 rounded-full">
                                                     <span className="text-purple-400 font-medium">QB: {points.qb}</span>
                                                 </div>
-                                                <div className="bg-orange-900/20 border border-orange-700/50 px-3 py-1.5 rounded-full">
-                                                    <span className="text-orange-400 font-semibold">Total: {points.total}</span>
+                                                <div className={`px-4 py-1.5 rounded-full border shadow-sm ${isHome
+                                                    ? 'bg-blue-500/10 border-blue-500/40 shadow-blue-500/5'
+                                                    : 'bg-emerald-500/10 border-emerald-500/40 shadow-emerald-500/5'
+                                                    }`}>
+                                                    <span className={`font-bold ${isHome ? 'text-blue-400' : 'text-emerald-400'}`}>
+                                                        Total Points: {points.total}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>

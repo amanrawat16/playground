@@ -23,12 +23,28 @@ const PromotionModal = ({
                 nextStage === 'final' ? 2 : 8;
 
     useEffect(() => {
-        if (isOpen && standings?.standings) {
+        if (isOpen && standings) {
+            let flatStandings = [];
+            if (Array.isArray(standings)) {
+                // Flatten teams from all groups
+                standings.forEach(group => {
+                    if (group.standings) {
+                        flatStandings.push(...group.standings);
+                    }
+                });
+                // Sort by points/GD if needed, but for now just flatten
+                flatStandings.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference);
+            } else if (standings?.standings) {
+                flatStandings = standings.standings;
+            }
+
             // Pre-select top N teams
-            const topTeams = standings.standings.slice(0, teamsToAdvance).map(s => s.tournamentTeam);
+            const topTeams = flatStandings.slice(0, teamsToAdvance).map(s => {
+                return typeof s.tournamentTeam === 'object' ? s.tournamentTeam._id : s.tournamentTeam;
+            });
             setSelectedTeams(topTeams);
         }
-    }, [isOpen, standings]);
+    }, [isOpen, standings, teamsToAdvance]);
 
     const handleToggleTeam = (teamId) => {
         setSelectedTeams(prev => {
@@ -100,49 +116,62 @@ const PromotionModal = ({
                     </div>
 
                     <div className="space-y-2">
-                        {standings?.standings?.map((standing) => {
-                            const isSelected = selectedTeams.includes(standing.tournamentTeam);
-                            return (
-                                <div
-                                    key={standing.tournamentTeam}
-                                    onClick={() => handleToggleTeam(standing.tournamentTeam)}
-                                    className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${isSelected
-                                        ? 'bg-orange-600/10 border-orange-500/50'
-                                        : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isSelected ? 'bg-orange-500 text-white' : 'bg-slate-700 text-slate-400'
-                                            }`}>
-                                            {standing.position}
-                                        </div>
+                        {(() => {
+                            let flatStandings = [];
+                            if (Array.isArray(standings)) {
+                                standings.forEach(group => {
+                                    if (group.standings) flatStandings.push(...group.standings);
+                                });
+                                flatStandings.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference);
+                            } else if (standings?.standings) {
+                                flatStandings = standings.standings;
+                            }
 
-                                        <div className="flex items-center gap-3">
-                                            {standing.team.logo ? (
-                                                <img src={standing.team.logo} alt="" className="w-8 h-8 rounded-full object-cover" />
-                                            ) : (
-                                                <div className="w-8 h-8 bg-slate-700 rounded-full" />
-                                            )}
-                                            <div>
-                                                <h3 className={`font-medium ${isSelected ? 'text-white' : 'text-slate-300'}`}>
-                                                    {standing.team.name}
-                                                </h3>
-                                                <div className="text-xs text-slate-500">
-                                                    Played: {standing.played} • Pts: {standing.points}
+                            return flatStandings.map((standing) => {
+                                const teamId = typeof standing.tournamentTeam === 'object' ? standing.tournamentTeam._id : standing.tournamentTeam;
+                                const isSelected = selectedTeams.includes(teamId);
+                                return (
+                                    <div
+                                        key={teamId}
+                                        onClick={() => handleToggleTeam(teamId)}
+                                        className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${isSelected
+                                            ? 'bg-orange-600/10 border-orange-500/50'
+                                            : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isSelected ? 'bg-orange-500 text-white' : 'bg-slate-700 text-slate-400'
+                                                }`}>
+                                                {standing.position}
+                                            </div>
+
+                                            <div className="flex items-center gap-3">
+                                                {standing.team?.logo ? (
+                                                    <img src={standing.team.logo} alt="" className="w-8 h-8 rounded-full object-cover" />
+                                                ) : (
+                                                    <div className="w-8 h-8 bg-slate-700 rounded-full" />
+                                                )}
+                                                <div>
+                                                    <h3 className={`font-medium ${isSelected ? 'text-white' : 'text-slate-300'}`}>
+                                                        {standing.team?.name || standing.team?.teamName}
+                                                    </h3>
+                                                    <div className="text-xs text-slate-500">
+                                                        Played: {standing.played} • Pts: {standing.points}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected
-                                        ? 'bg-orange-500 border-orange-500'
-                                        : 'border-slate-600'
-                                        }`}>
-                                        {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected
+                                            ? 'bg-orange-500 border-orange-500'
+                                            : 'border-slate-600'
+                                            }`}>
+                                            {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            });
+                        })()}
                     </div>
                 </div>
 
