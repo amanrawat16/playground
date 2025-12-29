@@ -32,6 +32,16 @@ const PromotionModal = ({
                         flatStandings.push(...group.standings);
                     }
                 });
+
+                // Remove duplicates based on team ID
+                const uniqueTeams = new Map();
+                flatStandings.forEach(item => {
+                    const teamId = typeof item.tournamentTeam === 'object' ? item.tournamentTeam._id : item.tournamentTeam;
+                    if (!uniqueTeams.has(teamId)) {
+                        uniqueTeams.set(teamId, item);
+                    }
+                });
+                flatStandings = Array.from(uniqueTeams.values());
                 // Sort by points/GD if needed, but for now just flatten
                 flatStandings.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference);
             } else if (standings?.standings) {
@@ -122,6 +132,16 @@ const PromotionModal = ({
                                 standings.forEach(group => {
                                     if (group.standings) flatStandings.push(...group.standings);
                                 });
+
+                                // Remove duplicates based on team ID
+                                const uniqueTeams = new Map();
+                                flatStandings.forEach(item => {
+                                    const teamId = typeof item.tournamentTeam === 'object' ? item.tournamentTeam._id : item.tournamentTeam;
+                                    if (!uniqueTeams.has(teamId)) {
+                                        uniqueTeams.set(teamId, item);
+                                    }
+                                });
+                                flatStandings = Array.from(uniqueTeams.values());
                                 flatStandings.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference);
                             } else if (standings?.standings) {
                                 flatStandings = standings.standings;
